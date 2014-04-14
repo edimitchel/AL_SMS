@@ -3,7 +3,6 @@ package com.cnam.al_sms;
 import android.app.Activity;
 import android.app.ActionBar;
 import android.app.Fragment;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -12,14 +11,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.os.Build;
 
-public class MainActivity extends Activity {
-
-	private static final int CODE_APP = 98651;
+public class ConfigurationConnexionView extends Activity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
+		setContentView(R.layout.activity_configuration_connexion_view);
 
 		if (savedInstanceState == null) {
 			getFragmentManager().beginTransaction()
@@ -31,7 +28,7 @@ public class MainActivity extends Activity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
+		getMenuInflater().inflate(R.menu.configuration_connexion_view, menu);
 		return true;
 	}
 
@@ -42,8 +39,6 @@ public class MainActivity extends Activity {
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
 		if (id == R.id.action_settings) {
-			Intent intent = new Intent(getBaseContext(),SynchronisationActivity.class);
-			startActivityForResult(intent, CODE_APP);
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
@@ -60,7 +55,8 @@ public class MainActivity extends Activity {
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
-			View rootView = inflater.inflate(R.layout.fragment_main, container,
+			View rootView = inflater.inflate(
+					R.layout.fragment_configuration_connexion_view, container,
 					false);
 			return rootView;
 		}

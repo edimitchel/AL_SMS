@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">AL_SMS</string>
+    <string name="app_name">Al SMS</string>
+    <string name="action_settings">Paramètres</string>
+    <string name="is_master">Périphérique maître</string>
+    <string name="title_activity_synchronisation">Synchronisation</string>
+    <string name="label_sync_running">Synchronisation en cours..</string>
+    <string name="label_msg_sync">Recherche de périphériques ..</string>
+    <string name="refresh">Raffraichir</string>
+    <string name="title_activity_configuration_connexion_view">ConfigurationConnexionView</string>
     <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
 
 </resources>
