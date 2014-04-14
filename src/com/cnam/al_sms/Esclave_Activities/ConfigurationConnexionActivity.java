@@ -1,4 +1,4 @@
-package com.cnam.al_sms;
+package com.cnam.al_sms.Esclave_Activities;
 
 import android.animation.ObjectAnimator;
 import android.app.Activity;
@@ -28,7 +28,12 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
-public class SynchronisationActivity extends Activity implements
+import com.cnam.al_sms.R;
+import com.cnam.al_sms.R.id;
+import com.cnam.al_sms.R.layout;
+import com.cnam.al_sms.R.menu;
+
+public class ConfigurationConnexionActivity extends Activity implements
 		AdapterView.OnItemSelectedListener {
 
 	private int CODE_ACTIVITY = 2;
@@ -71,7 +76,7 @@ public class SynchronisationActivity extends Activity implements
 			mArrayBDevice = new ArrayList(set);
 
 			ArrayAdapter<String> adapter = new ArrayAdapter<String>(
-					SynchronisationActivity.this,
+					ConfigurationConnexionActivity.this,
 					android.R.layout.simple_list_item_checked, mArrayAdapter);
 			lv_devices.setAdapter(adapter);
 

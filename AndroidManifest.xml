@@ -18,7 +18,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.cnam.al_sms.MainActivity"
+            android:name="com.cnam.al_sms.Esclave_Activities.MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -27,7 +27,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.cnam.al_sms.SynchronisationActivity"
+            android:name="com.cnam.al_sms.Esclave_Activities.ConfigurationConnexionActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.SYNC" />

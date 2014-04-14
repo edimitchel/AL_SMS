@@ -1,4 +1,9 @@
-package com.cnam.al_sms;
+package com.cnam.al_sms.Esclave_Activities;
+
+import com.cnam.al_sms.R;
+import com.cnam.al_sms.R.id;
+import com.cnam.al_sms.R.layout;
+import com.cnam.al_sms.R.menu;
 
 import android.app.Activity;
 import android.app.ActionBar;
@@ -42,7 +47,7 @@ public class MainActivity extends Activity {
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
 		if (id == R.id.action_settings) {
-			Intent intent = new Intent(getBaseContext(),SynchronisationActivity.class);
+			Intent intent = new Intent(getBaseContext(),ConfigurationConnexionActivity.class);
 			startActivityForResult(intent, CODE_APP);
 			return true;
 		}
