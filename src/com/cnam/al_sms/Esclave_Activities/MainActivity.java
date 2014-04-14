@@ -1,6 +1,7 @@
 package com.cnam.al_sms.Esclave_Activities;
 
 import com.cnam.al_sms.R;
+import com.cnam.al_sms.Connectivite.ConnecBluetooth;
 import com.cnam.al_sms.R.id;
 import com.cnam.al_sms.R.layout;
 import com.cnam.al_sms.R.menu;
@@ -8,6 +9,7 @@ import com.cnam.al_sms.R.menu;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.UUID;
 
 import android.app.Activity;
 import android.content.ContentResolver;
@@ -32,7 +34,6 @@ import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
-
 	private static final int CODE_APP = 98651;
     private ListView m_LVconvstream;
     private Button m_BTNSync;
@@ -146,6 +147,13 @@ public class MainActivity extends Activity {
                 startActivityForResult(i_sync,CODE_APP);
             }
         });
+		try {
+			ConnecBluetooth.checkBluetoothConnection(this);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 
 	@Override

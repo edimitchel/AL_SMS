@@ -32,6 +32,7 @@ import com.cnam.al_sms.R;
 import com.cnam.al_sms.R.id;
 import com.cnam.al_sms.R.layout;
 import com.cnam.al_sms.R.menu;
+import com.cnam.al_sms.Connectivite.ConnecBluetooth;
 
 public class ConfigurationConnexionActivity extends Activity implements
 		AdapterView.OnItemSelectedListener {
@@ -92,9 +93,7 @@ public class ConfigurationConnexionActivity extends Activity implements
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_synchronisation);
-
 		lv_devices = (ListView) findViewById(R.id.lstDevice);
-
 		ba = BluetoothAdapter.getDefaultAdapter();
 		if (ba != null) {
 			if (!ba.isEnabled()) {
@@ -141,6 +140,7 @@ public class ConfigurationConnexionActivity extends Activity implements
 			lv_devices.setOnItemSelectedListener(this);
 
 			Log.i("smsview", mArrayAdapter.toString());
+
 		}
 	}
 
