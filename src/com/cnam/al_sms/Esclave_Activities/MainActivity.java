@@ -142,7 +142,7 @@ public class MainActivity extends Activity {
         m_BTNSync.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i_sync = new Intent(MainActivity.this, SynchronisationActivity.class);
+                Intent i_sync = new Intent(MainActivity.this, ConfigurationConnexionActivity.class);
                 startActivityForResult(i_sync,CODE_APP);
             }
         });
