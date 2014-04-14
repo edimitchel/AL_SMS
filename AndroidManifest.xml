@@ -37,6 +37,10 @@
             android:name="com.cnam.al_sms.ConfigurationConnexionView"
             android:label="@string/title_activity_configuration_connexion_view" >
         </activity>
+        <activity
+            android:name="com.cnam.al_sms.Conversation_View"
+            android:label="@string/title_activity_conversation__view" >
+        </activity>
     </application>
 
 </manifest>

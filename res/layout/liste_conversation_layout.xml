@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/GridLayout1"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:columnCount="3"
+    android:orientation="horizontal" >
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="10dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="10dp"
+        android:baselineAligned="false"
+        android:weightSum="1"
+        android:id="@+id/linearLayout">
+
+        <QuickContactBadge
+            android:id="@+id/imageContact"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_gravity="left|top"
+            android:layout_marginRight="10dp"/>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1.15">
+
+            <TextView
+                android:id="@+id/nomcontact"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_column="2"
+                android:layout_gravity="top"
+                android:layout_row="0"
+                android:text="Contact"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            <TextView
+                android:id="@+id/lst_msg"
+                android:layout_column="2"
+                android:layout_gravity="left|bottom"
+                android:layout_row="1"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="dernier messagqdfoi qsf jsmqdof jsqdofmil sqjdfomoqls kfjqsomdf lk"
+                android:lines="1"
+                android:ellipsize="end"
+                android:enabled="false"
+                android:editable="false"
+                android:clickable="false"
+                android:autoText="false"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:layout_width="fill_parent"
+                android:ems="10"
+                android:scrollHorizontally="true" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/nb_msg"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center_vertical|right"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="0"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:textIsSelectable="false"
+            android:layout_marginLeft="10dp"
+            android:gravity="center_vertical|center_horizontal" />
+
+    </LinearLayout>
+
+</RelativeLayout>

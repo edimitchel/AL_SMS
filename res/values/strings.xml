@@ -10,5 +10,6 @@
     <string name="refresh">Raffraichir</string>
     <string name="title_activity_configuration_connexion_view">ConfigurationConnexionView</string>
     <string name="hello_world">Hello world!</string>
+    <string name="title_activity_conversation__view">Conversation_View</string>
 
 </resources>
