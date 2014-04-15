@@ -1,14 +1,16 @@
 package com.cnam.al_sms.Esclave_Activities;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+import shared.BluetoothDeviceAdapter;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
-import android.app.LauncherActivity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
-import android.content.ClipData;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
@@ -17,22 +19,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.Animation;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
-
 import com.cnam.al_sms.R;
-import com.cnam.al_sms.R.id;
-import com.cnam.al_sms.R.layout;
-import com.cnam.al_sms.R.menu;
-import com.cnam.al_sms.Connectivite.ConnecBluetooth;
 
 public class ConfigurationConnexionActivity extends Activity implements
 		AdapterView.OnItemSelectedListener {
@@ -41,11 +32,13 @@ public class ConfigurationConnexionActivity extends Activity implements
 
 	private int REQUEST_ENABLE_BT = 1;
 
-	private ArrayList<BluetoothDevice> mArrayBDevice = new ArrayList<BluetoothDevice>();
+	private List<BluetoothDevice> mArrayPairedDevice = new ArrayList<BluetoothDevice>();
 
-	private ArrayList<String> mArrayAdapter = new ArrayList<String>();
+	private List<BluetoothDevice> mArrayBluetoothDevice = new ArrayList<BluetoothDevice>();
 
-	private ListView lv_devices;
+	private ListView mPairedDevices;
+	
+	private ListView mOtherDevices;
 
 	private BluetoothAdapter ba;
 
@@ -61,30 +54,28 @@ public class ConfigurationConnexionActivity extends Activity implements
 						.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
 				// Add the name and address to an array adapter to show in a
 				// ListView
-				mArrayAdapter
-						.add(device.getName() + "\n" + device.getAddress());
-				mArrayBDevice.add(device);
-
-				Log.i("smsview", mArrayAdapter.toString());
+				if (device.getName() != "null")
+					mArrayPairedDevice.add(device);
 			}
 
-			Set set = new HashSet();
-			set.addAll(mArrayAdapter);
-			mArrayAdapter = new ArrayList(set);
+			BluetoothDeviceAdapter adapterPairedDevices = new BluetoothDeviceAdapter(
+					context, mArrayPairedDevice);
+			mPairedDevices.setAdapter(adapterPairedDevices);
 
-			set = new HashSet();
-			set.addAll(mArrayBDevice);
-			mArrayBDevice = new ArrayList(set);
+			BluetoothDeviceAdapter adapterOtherDevice = new BluetoothDeviceAdapter(
+					context, mArrayBluetoothDevice);
+			mOtherDevices.setAdapter(adapterOtherDevice);
 
-			ArrayAdapter<String> adapter = new ArrayAdapter<String>(
-					ConfigurationConnexionActivity.this,
-					android.R.layout.simple_list_item_checked, mArrayAdapter);
-			lv_devices.setAdapter(adapter);
+			int nb_devices = mArrayPairedDevice.size()
+					+ mArrayPairedDevice.size();
 
-			if (!mArrayAdapter.isEmpty()) {
-				String s = mArrayAdapter.size() > 1 ? "s" : "";
-				showMessage(mArrayAdapter.size() + " périphérique" + s
-						+ " trouvé" + s, 1);
+			if (mArrayPairedDevice.size() + mArrayPairedDevice.size() != 0) {
+				String s = nb_devices > 1 ? "s" : "";
+				showMessage(nb_devices + " périphérique" + s + " trouvé" + s, 1);
+			} else {
+				showMessage(
+						"Aucun périphérique n'a été trouvé. Vérifiez votre configuration.",
+						0);
 			}
 		}
 	};
@@ -93,7 +84,8 @@ public class ConfigurationConnexionActivity extends Activity implements
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_synchronisation);
-		lv_devices = (ListView) findViewById(R.id.lstDevice);
+		mPairedDevices = (ListView) findViewById(R.id.lstPairedDevice);
+		mOtherDevices = (ListView) findViewById(R.id.lstOtherDevice);
 		ba = BluetoothAdapter.getDefaultAdapter();
 		if (ba != null) {
 			if (!ba.isEnabled()) {
@@ -111,17 +103,10 @@ public class ConfigurationConnexionActivity extends Activity implements
 				for (BluetoothDevice device : pairedDevices) {
 					// Add the name and address to an array adapter to show in a
 					// ListView
-					mArrayAdapter.add(device.getName() + "\n"
-							+ device.getAddress());
+					mArrayBluetoothDevice.add(device);
 				}
 			}
 			ba.startDiscovery();
-
-			if (mArrayAdapter.isEmpty()) {
-				showMessage(
-						"Aucun périphérique n'a été trouvé. Vérifiez votre configuration.",
-						0);
-			}
 
 			TextView tvMessage = (TextView) findViewById(R.id.tv_msg_sync);
 			tvMessage.setOnLongClickListener(new View.OnLongClickListener() {
@@ -137,10 +122,8 @@ public class ConfigurationConnexionActivity extends Activity implements
 			anim.setDuration(500).setRepeatMode(ObjectAnimator.INFINITE);
 			anim.start();
 
-			lv_devices.setOnItemSelectedListener(this);
-
-			Log.i("smsview", mArrayAdapter.toString());
-
+			mPairedDevices.setOnItemSelectedListener(this);
+			mOtherDevices.setOnItemSelectedListener(this);
 		}
 	}
 
@@ -186,14 +169,10 @@ public class ConfigurationConnexionActivity extends Activity implements
 	@Override
 	public void onItemSelected(AdapterView<?> parent, View view, int position,
 			long id) {
-		ListView item = (ListView) parent.getItemAtPosition(position);
-		if (!item.isSelected())
-			item.setSelected(true);
-		else
-			item.setSelected(false);
-
-		BluetoothDevice bdToConnect = mArrayBDevice.get(position);
-
+		BluetoothDevice bdToConnect = (BluetoothDevice) parent.getItemAtPosition(position);
+		Intent DeviceToConnect = new Intent(ConfigurationConnexionActivity.this,MainActivity.class);
+		DeviceToConnect.putExtra("Adresse_MAC", bdToConnect.getAddress());
+		startActivityForResult(DeviceToConnect, 1);
 	}
 
 	@Override

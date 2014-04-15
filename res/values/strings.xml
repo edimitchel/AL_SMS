@@ -6,7 +6,7 @@
     <string name="is_master">Périphérique maître</string>
     <string name="title_activity_synchronisation">Synchronisation</string>
     <string name="label_sync_running">Synchronisation en cours..</string>
-    <string name="label_msg_sync">Recherche de périphériques ..</string>
+    <string name="label_msg_sync">Recherche de périphériques ...</string>
     <string name="refresh">Raffraichir</string>
     <string name="title_activity_configuration_connexion_view">ConfigurationConnexionView</string>
     <string name="hello_world">Hello world!</string>

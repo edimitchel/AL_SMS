@@ -25,11 +25,27 @@
         android:singleLine="false" />
 
     <ListView
+        android:id="@+id/lstPairedDevice"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/lstDevice"
+        android:layout_above="@id/lstOtherDevice"
         android:layout_alignParentStart="true"
+        android:footerDividersEnabled="true"
+        tools:listitem="@android:layout/simple_expandable_list_item_2" >
+
+    </ListView>
+
+    <ListView
+        android:id="@+id/lstOtherDevice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_above="@+id/tv_msg_sync"
-        tools:listitem="@android:layout/simple_list_item_checked" />
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:footerDividersEnabled="true"
+        tools:listitem="@android:layout/simple_expandable_list_item_2" >
+
+    </ListView>
 
 </RelativeLayout>
