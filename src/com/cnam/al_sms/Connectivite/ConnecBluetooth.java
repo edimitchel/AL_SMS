@@ -9,7 +9,8 @@ import android.widget.Toast;
 
 public class ConnecBluetooth {
 	private final static int REQUEST_CODE_ENABLE_BLUETOOTH = 0;
-	public final static UUID uuid = UUID.fromString("a60f35f0-b93a-11de-8a39-08102009c666");
+	public final static UUID APPUUID = UUID.fromString("a60f35f0-b93a-11de-8a39-08102009c666");
+	public final static String APPNAME = "ALSMS";
 
 	/**
 	 * 

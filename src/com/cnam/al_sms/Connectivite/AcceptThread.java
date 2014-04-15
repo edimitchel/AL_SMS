@@ -14,7 +14,7 @@ public class AcceptThread  extends Thread {
 		   public AcceptThread() {
 		       BluetoothServerSocket tmp = null;
 		       try {
-		            tmp = mBluetoothAdapter.listenUsingRfcommWithServiceRecord("AL_SMS", ConnecBluetooth.uuid);
+		            tmp = mBluetoothAdapter.listenUsingRfcommWithServiceRecord(ConnecBluetooth.APPNAME, ConnecBluetooth.APPUUID);
 		       } catch (IOException e) { }
 		       mmServerSocket = tmp;
 		   }

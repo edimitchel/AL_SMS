@@ -4,19 +4,22 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import android.app.Activity;
 import android.bluetooth.BluetoothSocket;
 import android.widget.Toast;
 
-private class ConnectedThread extends Thread {
+class ConnectedThread extends Thread {
     private final BluetoothSocket mmSocket;
     private final InputStream mmInStream;
     private final OutputStream mmOutStream;
+    private final Activity mmActivity;
 
-    public ConnectedThread(BluetoothSocket socket) {
-        Toast.makeText(MainActivity.this, "construct thread connected", Toast.LENGTH_SHORT).show();
+    public ConnectedThread(BluetoothSocket socket, Activity a) {
+        Toast.makeText(a, "construct thread connected", Toast.LENGTH_SHORT).show();
         mmSocket = socket;
         InputStream tmpIn = null;
         OutputStream tmpOut = null;
+        mmActivity = a;
 
         // Get the input and output streams, using temp objects because
         // member streams are final
@@ -32,7 +35,7 @@ private class ConnectedThread extends Thread {
     public void run() {
         byte[] buffer = new byte[1024];  // buffer store for the stream
         int bytes; // bytes returned from read()
-        Toast.makeText(BluetoothService2.this, "connexion établi", Toast.LENGTH_SHORT).show();
+        Toast.makeText(mmActivity, "connexion établi", Toast.LENGTH_SHORT).show();
         // Keep listening to the InputStream until an exception occurs
         while (true) {
             try {
@@ -59,6 +62,6 @@ private class ConnectedThread extends Thread {
             mmSocket.close();
         } catch (IOException e) { }
     }
-}
+
 
 }

@@ -1,6 +1,7 @@
 package com.cnam.al_sms.Esclave_Activities;
 
 import com.cnam.al_sms.R;
+import com.cnam.al_sms.Connectivite.BluetoothService;
 import com.cnam.al_sms.Connectivite.ConnecBluetooth;
 import com.cnam.al_sms.R.id;
 import com.cnam.al_sms.R.layout;
@@ -18,6 +19,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.Telephony;
 import android.provider.Telephony.Sms;
 import android.telephony.TelephonyManager;
@@ -37,6 +39,11 @@ public class MainActivity extends Activity {
 	private static final int CODE_APP = 98651;
     private ListView m_LVconvstream;
     private Button m_BTNSync;
+    private BluetoothService bTService=new BluetoothService(this, new Handler());
+    // String buffer for outgoing messages
+    private StringBuffer mOutStringBuffer;
+
+   
     
     private ArrayList<HashMap<String, String>> conversations = new ArrayList<HashMap<String, String>>();
 
@@ -177,5 +184,24 @@ public class MainActivity extends Activity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
+	
+	private void sendMessage(String message) {
+        // Check that we're actually connected before trying anything
+        if (bTService.getState() != BluetoothService.STATE_CONNECTED) {
+            Toast.makeText(this, "Pas connecté", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Check that there's actually something to send
+        if (message.length() > 0) {
+            // Get the message bytes and tell the BluetoothChatService to write
+            byte[] send = message.getBytes();
+            bTService.write(send);
+
+            // Reset out string buffer to zero and clear the edit text field
+            mOutStringBuffer.setLength(0);
+           
+        }
+    }
 
 }
