@@ -13,6 +13,8 @@ import java.util.HashMap;
 import java.util.UUID;
 
 import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -20,6 +22,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.provider.Telephony;
 import android.provider.Telephony.Sms;
 import android.telephony.TelephonyManager;
@@ -43,7 +46,27 @@ public class MainActivity extends Activity {
     // String buffer for outgoing messages
     private StringBuffer mOutStringBuffer;
 
-   
+    /* variable liaison Bluetooth */
+    // Debugging
+    private static final String TAG = "BluetoothChat";
+    private static final boolean D = true;
+
+    // Message types sent from the BluetoothChatService Handler
+    public static final int MESSAGE_STATE_CHANGE = 1;
+    public static final int MESSAGE_READ = 2;
+    public static final int MESSAGE_WRITE = 3;
+    public static final int MESSAGE_DEVICE_NAME = 4;
+    public static final int MESSAGE_TOAST = 5;
+
+    // Key names received from the BluetoothChatService Handler
+    public static final String DEVICE_NAME = "device_name";
+    public static final String TOAST = "toast";
+
+    // Intent request codes
+    private static final int REQUEST_CONNECT_DEVICE = 1;
+    private static final int REQUEST_ENABLE_BT = 2;
+    /* fin variable liaison Bluetooth */
+    BluetoothAdapter mBluetoothAdapter =  BluetoothAdapter.getDefaultAdapter();
     
     private ArrayList<HashMap<String, String>> conversations = new ArrayList<HashMap<String, String>>();
 
@@ -185,6 +208,7 @@ public class MainActivity extends Activity {
 		return super.onOptionsItemSelected(item);
 	}
 	
+	/* Liaison Bluetooth */
 	private void sendMessage(String message) {
         // Check that we're actually connected before trying anything
         if (bTService.getState() != BluetoothService.STATE_CONNECTED) {
@@ -203,5 +227,34 @@ public class MainActivity extends Activity {
            
         }
     }
+	
+	 public void onActivityResult(int requestCode, int resultCode, Intent data) {
+	        if(D) Log.d(TAG, "onActivityResult " + resultCode);
+	        switch (requestCode) {
+	        case REQUEST_CONNECT_DEVICE:
+	            // When DeviceListActivity returns with a device to connect
+	            if (resultCode == Activity.RESULT_OK) {
+	                // Get the device MAC address
+	                String address = data.getExtras().getString("Adresse_MAC");
+	                
+					// Get the BLuetoothDevice object
+	                BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
+	                // Attempt to connect to the device
+	                bTService.connect(device);
+	            }
+	            break;
+	        case REQUEST_ENABLE_BT:
+	            // When the request to enable Bluetooth returns
+	            if (resultCode == Activity.RESULT_OK) {
+	                // Bluetooth is now enabled, so set up a chat session
+	                
+	            } else {
+	                // User did not enable Bluetooth or an error occured
+	                Log.d(TAG, "BT not enabled");
+	                Toast.makeText(this, "Bluetooth not enabled", Toast.LENGTH_SHORT).show();
+	                finish();
+	            }
+	        }
+	    }
 
 }
