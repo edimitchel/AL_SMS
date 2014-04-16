@@ -177,7 +177,7 @@ public class ConfigurationConnexionActivity extends Activity implements
 		BluetoothDevice bdToConnect = (BluetoothDevice) parent
 				.getItemAtPosition(position);
 		Intent DeviceToConnect = new Intent(
-				ConfigurationConnexionActivity.this, MainActivity.class);
+				ConfigurationConnexionActivity.this, ConnexionEsclaveActivity.class);
 		DeviceToConnect.putExtra("Adresse_MAC", bdToConnect.getAddress());
 		startActivity(DeviceToConnect);
 		
