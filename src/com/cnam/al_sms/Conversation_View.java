@@ -16,7 +16,7 @@ public class Conversation_View extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_conversation__view);
+		setContentView(R.layout.activity_conversation_view);
 
 		/* POUR LES FRAGMENTS
 		 * if (savedInstanceState == null) {
@@ -29,7 +29,7 @@ public class Conversation_View extends Activity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.conversation__view, menu);
+		getMenuInflater().inflate(R.menu.conversation_view, menu);
 		return true;
 	}
 

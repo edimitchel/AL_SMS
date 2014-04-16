@@ -11,5 +11,8 @@
     <string name="title_activity_configuration_connexion_view">ConfigurationConnexionView</string>
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_conversation__view">Conversation_View</string>
+    <string name="groupe">Groupe</string>
+    <string name="label_appareil_bluetooth">Appareil bluetooth</string>
+    <string name="label_adresse_mac">Adresse MAC</string>
 
 </resources>

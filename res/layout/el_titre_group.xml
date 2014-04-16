@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/titreGroupExpanList"
+    android:layout_width="match_parent"
+    android:layout_height="75dp"
+    android:gravity="center_vertical|center_horizontal"
+    android:text="@string/groupe"
+    android:textAllCaps="false"
+    android:textAppearance="?android:attr/textAppearanceMedium" />
+
