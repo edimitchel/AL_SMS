@@ -20,13 +20,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.cnam.al_sms.R;
 
 public class ConfigurationConnexionActivity extends Activity implements
-		AdapterView.OnItemSelectedListener {
+		AdapterView.OnItemClickListener {
 
 	private int CODE_ACTIVITY = 2;
 
@@ -37,7 +39,7 @@ public class ConfigurationConnexionActivity extends Activity implements
 	private List<BluetoothDevice> mArrayBluetoothDevice = new ArrayList<BluetoothDevice>();
 
 	private ListView mPairedDevices;
-	
+
 	private ListView mOtherDevices;
 
 	private BluetoothAdapter ba;
@@ -122,8 +124,11 @@ public class ConfigurationConnexionActivity extends Activity implements
 			anim.setDuration(500).setRepeatMode(ObjectAnimator.INFINITE);
 			anim.start();
 
-			mPairedDevices.setOnItemSelectedListener(this);
-			mOtherDevices.setOnItemSelectedListener(this);
+			mPairedDevices.setOnItemClickListener(this);
+			mOtherDevices.setOnItemClickListener(this);
+
+			
+
 		}
 	}
 
@@ -167,16 +172,15 @@ public class ConfigurationConnexionActivity extends Activity implements
 	}
 
 	@Override
-	public void onItemSelected(AdapterView<?> parent, View view, int position,
+	public void onItemClick(AdapterView<?> parent, View view, int position,
 			long id) {
-		BluetoothDevice bdToConnect = (BluetoothDevice) parent.getItemAtPosition(position);
-		Intent DeviceToConnect = new Intent(ConfigurationConnexionActivity.this,MainActivity.class);
+		BluetoothDevice bdToConnect = (BluetoothDevice) parent
+				.getItemAtPosition(position);
+		Intent DeviceToConnect = new Intent(
+				ConfigurationConnexionActivity.this, MainActivity.class);
 		DeviceToConnect.putExtra("Adresse_MAC", bdToConnect.getAddress());
-		startActivityForResult(DeviceToConnect, 1);
+		startActivity(DeviceToConnect);
+		
 	}
 
-	@Override
-	public void onNothingSelected(AdapterView<?> parent) {
-
-	}
 }
