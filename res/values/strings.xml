@@ -14,5 +14,6 @@
     <string name="groupe">Groupe</string>
     <string name="label_appareil_bluetooth">Appareil bluetooth</string>
     <string name="label_adresse_mac">Adresse MAC</string>
+    <string name="title_activity_connexion_esclave">ConnexionEsclaveActivity</string>
 
 </resources>

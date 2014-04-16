@@ -1,5 +1,10 @@
 package com.cnam.al_sms;
 
+import com.cnam.al_sms.R;
+import com.cnam.al_sms.R.id;
+import com.cnam.al_sms.R.layout;
+import com.cnam.al_sms.R.menu;
+
 import android.app.Activity;
 import android.app.ActionBar;
 import android.app.Fragment;

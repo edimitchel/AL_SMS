@@ -41,6 +41,10 @@
             android:name="com.cnam.al_sms.Conversation_View"
             android:label="@string/title_activity_conversation__view" >
         </activity>
+        <activity
+            android:name="com.cnam.al_sms.Esclave_Activities.ConnexionEsclaveActivity"
+            android:label="@string/title_activity_connexion_esclave" >
+        </activity>
     </application>
 
 </manifest>

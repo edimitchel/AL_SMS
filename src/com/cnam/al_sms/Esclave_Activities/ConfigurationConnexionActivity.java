@@ -1,7 +1,6 @@
 package com.cnam.al_sms.Esclave_Activities;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 import shared.BluetoothDeviceAdapter;
@@ -28,7 +27,7 @@ import android.widget.TextView;
 import com.cnam.al_sms.R;
 
 public class ConfigurationConnexionActivity extends Activity implements
-		AdapterView.OnItemSelectedListener {
+		AdapterView.OnItemClickListener {
 
 	private int CODE_ACTIVITY = 2;
 
@@ -176,18 +175,15 @@ public class ConfigurationConnexionActivity extends Activity implements
 	}
 
 	@Override
-	public void onItemSelected(AdapterView<?> parent, View view, int position,
+	public void onItemClick(AdapterView<?> parent, View view, int position,
 			long id) {
 		BluetoothDevice bdToConnect = (BluetoothDevice) parent
 				.getItemAtPosition(position);
 		Intent DeviceToConnect = new Intent(
-				ConfigurationConnexionActivity.this, MainActivity.class);
+				ConfigurationConnexionActivity.this, ConnexionEsclaveActivity.class);
 		DeviceToConnect.putExtra("Adresse_MAC", bdToConnect.getAddress());
-		startActivityForResult(DeviceToConnect, 1);
+		startActivity(DeviceToConnect);
+		
 	}
 
-	@Override
-	public void onNothingSelected(AdapterView<?> parent) {
-
-	}
 }
