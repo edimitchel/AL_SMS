@@ -19,12 +19,12 @@
         android:footerDividersEnabled="true" />
 
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Commencer la synchronisation"
         android:id="@+id/btn_start_sync"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@id/conversations"
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
-        android:layout_alignEnd="@id/conversations" />
+        android:text="Commencer la synchronisation" />
 
 </RelativeLayout>

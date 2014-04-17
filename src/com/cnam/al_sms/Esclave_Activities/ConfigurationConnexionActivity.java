@@ -15,19 +15,20 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ExpandableListView;
-import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.cnam.al_sms.R;
 
-public class ConfigurationConnexionActivity extends Activity implements
-		AdapterView.OnItemClickListener {
+public class ConfigurationConnexionActivity extends Activity {
+
+	protected static final long TEMPS_RAFFRAICHISSEMENT_RECHERCHE = 5000;
 
 	private int CODE_ACTIVITY = 2;
 
@@ -41,19 +42,30 @@ public class ConfigurationConnexionActivity extends Activity implements
 
 	private ArrayList<BluetoothDeviceGroup> listeGroupes;
 
-	private ListView mPairedDevices;
+	private BluetoothAdapter ba;
 
-	private ListView mOtherDevices;
+	// Permet le rafraichissement de la découverte des périphériques
+	private Handler handler = new Handler();
+	private Runnable raffraichitPeripheriques = new Runnable() {
+		public void run() {
+			setRechercheMode(true);
+			ba.startDiscovery();
+			handler.postDelayed(raffraichitPeripheriques,
+					TEMPS_RAFFRAICHISSEMENT_RECHERCHE);
+		}
+	};
 
 	private ExpandableListView mExpendableList;
 
-	private BluetoothAdapter ba;
+	private ProgressBar mRoueRecherche;
 
 	private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
 		public void onReceive(Context context, Intent intent) {
 			String action = intent.getAction();
 
-			Log.i("smsview", "Receiver");
+			mArrayBluetoothDevice.getDevices().clear();
+
+			Log.i("ALSMS", "Recherche de périphériques..");
 			// When discovery finds a device
 			if (BluetoothDevice.ACTION_FOUND.equals(action)) {
 				// Get the BluetoothDevice object from the Intent
@@ -62,7 +74,7 @@ public class ConfigurationConnexionActivity extends Activity implements
 				// Add the name and address to an array adapter to show in a
 				// ListView
 				if (device.getName() != "null" && !device.getName().isEmpty())
-					mArrayPairedDevice.add(device);
+					mArrayBluetoothDevice.add(device);
 			}
 
 			listeGroupes = new ArrayList<BluetoothDeviceGroup>();
@@ -75,9 +87,15 @@ public class ConfigurationConnexionActivity extends Activity implements
 			BluetoothDeviceAdapter adapter = new BluetoothDeviceAdapter(
 					ConfigurationConnexionActivity.this, listeGroupes);
 			mExpendableList.setAdapter(adapter);
-			mExpendableList.expandGroup(0);
+			int nb_group = mExpendableList.getCount();
+			for (int i = 0; i < nb_group; i++) {
+				mExpendableList.expandGroup(i);
+			}
 
-			int nb_devices = mArrayBluetoothDevice.size()+mArrayPairedDevice.size();
+			int nb_devices = mArrayBluetoothDevice.size()
+					+ mArrayPairedDevice.size();
+
+			setRechercheMode(false);
 
 			if (nb_devices != 0) {
 				String s = nb_devices > 1 ? "s" : "";
@@ -96,6 +114,8 @@ public class ConfigurationConnexionActivity extends Activity implements
 		setContentView(R.layout.activity_synchronisation);
 
 		mExpendableList = (ExpandableListView) findViewById(R.id.connectedDevices);
+
+		mRoueRecherche = (ProgressBar) findViewById(R.id.roueRecherche);
 		ba = BluetoothAdapter.getDefaultAdapter();
 		if (ba != null) {
 			if (!ba.isEnabled()) {
@@ -114,25 +134,16 @@ public class ConfigurationConnexionActivity extends Activity implements
 				for (BluetoothDevice device : pairedDevices) {
 					// Add the name and address to an array adapter to show in a
 					// ListView
-					mArrayBluetoothDevice.add(device);
+					mArrayPairedDevice.add(device);
 				}
 			}
-			ba.startDiscovery();
 
-			TextView tvMessage = (TextView) findViewById(R.id.tv_msg_sync);
-			tvMessage.setOnLongClickListener(new View.OnLongClickListener() {
-				@Override
-				public boolean onLongClick(View v) {
-					showMessage("En fait si ça marche du tonner!", 1);
-					return true;
-				}
-			});
-
-			ObjectAnimator anim = ObjectAnimator.ofFloat(tvMessage, "alpha",
-					1f, 0.8f);
-			anim.setDuration(500).setRepeatMode(ObjectAnimator.INFINITE);
-			anim.start();
+			raffraichitPeripheriques.run();
 		}
+	}
+
+	protected void setRechercheMode(boolean b) {
+		mRoueRecherche.setVisibility(b ? View.VISIBLE : View.INVISIBLE);
 	}
 
 	private void showMessage(String s, int type) {
@@ -158,7 +169,7 @@ public class ConfigurationConnexionActivity extends Activity implements
 	public boolean onCreateOptionsMenu(Menu menu) {
 
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
+		getMenuInflater().inflate(R.menu.connexion_esclave, menu);
 		return true;
 	}
 
@@ -170,20 +181,20 @@ public class ConfigurationConnexionActivity extends Activity implements
 		int id = item.getItemId();
 		if (id == R.id.action_settings) {
 			return true;
+		} else if (id == R.id.raffraichirRercherche) {
+			setRechercheMode(true);
+			ba.startDiscovery();
 		}
 		return super.onOptionsItemSelected(item);
 	}
 
-	@Override
-	public void onItemClick(AdapterView<?> parent, View view, int position,
-			long id) {
-		BluetoothDevice bdToConnect = (BluetoothDevice) parent
-				.getItemAtPosition(position);
+	public void envoyerAdressePeripherique(BluetoothDevice bd) {
 		Intent DeviceToConnect = new Intent(
-				ConfigurationConnexionActivity.this, ConnexionEsclaveActivity.class);
-		DeviceToConnect.putExtra("Adresse_MAC", bdToConnect.getAddress());
+				ConfigurationConnexionActivity.this,
+				ConnexionEsclaveActivity.class);
+		DeviceToConnect.putExtra("Adresse_MAC", bd.getAddress());
 		startActivity(DeviceToConnect);
-		
+
 	}
 
 }

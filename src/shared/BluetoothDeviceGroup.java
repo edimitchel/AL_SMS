@@ -11,7 +11,7 @@ public class BluetoothDeviceGroup {
 	public ArrayList<BluetoothDevice> getDevices() {
 		return devices;
 	}
-	
+
 	public String groupName;
 
 	public String getGroupName() {

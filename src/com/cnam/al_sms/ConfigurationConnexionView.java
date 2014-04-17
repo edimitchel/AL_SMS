@@ -1,21 +1,10 @@
 package com.cnam.al_sms;
 
-import com.cnam.al_sms.R;
-import com.cnam.al_sms.R.id;
-import com.cnam.al_sms.R.layout;
-import com.cnam.al_sms.R.menu;
-
 import android.app.Activity;
-import android.app.ActionBar;
-import android.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.os.Build;
 
 public class ConfigurationConnexionView extends Activity {
 
@@ -23,8 +12,8 @@ public class ConfigurationConnexionView extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_configuration_connexion_view);
-		
-		Log.d("ALSMS",savedInstanceState.toString());
+
+		Log.d("ALSMS", savedInstanceState.toString());
 	}
 
 	@Override

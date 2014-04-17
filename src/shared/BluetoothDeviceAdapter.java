@@ -4,16 +4,17 @@ import java.util.ArrayList;
 
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.cnam.al_sms.R;
+import com.cnam.al_sms.Esclave_Activities.ConnexionEsclaveActivity;
 
 public class BluetoothDeviceAdapter extends BaseExpandableListAdapter {
 
@@ -74,12 +75,10 @@ public class BluetoothDeviceAdapter extends BaseExpandableListAdapter {
 		if (convertView == null) {
 			gholder = new GroupViewHolder();
 
-			convertView = inflater.inflate(R.layout.el_titre_group,
-					null);
+			convertView = inflater.inflate(R.layout.el_titre_group, null);
 
 			gholder.titreGroupExpanList = (TextView) convertView
 					.findViewById(R.id.titreGroupExpanList);
-			
 
 			convertView.setTag(gholder);
 		} else {
@@ -101,8 +100,7 @@ public class BluetoothDeviceAdapter extends BaseExpandableListAdapter {
 		if (convertView == null) {
 			childViewHolder = new ChildViewHolder();
 
-			convertView = inflater.inflate(
-					R.layout.el_enfant, null);
+			convertView = inflater.inflate(R.layout.el_enfant, null);
 
 			childViewHolder.nomPeripherique = (TextView) convertView
 					.findViewById(R.id.nomPeripherique);
@@ -117,12 +115,15 @@ public class BluetoothDeviceAdapter extends BaseExpandableListAdapter {
 		childViewHolder.nomPeripherique.setText(objet.getName());
 
 		childViewHolder.adresseMacPeripherique.setText(objet.getAddress());
-		
+
 		convertView.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
-				
+				Intent DeviceToConnect = new Intent(contexte,
+						ConnexionEsclaveActivity.class);
+				DeviceToConnect.putExtra("Adresse_MAC", objet.getAddress());
+				contexte.startActivity(DeviceToConnect);
 			}
 		});
 

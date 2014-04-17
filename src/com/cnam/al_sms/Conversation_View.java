@@ -1,15 +1,9 @@
 package com.cnam.al_sms;
 
 import android.app.Activity;
-import android.app.ActionBar;
-import android.app.Fragment;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.os.Build;
 
 public class Conversation_View extends Activity {
 
@@ -18,11 +12,11 @@ public class Conversation_View extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_conversation_view);
 
-		/* POUR LES FRAGMENTS
-		 * if (savedInstanceState == null) {
-			getFragmentManager().beginTransaction()
-					.add(R.id.container, new PlaceholderFragment()).commit();
-		}*/
+		/*
+		 * POUR LES FRAGMENTS if (savedInstanceState == null) {
+		 * getFragmentManager().beginTransaction() .add(R.id.container, new
+		 * PlaceholderFragment()).commit(); }
+		 */
 	}
 
 	@Override
@@ -44,25 +38,21 @@ public class Conversation_View extends Activity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
-	
+
 	/**
 	 * A placeholder fragment containing a simple view.
 	 */
 
-	/* POUR LES FRAGMENTS
-	public static class PlaceholderFragment extends Fragment {
-
-		public PlaceholderFragment() {
-		}
-
-		@Override
-		public View onCreateView(LayoutInflater inflater, ViewGroup container,
-				Bundle savedInstanceState) {
-			View rootView = inflater.inflate(
-					R.layout.fragment_conversation__view, container, false);
-			return rootView;
-		}
-	}
-	*/
+	/*
+	 * POUR LES FRAGMENTS public static class PlaceholderFragment extends
+	 * Fragment {
+	 * 
+	 * public PlaceholderFragment() { }
+	 * 
+	 * @Override public View onCreateView(LayoutInflater inflater, ViewGroup
+	 * container, Bundle savedInstanceState) { View rootView = inflater.inflate(
+	 * R.layout.fragment_conversation__view, container, false); return rootView;
+	 * } }
+	 */
 
 }
