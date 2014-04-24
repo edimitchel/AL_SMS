@@ -45,6 +45,10 @@
             android:name="com.cnam.al_sms.Esclave_Activities.ConnexionEsclaveActivity"
             android:label="@string/title_activity_connexion_esclave" >
         </activity>
+        <activity
+            android:name="com.cnam.al_sms.ConnexionMaitreActivity"
+            android:label="@string/title_activity_connexion_maitre" >
+        </activity>
     </application>
 
 </manifest>

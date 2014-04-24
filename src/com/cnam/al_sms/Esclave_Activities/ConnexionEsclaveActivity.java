@@ -2,6 +2,8 @@ package com.cnam.al_sms.Esclave_Activities;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -10,13 +12,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.cnam.al_sms.R;
 import com.cnam.al_sms.Connectivite.BluetoothService;
+import com.cnam.al_sms.Connectivite.ConnecBluetooth;
 
 public class ConnexionEsclaveActivity extends Activity {
 	private BluetoothService bTService = new BluetoothService(this,
 			new Handler());
+	private BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +35,11 @@ public class ConnexionEsclaveActivity extends Activity {
 			TextView txt_mac = (TextView) findViewById(R.id.txt_mac);
 			txt_mac.setText("Vous souhaitez vous connectez à l'adresse MAC :"
 					+ adress);
+			// création d'un Bluetooth device grace à l'adresse puis connection grace au Bluetooth Service
+			BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(adress);
+			bTService.connect(device);
+			Toast.makeText(this, "En attente de connexion", Toast.LENGTH_LONG).show();
+			ConnecBluetooth.askAcceptBluetooth(device,this);
 		}
 
 	}
