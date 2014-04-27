@@ -1,11 +1,12 @@
 package com.cnam.al_sms.Esclave_Activities;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Set;
 
 import shared.BluetoothDeviceAdapter;
 import shared.BluetoothDeviceGroup;
-import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -19,53 +20,57 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ExpandableListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.cnam.al_sms.BuildConfig;
 import com.cnam.al_sms.R;
+import com.cnam.al_sms.Connectivite.ConnecBluetooth;
 
-public class ConfigurationConnexionActivity extends Activity {
+public class ConfigurationConnexionActivity extends Activity implements Runnable {
 
 	protected static final long TEMPS_RAFFRAICHISSEMENT_RECHERCHE = 5000;
+
+	protected static final long DUREE_RECHERCHE = 5000;
 
 	private int CODE_ACTIVITY = 2;
 
 	private int REQUEST_ENABLE_BT = 1;
+	
+	private Activity activity = this;
 
-	private BluetoothDeviceGroup mArrayPairedDevice = new BluetoothDeviceGroup(
+	private BluetoothDeviceGroup mPairedDeviceGroup = new BluetoothDeviceGroup(
 			"Périphériques appareillés");
 
-	private BluetoothDeviceGroup mArrayBluetoothDevice = new BluetoothDeviceGroup(
+	private BluetoothDeviceGroup mBluetoothDeviceGroup = new BluetoothDeviceGroup(
 			"Appareils connectés");
 
 	private ArrayList<BluetoothDeviceGroup> listeGroupes;
 
 	private BluetoothAdapter ba;
 
+	private boolean enRecherche = true;
+
+	private Calendar calendrier = Calendar.getInstance();
+
+	private Timestamp firstOrForcedRefresh = null;
+
 	// Permet le rafraichissement de la découverte des périphériques
 	private Handler handler = new Handler();
-	private Runnable raffraichitPeripheriques = new Runnable() {
-		public void run() {
-			setRechercheMode(true);
-			ba.startDiscovery();
-			handler.postDelayed(raffraichitPeripheriques,
-					TEMPS_RAFFRAICHISSEMENT_RECHERCHE);
-		}
-	};
+	private Runnable raffraichitPeripheriques = this;
 
 	private ExpandableListView mExpendableList;
 
 	private ProgressBar mRoueRecherche;
 
+	private Menu optionsMenu;
+
 	private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
 		public void onReceive(Context context, Intent intent) {
 			String action = intent.getAction();
 
-			mArrayBluetoothDevice.getDevices().clear();
-
-			Log.i("ALSMS", "Recherche de périphériques..");
+			Log.i(BuildConfig.TAG, "Périphérique trouvé..");
 			// When discovery finds a device
 			if (BluetoothDevice.ACTION_FOUND.equals(action)) {
 				// Get the BluetoothDevice object from the Intent
@@ -73,37 +78,10 @@ public class ConfigurationConnexionActivity extends Activity {
 						.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
 				// Add the name and address to an array adapter to show in a
 				// ListView
-				if (device.getName() != "null" && !device.getName().isEmpty())
-					mArrayBluetoothDevice.add(device);
-			}
-
-			listeGroupes = new ArrayList<BluetoothDeviceGroup>();
-
-			if (mArrayPairedDevice.size() > 0)
-				listeGroupes.add(mArrayPairedDevice);
-			if (mArrayBluetoothDevice.size() > 0)
-				listeGroupes.add(mArrayBluetoothDevice);
-
-			BluetoothDeviceAdapter adapter = new BluetoothDeviceAdapter(
-					ConfigurationConnexionActivity.this, listeGroupes);
-			mExpendableList.setAdapter(adapter);
-			int nb_group = mExpendableList.getCount();
-			for (int i = 0; i < nb_group; i++) {
-				mExpendableList.expandGroup(i);
-			}
-
-			int nb_devices = mArrayBluetoothDevice.size()
-					+ mArrayPairedDevice.size();
-
-			setRechercheMode(false);
-
-			if (nb_devices != 0) {
-				String s = nb_devices > 1 ? "s" : "";
-				showMessage(nb_devices + " périphérique" + s + " trouvé" + s, 1);
-			} else {
-				showMessage(
-						"Aucun périphérique n'a été trouvé.\nVérifiez votre configuration.",
-						0);
+				if (!mBluetoothDeviceGroup.getDevices().contains(device)
+						&& device.getName() != "null"
+						&& !device.getName().isEmpty())
+					mBluetoothDeviceGroup.add(device);
 			}
 		}
 	};
@@ -115,18 +93,11 @@ public class ConfigurationConnexionActivity extends Activity {
 
 		mExpendableList = (ExpandableListView) findViewById(R.id.connectedDevices);
 
-		mRoueRecherche = (ProgressBar) findViewById(R.id.roueRecherche);
 		ba = BluetoothAdapter.getDefaultAdapter();
 		if (ba != null) {
-			if (!ba.isEnabled()) {
-				Intent iEnableBlue = new Intent(
-						BluetoothAdapter.ACTION_REQUEST_ENABLE);
-				startActivityForResult(iEnableBlue, REQUEST_ENABLE_BT);
-				ba.startDiscovery();
-			}
-
 			IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
 			registerReceiver(mReceiver, filter);
+			raffraichitPeripheriques.run();
 
 			Set<BluetoothDevice> pairedDevices = ba.getBondedDevices();
 			if (pairedDevices.size() > 0) {
@@ -134,16 +105,14 @@ public class ConfigurationConnexionActivity extends Activity {
 				for (BluetoothDevice device : pairedDevices) {
 					// Add the name and address to an array adapter to show in a
 					// ListView
-					mArrayPairedDevice.add(device);
+					mPairedDeviceGroup.add(device);
 				}
 			}
-
-			raffraichitPeripheriques.run();
 		}
 	}
 
 	protected void setRechercheMode(boolean b) {
-		mRoueRecherche.setVisibility(b ? View.VISIBLE : View.INVISIBLE);
+		setRefreshActionButtonState(b);
 	}
 
 	private void showMessage(String s, int type) {
@@ -167,8 +136,7 @@ public class ConfigurationConnexionActivity extends Activity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-
-		// Inflate the menu; this adds items to the action bar if it is present.
+		this.optionsMenu = menu;
 		getMenuInflater().inflate(R.menu.connexion_esclave, menu);
 		return true;
 	}
@@ -188,6 +156,20 @@ public class ConfigurationConnexionActivity extends Activity {
 		return super.onOptionsItemSelected(item);
 	}
 
+	public void setRefreshActionButtonState(final boolean refreshing) {
+		if (optionsMenu != null) {
+			final MenuItem refreshItem = optionsMenu
+					.findItem(R.id.raffraichirRercherche);
+			if (refreshItem != null) {
+				if (refreshing) {
+					refreshItem.setActionView(R.layout.menu_action_is_refresh);
+				} else {
+					refreshItem.setActionView(null);
+				}
+			}
+		}
+	}
+
 	public void envoyerAdressePeripherique(BluetoothDevice bd) {
 		Intent DeviceToConnect = new Intent(
 				ConfigurationConnexionActivity.this,
@@ -195,6 +177,67 @@ public class ConfigurationConnexionActivity extends Activity {
 		DeviceToConnect.putExtra("Adresse_MAC", bd.getAddress());
 		startActivity(DeviceToConnect);
 
+	}
+	
+	public void run(){
+		if (firstOrForcedRefresh == null)
+			firstOrForcedRefresh = new Timestamp(
+					calendrier.get(Calendar.SECOND));
+
+		if (!enRecherche
+				|| calendrier.get(Calendar.SECOND)
+						- firstOrForcedRefresh.getTime() > DUREE_RECHERCHE) {
+			enRecherche = false;
+			return;
+		}
+
+		if (!ba.isDiscovering() && ba.isEnabled()) {
+			ba.startDiscovery();
+			setRechercheMode(true);
+		} else {
+			try {
+				ConnecBluetooth.checkBluetoothConnection(activity);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				Log.i(BuildConfig.TAG,e.getLocalizedMessage());
+			}
+			setRechercheMode(false);
+			return;
+		}
+
+		listeGroupes = new ArrayList<BluetoothDeviceGroup>();
+
+		for (BluetoothDevice bd : mPairedDeviceGroup.getDevices()) {
+			if (!mBluetoothDeviceGroup.getDevices().contains(bd)) {
+				mPairedDeviceGroup.getDevices().remove(
+						mPairedDeviceGroup.getDevices().indexOf(bd));
+			}
+		}
+
+		if (mBluetoothDeviceGroup.size() > 0)
+			listeGroupes.add(mBluetoothDeviceGroup);
+		if (mPairedDeviceGroup.size() > 0)
+			listeGroupes.add(mPairedDeviceGroup);
+
+		BluetoothDeviceAdapter adapter = new BluetoothDeviceAdapter(
+				ConfigurationConnexionActivity.this, listeGroupes);
+		mExpendableList.setAdapter(adapter);
+		int nb_group = mExpendableList.getCount();
+		for (int i = 0; i < nb_group; i++) {
+			mExpendableList.expandGroup(i);
+		}
+
+		int nb_devices = mBluetoothDeviceGroup.size();
+
+		if (nb_devices != 0) {
+			String s = nb_devices > 1 ? "s" : "";
+			showMessage(nb_devices + " périphérique" + s + " trouvé" + s, 1);
+		} else {
+			showMessage("Aucun périphérique n'a été trouvé.", 0);
+		}
+
+		handler.postDelayed(raffraichitPeripheriques,
+				TEMPS_RAFFRAICHISSEMENT_RECHERCHE);
 	}
 
 }

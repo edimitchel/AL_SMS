@@ -30,7 +30,7 @@ public class ConnecBluetooth {
 	 *             si le bluetooth n'est pas supproté
 	 */
 	public static boolean checkBluetoothConnection(Activity a) throws Exception {
-		boolean res = false;
+		boolean res = true;
 
 		BluetoothAdapter bluetoothAdapter = BluetoothAdapter
 				.getDefaultAdapter();
@@ -45,11 +45,7 @@ public class ConnecBluetooth {
 					REQUEST_CODE_ENABLE_BLUETOOTH);
 			if (!bluetoothAdapter.isEnabled()) {
 				res = false;
-			} else {
-				res = true;
 			}
-		} else {
-			res = true;
 		}
 		return res;
 

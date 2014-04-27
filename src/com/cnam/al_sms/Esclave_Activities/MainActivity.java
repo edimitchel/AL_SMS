@@ -14,6 +14,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Telephony.Sms;
+import android.provider.Telephony.Sms.Conversations;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.Menu;
@@ -26,6 +27,7 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
+import com.cnam.al_sms.BuildConfig;
 import com.cnam.al_sms.R;
 import com.cnam.al_sms.Connectivite.BluetoothService;
 import com.cnam.al_sms.Connectivite.ConnecBluetooth;
@@ -71,31 +73,32 @@ public class MainActivity extends Activity {
 		TelephonyManager manager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
 		String type = null;
 		if (manager.getPhoneType() == TelephonyManager.PHONE_TYPE_NONE) {
-			type = "tablette";
+			type = "une tablette";
 		} else {
-			type = "mobile";
+			type = "un mobile";
 		}
 
-		Toast.makeText(this, "Je suis un(e) " + type, Toast.LENGTH_LONG).show();
+		Toast.makeText(this, "Je suis " + type, Toast.LENGTH_LONG).show();
 
 		ContentResolver cr = getContentResolver();
 
 		HashMap<String, String> map;
 
 		Cursor curConversations;
+		Uri uConversations = Uri.parse("content://sms/conversations?simple=true");
 		curConversations = cr.query(
-				Uri.parse("content://sms/conversations?simple=true"), null,
-				null, null, null);
-
-		Log.i("ALSMS", Arrays.toString(curConversations.getColumnNames()));
+				uConversations, null,
+				null, null, "date DESC");
+		
+		Log.i(BuildConfig.TAG, Arrays.toString(curConversations.getColumnNames()));
 		while (curConversations.moveToNext()) {
-			ArrayList<String> values = new ArrayList<String>();
+			/*ArrayList<String> values = new ArrayList<String>();
 			for (int i = 0; i < curConversations.getColumnCount(); i++) {
 				values.add(curConversations.getString(i));
 			}
-			Log.i("ALSMS", values.toString());
+			Log.i(BuildConfig.TAG, values.toString());*/
 
-			Log.i("ALSMS", Arrays.toString(curConversations.getColumnNames()));
+			Log.i(BuildConfig.TAG, Arrays.toString(curConversations.getColumnNames()));
 			map = new HashMap<String, String>();
 			String thread_id = curConversations.getString(0);
 			String lst_msg = curConversations.getString(curConversations

@@ -46,7 +46,7 @@ public class BluetoothDeviceAdapter extends BaseExpandableListAdapter {
 
 	@Override
 	public Object getChild(int groupPosition, int childPosition) {
-		return groupes_peripherique.get(groupPosition).getDevices()
+		return getGroup(groupPosition).getDevices()
 				.get(childPosition);
 	}
 

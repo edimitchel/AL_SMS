@@ -7,12 +7,13 @@
         android:orderInCategory="100"
         android:showAsAction="never"
         android:title="@string/action_settings"/>
-    
     <item
         android:id="@+id/raffraichirRercherche"
+        android:icon="@android:drawable/ic_menu_search"
         android:orderInCategory="50"
         android:showAsAction="always"
-        android:title="@string/raffrachir">
+        android:title="@string/raffrachir"
+        tools:context="android">
     </item>
 
 </menu>

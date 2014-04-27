@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.UUID;
 
+import com.cnam.al_sms.BuildConfig;
+
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
@@ -22,7 +24,6 @@ import android.util.Log;
 public class BluetoothService {
 	// Debugging
 	private static final String TAG = "BluetoothService";
-	private static final boolean D = true;
 
 	// Name for the SDP record when creating server socket
 	private static final String NAME = "BluetoothALSMS";
@@ -71,10 +72,9 @@ public class BluetoothService {
 	 *            An integer defining the current connection state
 	 */
 	private synchronized void setState(int state) {
-		if (D)
+		if (BuildConfig.DEBUG)
 			Log.d(TAG, "setState() " + mState + " -> " + state);
 		mState = state;
-
 	}
 
 	/**
@@ -89,7 +89,7 @@ public class BluetoothService {
 	 * session in listening (server) mode. Called by the Activity onResume()
 	 */
 	public synchronized void start() {
-		if (D)
+		if (BuildConfig.DEBUG)
 			Log.d(TAG, "start");
 
 		// Cancel any thread attempting to make a connection
@@ -119,7 +119,7 @@ public class BluetoothService {
 	 *            The BluetoothDevice to connect
 	 */
 	public synchronized void connect(BluetoothDevice device) {
-		if (D)
+		if (BuildConfig.DEBUG)
 			Log.d(TAG, "connect to: " + device);
 
 		// Cancel any thread attempting to make a connection
@@ -152,7 +152,7 @@ public class BluetoothService {
 	 */
 	public synchronized void connected(BluetoothSocket socket,
 			BluetoothDevice device) {
-		if (D)
+		if (BuildConfig.DEBUG)
 			Log.d(TAG, "connected");
 
 		// Cancel the thread that completed the connection
@@ -185,7 +185,7 @@ public class BluetoothService {
 	 * Stop all threads
 	 */
 	public synchronized void stop() {
-		if (D)
+		if (BuildConfig.DEBUG)
 			Log.d(TAG, "stop");
 		if (mConnectThread != null) {
 			mConnectThread.cancel();
@@ -227,7 +227,6 @@ public class BluetoothService {
 	 */
 	private void connectionFailed() {
 		setState(STATE_LISTEN);
-
 	}
 
 	/**
