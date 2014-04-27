@@ -13,8 +13,8 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.ContactsContract;
 import android.provider.Telephony.Sms;
-import android.provider.Telephony.Sms.Conversations;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.Menu;
@@ -40,11 +40,6 @@ public class MainActivity extends Activity {
 			new Handler());
 	// String buffer for outgoing messages
 	private StringBuffer mOutStringBuffer;
-
-	/* variable liaison Bluetooth */
-	// Debugging
-	private static final String TAG = "ALSMS";
-	private static final boolean D = true;
 
 	// Message types sent from the BluetoothChatService Handler
 	public static final int MESSAGE_STATE_CHANGE = 1;
@@ -82,69 +77,63 @@ public class MainActivity extends Activity {
 
 		ContentResolver cr = getContentResolver();
 
-		HashMap<String, String> map;
+		HashMap<String, String> mapConversation;
 
 		Cursor curConversations;
-		Uri uConversations = Uri.parse("content://sms/conversations?simple=true");
-		curConversations = cr.query(
-				uConversations, null,
-				null, null, "date DESC");
-		
-		Log.i(BuildConfig.TAG, Arrays.toString(curConversations.getColumnNames()));
-		while (curConversations.moveToNext()) {
-			/*ArrayList<String> values = new ArrayList<String>();
-			for (int i = 0; i < curConversations.getColumnCount(); i++) {
-				values.add(curConversations.getString(i));
-			}
-			Log.i(BuildConfig.TAG, values.toString());*/
+		Uri uConversations = Uri
+				.parse("content://sms/conversations?simple=true");
+		curConversations = cr.query(uConversations, null, null, null,
+				"date DESC");
 
-			Log.i(BuildConfig.TAG, Arrays.toString(curConversations.getColumnNames()));
-			map = new HashMap<String, String>();
+		Log.i(BuildConfig.TAG,
+				Arrays.toString(curConversations.getColumnNames()));
+		while (curConversations.moveToNext()) {
+			/*
+			 * For debbuging ArrayList<String> values = new ArrayList<String>();
+			 * for (int i = 0; i < curConversations.getColumnCount(); i++) {
+			 * values.add(curConversations.getString(i)); }
+			 * Log.i(BuildConfig.TAG, values.toString());
+			 */
+			Log.i(BuildConfig.TAG,
+					Arrays.toString(curConversations.getColumnNames()));
+
+			mapConversation = new HashMap<String, String>();
 			String thread_id = curConversations.getString(0);
 			String lst_msg = curConversations.getString(curConversations
 					.getColumnIndexOrThrow(Sms.Conversations.SNIPPET));
 			int cMsg = curConversations.getInt(curConversations
 					.getColumnIndexOrThrow(Sms.Conversations.MESSAGE_COUNT));
-			// String recip =
-			// curConversations.getString(curConversations.getColumnIndexOrThrow(Telephony.Threads.RECIPIENT_IDS));
+			String[] recipients_id = curConversations.getString(
+					curConversations.getColumnIndex(Sms.THREAD_ID)).split(" ");
 
-			// Log.i("ALSMS",recip);
-			/*
-			 * Uri uriContact = Sms.CONTENT_URI; Cursor curContact =
-			 * cr.q(uriContact, new String[]{Sms.PERSON,
-			 * ContactsContract.Contacts.DISPLAY_NAME}, null, new
-			 * String[]{thread_id}, null); curContact.moveToFirst(); String
-			 * id_contact = curContact.getString(0); String nom_contact =
-			 * curContact.getString(1); // String thumbnail_photo_uri =
-			 * curContact.getString(2);
-			 * 
-			 * Log.i("smsview", Arrays.toString(curContact.getColumnNames()));
-			 * Log.i("smsview", "Data : " + id_contact + " " + nom_contact);
-			 * 
-			 * // String nom_contact =
-			 * curConversations.getString(curConversations
-			 * .getColumnIndexOrThrow(ContactsContract.Contacts.DISPLAY_NAME));
-			 */
-			/*
-			 * Log.i("testsms", Arrays.toString(curContact.getColumnNames()));
-			 * String nom_contact = ""; Log.i("testsms", id_contact);
-			 */
+			ArrayList<String> nomsContact = new ArrayList<String>();
 
-			/*
-			 * byte[] photoBlob = photo.getBlob(photo
-			 * .getColumnIndex(Photo.PHOTO)); final Bitmap photoBitmap =
-			 * BitmapFactory .decodeByteArray(photoBlob, 0, photoBlob.length);
-			 * QuickContactBadge qcb = (QuickContactBadge)
-			 * findViewById(R.id.imageContact); qcb.setImageBitmap(photoBitmap);
-			 */
+			// Curseur pour récupérer le contact
+			Cursor curContact = cr.query(ContactsContract.Contacts.CONTENT_URI,
+					new String[] { ContactsContract.Contacts.DISPLAY_NAME},
+					ContactsContract.Contacts._ID + " = ?", recipients_id,
+					ContactsContract.Contacts.DISPLAY_NAME
+							+ " ASC");
+			while (curContact.moveToNext()) {
+				nomsContact
+						.add(curContact.getString(curContact
+								.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME)));
+			}
+			curContact.close();
 
-			// String body = cur.getString(cur.getColumnIndex(Sms.BODY));
+			String nomContactJoined = "";
 
-			map.put("thread_id", thread_id);
-			map.put("nom_contact", "nope");
-			map.put("nb_msg", Integer.toString(cMsg));
-			map.put("last_msg", lst_msg);
-			conversations.add(map);
+			for (int n = 0; n < nomsContact.size(); n++) {
+				nomContactJoined.concat(nomsContact.get(n));
+				if (n < nomsContact.size() - 1)
+					nomContactJoined.concat(", ");
+			}
+
+			mapConversation.put("thread_id", thread_id);
+			mapConversation.put("nom_contact", nomContactJoined);
+			mapConversation.put("nb_msg", Integer.toString(cMsg));
+			mapConversation.put("last_msg", lst_msg);
+			conversations.add(mapConversation);
 		}
 		curConversations.close();
 

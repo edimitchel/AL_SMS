@@ -28,7 +28,8 @@ import com.cnam.al_sms.BuildConfig;
 import com.cnam.al_sms.R;
 import com.cnam.al_sms.Connectivite.ConnecBluetooth;
 
-public class ConfigurationConnexionActivity extends Activity implements Runnable {
+public class ConfigurationConnexionActivity extends Activity implements
+		Runnable {
 
 	protected static final long TEMPS_RAFFRAICHISSEMENT_RECHERCHE = 5000;
 
@@ -37,7 +38,7 @@ public class ConfigurationConnexionActivity extends Activity implements Runnable
 	private int CODE_ACTIVITY = 2;
 
 	private int REQUEST_ENABLE_BT = 1;
-	
+
 	private Activity activity = this;
 
 	private BluetoothDeviceGroup mPairedDeviceGroup = new BluetoothDeviceGroup(
@@ -101,10 +102,7 @@ public class ConfigurationConnexionActivity extends Activity implements Runnable
 
 			Set<BluetoothDevice> pairedDevices = ba.getBondedDevices();
 			if (pairedDevices.size() > 0) {
-				// Loop through paired devices
 				for (BluetoothDevice device : pairedDevices) {
-					// Add the name and address to an array adapter to show in a
-					// ListView
 					mPairedDeviceGroup.add(device);
 				}
 			}
@@ -119,11 +117,11 @@ public class ConfigurationConnexionActivity extends Activity implements Runnable
 		TextView tvMessage = (TextView) findViewById(R.id.tv_msg_sync);
 
 		tvMessage.setText(s);
-		if (type == 0) { // ERROR
+		if (type == 0) {
 			tvMessage.setTextColor(Color.parseColor("red"));
-		} else if (type == 1) { // WELL DONE
+		} else if (type == 1) {
 			tvMessage.setTextColor(Color.parseColor("#3e8940"));
-		} else if (type == 2) { // WARNING
+		} else if (type == 2) {
 			tvMessage.setTextColor(Color.parseColor("orange"));
 		}
 	}
@@ -143,9 +141,6 @@ public class ConfigurationConnexionActivity extends Activity implements Runnable
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
 		if (id == R.id.action_settings) {
 			return true;
@@ -178,8 +173,8 @@ public class ConfigurationConnexionActivity extends Activity implements Runnable
 		startActivity(DeviceToConnect);
 
 	}
-	
-	public void run(){
+
+	public void run() {
 		if (firstOrForcedRefresh == null)
 			firstOrForcedRefresh = new Timestamp(
 					calendrier.get(Calendar.SECOND));
@@ -198,8 +193,7 @@ public class ConfigurationConnexionActivity extends Activity implements Runnable
 			try {
 				ConnecBluetooth.checkBluetoothConnection(activity);
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				Log.i(BuildConfig.TAG,e.getLocalizedMessage());
+				Log.i(BuildConfig.TAG, e.getLocalizedMessage());
 			}
 			setRechercheMode(false);
 			return;

@@ -26,7 +26,7 @@ public class BluetoothDeviceGroup {
 		devices.add(bd);
 	}
 
-	public void addAll(List bd) {
+	public void addAll(List<BluetoothDevice> bd) {
 		devices.addAll(bd);
 	}
 

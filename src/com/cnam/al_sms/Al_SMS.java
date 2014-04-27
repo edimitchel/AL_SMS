@@ -17,8 +17,6 @@ public class Al_SMS extends Application {
 	    return Al_SMS.context;
 	}
 
-	
-
 	public static void setCurrentActivity(Activity currentActivity) {
 	    activity = currentActivity;
 	}
