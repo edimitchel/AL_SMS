@@ -180,25 +180,25 @@ public class ConfigurationConnexionActivity extends Activity implements
 			firstOrForcedRefresh = new Timestamp(
 					calendrier.get(Calendar.SECOND));
 
-		/*if (!enRecherche
+		if (!enRecherche
 				|| calendrier.get(Calendar.SECOND)
 						- firstOrForcedRefresh.getTime() > DUREE_RECHERCHE) {
 			enRecherche = false;
 			return;
-		}*/
+		}
 
-		if (!ba.isDiscovering() && ba.isEnabled()) {
+		//if (!ba.isDiscovering() && ba.isEnabled()) {
 			ba.startDiscovery();
 			setRechercheMode(true);
-		} else {
+		/*} else {
 			try {
 				ConnecBluetooth.checkBluetoothConnection(activity);
 			} catch (Exception e) {
 				Log.i(TAG, e.getLocalizedMessage());
 			}
-			setRechercheMode(false);
+			setRechercheMode(true);
 			return;
-		}
+		}*/
 
 		listeGroupes = new ArrayList<BluetoothDeviceGroup>();
 
@@ -216,9 +216,9 @@ public class ConfigurationConnexionActivity extends Activity implements
 
 		BluetoothDeviceAdapter adapter = new BluetoothDeviceAdapter(
 				ConfigurationConnexionActivity.this, listeGroupes);
+		
 		mExpendableList.setAdapter(adapter);
-		int nb_group = mExpendableList.getCount();
-		for (int i = 0; i < nb_group; i++) {
+		for (int i = 0; i < listeGroupes.size(); i++) {
 			mExpendableList.expandGroup(i);
 		}
 
