@@ -30,6 +30,7 @@ import com.cnam.al_sms.Connectivite.ConnecBluetooth;
 
 public class ConfigurationConnexionActivity extends Activity implements
 		Runnable {
+	private static final String TAG= "ALSMS";
 
 	protected static final long TEMPS_RAFFRAICHISSEMENT_RECHERCHE = 5000;
 
@@ -71,7 +72,7 @@ public class ConfigurationConnexionActivity extends Activity implements
 		public void onReceive(Context context, Intent intent) {
 			String action = intent.getAction();
 
-			Log.i(BuildConfig.TAG, "Périphérique trouvé..");
+			Log.i(TAG, "Périphérique trouvé..");
 			// When discovery finds a device
 			if (BluetoothDevice.ACTION_FOUND.equals(action)) {
 				// Get the BluetoothDevice object from the Intent
@@ -179,12 +180,12 @@ public class ConfigurationConnexionActivity extends Activity implements
 			firstOrForcedRefresh = new Timestamp(
 					calendrier.get(Calendar.SECOND));
 
-		if (!enRecherche
+		/*if (!enRecherche
 				|| calendrier.get(Calendar.SECOND)
 						- firstOrForcedRefresh.getTime() > DUREE_RECHERCHE) {
 			enRecherche = false;
 			return;
-		}
+		}*/
 
 		if (!ba.isDiscovering() && ba.isEnabled()) {
 			ba.startDiscovery();
@@ -193,7 +194,7 @@ public class ConfigurationConnexionActivity extends Activity implements
 			try {
 				ConnecBluetooth.checkBluetoothConnection(activity);
 			} catch (Exception e) {
-				Log.i(BuildConfig.TAG, e.getLocalizedMessage());
+				Log.i(TAG, e.getLocalizedMessage());
 			}
 			setRechercheMode(false);
 			return;

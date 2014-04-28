@@ -33,6 +33,8 @@ import com.cnam.al_sms.Connectivite.BluetoothService;
 import com.cnam.al_sms.Connectivite.ConnecBluetooth;
 
 public class MainActivity extends Activity {
+	private static final String TAG= "ALSMS";
+	
 	private static final int CODE_APP = 98651;
 	private ListView m_LVconvstream;
 	private Button m_BTNSync;
@@ -85,16 +87,16 @@ public class MainActivity extends Activity {
 		curConversations = cr.query(uConversations, null, null, null,
 				"date DESC");
 
-		Log.i(BuildConfig.TAG,
+		Log.i(TAG,
 				Arrays.toString(curConversations.getColumnNames()));
 		while (curConversations.moveToNext()) {
 			/*
 			 * For debbuging ArrayList<String> values = new ArrayList<String>();
 			 * for (int i = 0; i < curConversations.getColumnCount(); i++) {
 			 * values.add(curConversations.getString(i)); }
-			 * Log.i(BuildConfig.TAG, values.toString());
+			 * Log.i(TAG, values.toString());
 			 */
-			Log.i(BuildConfig.TAG,
+			Log.i(TAG,
 					Arrays.toString(curConversations.getColumnNames()));
 
 			mapConversation = new HashMap<String, String>();
@@ -109,7 +111,7 @@ public class MainActivity extends Activity {
 			ArrayList<String> nomsContact = new ArrayList<String>();
 
 			// Curseur pour récupérer le contact
-			Cursor curContact = cr.query(ContactsContract.Contacts.CONTENT_URI,
+			/*Cursor curContact = cr.query(ContactsContract.Contacts.CONTENT_URI,
 					new String[] { ContactsContract.Contacts.DISPLAY_NAME},
 					ContactsContract.Contacts._ID + " = ?", recipients_id,
 					ContactsContract.Contacts.DISPLAY_NAME
@@ -127,10 +129,10 @@ public class MainActivity extends Activity {
 				nomContactJoined.concat(nomsContact.get(n));
 				if (n < nomsContact.size() - 1)
 					nomContactJoined.concat(", ");
-			}
+			}*/
 
 			mapConversation.put("thread_id", thread_id);
-			mapConversation.put("nom_contact", nomContactJoined);
+			mapConversation.put("nom_contact", String.valueOf(curConversations.getPosition()));
 			mapConversation.put("nb_msg", Integer.toString(cMsg));
 			mapConversation.put("last_msg", lst_msg);
 			conversations.add(mapConversation);
@@ -166,13 +168,6 @@ public class MainActivity extends Activity {
 				startActivityForResult(i_sync, CODE_APP);
 			}
 		});
-		try {
-			ConnecBluetooth.checkBluetoothConnection(this);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
 	}
 
 	@Override

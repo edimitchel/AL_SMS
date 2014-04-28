@@ -22,7 +22,7 @@ import android.util.Log;
  * performing data transmissions when connected.
  */
 public class BluetoothService {
-	private static final String NAME = "BluetoothALSMS";
+	private static final String TAG= "ALSMS";
 
 	private static final UUID MY_UUID = UUID
 			.fromString("fa87c0d0-afac-11de-8a39-0800200c9a66");
@@ -64,7 +64,7 @@ public class BluetoothService {
 	 */
 	private synchronized void setState(int state) {
 		if (BuildConfig.DEBUG)
-			Log.d(BuildConfig.TAG, "setState() " + mState + " -> " + state);
+			Log.d(TAG, "setState() " + mState + " -> " + state);
 		mState = state;
 	}
 
@@ -81,7 +81,7 @@ public class BluetoothService {
 	 */
 	public synchronized void start() {
 		if (BuildConfig.DEBUG)
-			Log.d(BuildConfig.TAG, "start");
+			Log.d(TAG, "start");
 
 		// Cancel any thread attempting to make a connection
 		if (mConnectThread != null) {
@@ -111,7 +111,7 @@ public class BluetoothService {
 	 */
 	public synchronized void connect(BluetoothDevice device) {
 		if (BuildConfig.DEBUG)
-			Log.d(BuildConfig.TAG, "connect to: " + device);
+			Log.d(TAG, "connect to: " + device);
 
 		// Cancel any thread attempting to make a connection
 		if (mState == STATE_CONNECTING) {
@@ -144,7 +144,7 @@ public class BluetoothService {
 	public synchronized void connected(BluetoothSocket socket,
 			BluetoothDevice device) {
 		if (BuildConfig.DEBUG)
-			Log.d(BuildConfig.TAG, "connected");
+			Log.d(TAG, "connected");
 
 		if (mConnectThread != null) {
 			mConnectThread.cancel();
@@ -176,7 +176,7 @@ public class BluetoothService {
 	 */
 	public synchronized void stop() {
 		if (BuildConfig.DEBUG)
-			Log.d(BuildConfig.TAG, "stop");
+			Log.d(TAG, "stop");
 		if (mConnectThread != null) {
 			mConnectThread.cancel();
 			mConnectThread = null;
@@ -270,7 +270,7 @@ public class BluetoothService {
 							try {
 								socket.close();
 							} catch (IOException e) {
-								Log.e(BuildConfig.TAG,
+								Log.e(TAG,
 										"Could not close unwanted socket", e);
 							}
 							break;
