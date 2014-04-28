@@ -352,7 +352,7 @@ public class BluetoothService {
 			BluetoothSocket tmp = null;
 			mmDevice = device;
 			mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-
+			Log.i("ALSMS-Bluetooth Service", "connected to " + mmDevice.getName());
 			// Get a BluetoothSocket to connect with the given BluetoothDevice
 			try {
 				// MY_UUID is the app's UUID string, also used by the server

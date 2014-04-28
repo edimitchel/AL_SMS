@@ -28,9 +28,11 @@ import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
 import com.cnam.al_sms.BuildConfig;
+import com.cnam.al_sms.Globales;
 import com.cnam.al_sms.R;
 import com.cnam.al_sms.Connectivite.BluetoothService;
 import com.cnam.al_sms.Connectivite.ConnecBluetooth;
+import com.cnam.al_sms.Maitre_Activities.ConnexionMaitreActivity;
 
 public class MainActivity extends Activity {
 	private static final String TAG= "ALSMS";
@@ -70,9 +72,11 @@ public class MainActivity extends Activity {
 		TelephonyManager manager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
 		String type = null;
 		if (manager.getPhoneType() == TelephonyManager.PHONE_TYPE_NONE) {
+			Globales.typeAppareil =  Globales.DeviceType.tablette;
 			type = "une tablette";
 		} else {
 			type = "un mobile";
+			Globales.typeAppareil =  Globales.DeviceType.phone;
 		}
 
 		Toast.makeText(this, "Je suis " + type, Toast.LENGTH_LONG).show();
@@ -163,8 +167,16 @@ public class MainActivity extends Activity {
 		m_BTNSync.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Intent i_sync = new Intent(MainActivity.this,
-						ConfigurationConnexionActivity.class);
+				
+				Intent i_sync = null;
+				if(Globales.typeAppareil==Globales.DeviceType.phone){
+					i_sync = new Intent(MainActivity.this,
+							ConnexionMaitreActivity.class);
+					
+				}else if(Globales.typeAppareil==Globales.DeviceType.tablette){
+					i_sync = new Intent(MainActivity.this,
+							ConfigurationConnexionActivity.class);
+				}
 				startActivityForResult(i_sync, CODE_APP);
 			}
 		});

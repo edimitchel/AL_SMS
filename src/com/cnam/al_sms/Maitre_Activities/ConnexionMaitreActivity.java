@@ -1,6 +1,10 @@
-package com.cnam.al_sms;
+package com.cnam.al_sms.Maitre_Activities;
 
+import com.cnam.al_sms.R;
 import com.cnam.al_sms.Connectivite.BluetoothService;
+import com.cnam.al_sms.R.id;
+import com.cnam.al_sms.R.layout;
+import com.cnam.al_sms.R.menu;
 
 
 import android.app.Activity;
