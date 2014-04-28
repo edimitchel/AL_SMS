@@ -46,7 +46,7 @@ public class ConfigurationConnexionActivity extends Activity implements
 			"Périphériques appareillés");
 
 	private BluetoothDeviceGroup mBluetoothDeviceGroup = new BluetoothDeviceGroup(
-			"Appareils connectés");
+			"Appareils visibles");
 
 	private ArrayList<BluetoothDeviceGroup> listeGroupes;
 
