@@ -17,20 +17,22 @@ import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Handler.Callback;
+import android.os.Message;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ExpandableListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.cnam.al_sms.BuildConfig;
 import com.cnam.al_sms.R;
 import com.cnam.al_sms.Connectivite.ConnecBluetooth;
 
 public class ConfigurationConnexionActivity extends Activity implements
 		Runnable {
-	private static final String TAG= "ALSMS";
+	private static final String TAG = "ALSMS";
 
 	protected static final long TEMPS_RAFFRAICHISSEMENT_RECHERCHE = 5000;
 
@@ -52,19 +54,14 @@ public class ConfigurationConnexionActivity extends Activity implements
 
 	private BluetoothAdapter ba;
 
-	private boolean enRecherche = true;
+	private int nb_recherche = 0;
 
-	private Calendar calendrier = Calendar.getInstance();
-
-	private Timestamp firstOrForcedRefresh = null;
+	BluetoothDeviceAdapter adapter = null;
 
 	// Permet le rafraichissement de la découverte des périphériques
 	private Handler handler = new Handler();
-	private Runnable raffraichitPeripheriques = this;
 
 	private ExpandableListView mExpendableList;
-
-	private ProgressBar mRoueRecherche;
 
 	private Menu optionsMenu;
 
@@ -99,13 +96,30 @@ public class ConfigurationConnexionActivity extends Activity implements
 		if (ba != null) {
 			IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
 			registerReceiver(mReceiver, filter);
-			raffraichitPeripheriques.run();
-
+			ba.startDiscovery();
+			
 			Set<BluetoothDevice> pairedDevices = ba.getBondedDevices();
 			if (pairedDevices.size() > 0) {
 				for (BluetoothDevice device : pairedDevices) {
 					mPairedDeviceGroup.add(device);
 				}
+			}
+		}
+
+		if (ba.isEnabled()) {
+			run();
+		} else {
+			boolean is_enabled = false;
+			try {
+				is_enabled = ConnecBluetooth.checkBluetoothConnection(activity);
+			} catch (Exception e) {
+				Log.i(TAG, e.getLocalizedMessage());
+			}
+
+			if (is_enabled) {
+				run();
+			} else {
+				showMessage("Activez votre bluetooth, s'il vous plait.", 0);
 			}
 		}
 	}
@@ -129,8 +143,8 @@ public class ConfigurationConnexionActivity extends Activity implements
 
 	@Override
 	protected void onDestroy() {
-		super.onDestroy();
 		unregisterReceiver(mReceiver);
+		super.onDestroy();
 	}
 
 	@Override
@@ -146,13 +160,12 @@ public class ConfigurationConnexionActivity extends Activity implements
 		if (id == R.id.action_settings) {
 			return true;
 		} else if (id == R.id.raffraichirRercherche) {
-			setRechercheMode(true);
-			ba.startDiscovery();
+			run();
 		}
 		return super.onOptionsItemSelected(item);
 	}
 
-	public void setRefreshActionButtonState(final boolean refreshing) {
+	public void setRefreshActionButtonState(boolean refreshing) {
 		if (optionsMenu != null) {
 			final MenuItem refreshItem = optionsMenu
 					.findItem(R.id.raffraichirRercherche);
@@ -172,36 +185,20 @@ public class ConfigurationConnexionActivity extends Activity implements
 				ConnexionEsclaveActivity.class);
 		DeviceToConnect.putExtra("Adresse_MAC", bd.getAddress());
 		startActivity(DeviceToConnect);
-
 	}
 
 	public void run() {
-		if (firstOrForcedRefresh == null)
-			firstOrForcedRefresh = new Timestamp(
-					calendrier.get(Calendar.SECOND));
+		if (ba.isDiscovering())
+			ba.cancelDiscovery();
 
-		if (!enRecherche
-				|| calendrier.get(Calendar.SECOND)
-						- firstOrForcedRefresh.getTime() > DUREE_RECHERCHE) {
-			enRecherche = false;
-			return;
-		}
-
-		//if (!ba.isDiscovering() && ba.isEnabled()) {
-			ba.startDiscovery();
-			setRechercheMode(true);
-		/*} else {
-			try {
-				ConnecBluetooth.checkBluetoothConnection(activity);
-			} catch (Exception e) {
-				Log.i(TAG, e.getLocalizedMessage());
-			}
-			setRechercheMode(true);
-			return;
-		}*/
+		ba.startDiscovery();
+		setRechercheMode(true);
+		
+		showMessage("Recherche en cours ...", 1);
 
 		listeGroupes = new ArrayList<BluetoothDeviceGroup>();
 
+		// Suppression du device appareillé de la liste des appareils visibles.
 		for (BluetoothDevice bd : mPairedDeviceGroup.getDevices()) {
 			if (!mBluetoothDeviceGroup.getDevices().contains(bd)) {
 				mPairedDeviceGroup.getDevices().remove(
@@ -212,27 +209,36 @@ public class ConfigurationConnexionActivity extends Activity implements
 		if (mBluetoothDeviceGroup.size() > 0)
 			listeGroupes.add(mBluetoothDeviceGroup);
 		if (mPairedDeviceGroup.size() > 0)
-			listeGroupes.add(mPairedDeviceGroup);
 
-		BluetoothDeviceAdapter adapter = new BluetoothDeviceAdapter(
+			listeGroupes.add(mPairedDeviceGroup);
+		adapter = new BluetoothDeviceAdapter(
 				ConfigurationConnexionActivity.this, listeGroupes);
-		
 		mExpendableList.setAdapter(adapter);
-		for (int i = 0; i < listeGroupes.size(); i++) {
+
+		for (int i = 0; i < mExpendableList.getChildCount(); i++) {
 			mExpendableList.expandGroup(i);
 		}
 
 		int nb_devices = mBluetoothDeviceGroup.size();
-
 		if (nb_devices != 0) {
 			String s = nb_devices > 1 ? "s" : "";
 			showMessage(nb_devices + " périphérique" + s + " trouvé" + s, 1);
 		} else {
 			showMessage("Aucun périphérique n'a été trouvé.", 0);
 		}
+		
+		handler.postDelayed(new Runnable() {
 
-		handler.postDelayed(raffraichitPeripheriques,
-				TEMPS_RAFFRAICHISSEMENT_RECHERCHE);
+			@Override
+			public void run() {
+				if (ba.isDiscovering())
+					handler.postDelayed(this, TEMPS_RAFFRAICHISSEMENT_RECHERCHE);
+				else {
+					nb_recherche++;
+					setRechercheMode(false);
+				}
+			}
+		}, TEMPS_RAFFRAICHISSEMENT_RECHERCHE);
 	}
 
 }
