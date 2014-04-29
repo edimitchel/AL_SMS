@@ -77,10 +77,12 @@ public class ConfigurationConnexionActivity extends Activity implements
 						.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
 				// Add the name and address to an array adapter to show in a
 				// ListView
-				if (!mBluetoothDeviceGroup.getDevices().contains(device)
+				if (!mBluetoothDeviceGroup.contains(device)
 						&& device.getName() != "null"
 						&& !device.getName().isEmpty())
 					mBluetoothDeviceGroup.add(device);
+				if (adapter != null)
+					adapter.notifyDataSetChanged();
 			}
 		}
 	};
@@ -97,7 +99,8 @@ public class ConfigurationConnexionActivity extends Activity implements
 			IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
 			registerReceiver(mReceiver, filter);
 			ba.startDiscovery();
-			
+			setRechercheMode(true);
+
 			Set<BluetoothDevice> pairedDevices = ba.getBondedDevices();
 			if (pairedDevices.size() > 0) {
 				for (BluetoothDevice device : pairedDevices) {
@@ -107,7 +110,7 @@ public class ConfigurationConnexionActivity extends Activity implements
 		}
 
 		if (ba.isEnabled()) {
-			run();
+			handler.postDelayed(this, TEMPS_RAFFRAICHISSEMENT_RECHERCHE);
 		} else {
 			boolean is_enabled = false;
 			try {
@@ -126,6 +129,8 @@ public class ConfigurationConnexionActivity extends Activity implements
 
 	protected void setRechercheMode(boolean b) {
 		setRefreshActionButtonState(b);
+		if(b)
+			showMessage("Recherche en cours ...", 1);
 	}
 
 	private void showMessage(String s, int type) {
@@ -193,14 +198,12 @@ public class ConfigurationConnexionActivity extends Activity implements
 
 		ba.startDiscovery();
 		setRechercheMode(true);
-		
-		showMessage("Recherche en cours ...", 1);
 
 		listeGroupes = new ArrayList<BluetoothDeviceGroup>();
 
 		// Suppression du device appareillé de la liste des appareils visibles.
 		for (BluetoothDevice bd : mPairedDeviceGroup.getDevices()) {
-			if (!mBluetoothDeviceGroup.getDevices().contains(bd)) {
+			if (!mBluetoothDeviceGroup.contains(bd)) {
 				mPairedDeviceGroup.getDevices().remove(
 						mPairedDeviceGroup.getDevices().indexOf(bd));
 			}
@@ -209,13 +212,17 @@ public class ConfigurationConnexionActivity extends Activity implements
 		if (mBluetoothDeviceGroup.size() > 0)
 			listeGroupes.add(mBluetoothDeviceGroup);
 		if (mPairedDeviceGroup.size() > 0)
-
 			listeGroupes.add(mPairedDeviceGroup);
-		adapter = new BluetoothDeviceAdapter(
-				ConfigurationConnexionActivity.this, listeGroupes);
-		mExpendableList.setAdapter(adapter);
 
-		for (int i = 0; i < mExpendableList.getChildCount(); i++) {
+		if (null == adapter) {
+			Log.d(TAG,"Instanciation de adapter");
+			adapter = new BluetoothDeviceAdapter(
+					ConfigurationConnexionActivity.this, listeGroupes);
+			mExpendableList.setAdapter(adapter);
+			
+		}
+
+		for (int i = 0; i < adapter.getGroupCount(); i++) {
 			mExpendableList.expandGroup(i);
 		}
 
@@ -226,7 +233,7 @@ public class ConfigurationConnexionActivity extends Activity implements
 		} else {
 			showMessage("Aucun périphérique n'a été trouvé.", 0);
 		}
-		
+
 		handler.postDelayed(new Runnable() {
 
 			@Override
