@@ -1,14 +1,17 @@
 package com.cnam.al_sms.Data.DataSource;
 
-import java.util.Date;
+import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.cnam.al_sms.Data.SMSDataBaseHelper;
 import com.cnam.al_sms.Data.SyncSMSDataBaseHelper;
+import com.cnam.al_sms.Modeles.SMS;
 import com.cnam.al_sms.Modeles.SyncSMS;
 
 public class SyncDataSource {
@@ -19,12 +22,14 @@ public class SyncDataSource {
 			SyncSMSDataBaseHelper.COLUMN_TYPE,
 			SyncSMSDataBaseHelper.COLUMN_FISRTSMS,
 			SyncSMSDataBaseHelper.COLUMN_LASTSMS };
+	private Context contexte;
 
 	public SyncDataSource() {
 	}
 
 	public SyncDataSource(Context context) {
 		dbHelper = new SyncSMSDataBaseHelper(context);
+		contexte = context;
 	}
 
 	public void open() throws SQLException {
@@ -58,6 +63,35 @@ public class SyncDataSource {
 			return (SyncSMS) cursorToSyncSMS(c);
 		}
 		return null;
+	}
+	
+	public List<SMS> getSmsNotSync() {
+		open();
+		Date d = (Date) getLastSyncSMSDate(1).getDateSync();
+		close();
+		SMSDataSource sds = new SMSDataSource(contexte);
+		sds.open();
+		ArrayList<SMS> smsNotSync = (ArrayList<SMS>) sds.getSmsAfterDate(d);
+		sds.close();
+		return smsNotSync;
+	}
+	
+	public static SyncSMS newSync(int type, long idPremierSms, long idDernierSms){
+		SyncSMS sSms = new SyncSMS();
+		sSms.setType(type);
+		sSms.setIdPremierSMS(idPremierSms);
+		sSms.setIdDernierSMS(idDernierSms);		
+		return sSms;
+	}
+	
+	public SyncSMS addSyncSms(SyncSMS sSms){
+		ContentValues cv = new ContentValues();
+		cv.put(SyncSMSDataBaseHelper.COLUMN_TYPE, sSms.getType());
+		cv.put(SyncSMSDataBaseHelper.COLUMN_FISRTSMS, sSms.getIdPremierSMS());
+		cv.put(SyncSMSDataBaseHelper.COLUMN_LASTSMS, sSms.getIdDernierSMS());
+		
+		long id = database.insert(SyncSMSDataBaseHelper.TABLE_SYNCHRONISATION, null, cv);
+		return getSyncSMS(id);
 	}
 
 	public SyncSMS cursorToSyncSMS(Cursor c) {

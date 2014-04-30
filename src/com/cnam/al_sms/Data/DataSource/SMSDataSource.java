@@ -1,5 +1,6 @@
 package com.cnam.al_sms.Data.DataSource;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,6 +70,20 @@ public class SMSDataSource {
 		Cursor cursor = database.query(SMSDataBaseHelper.TABLE_SMS,
 				allColumns, SMSDataBaseHelper.COLUMN_PERSON + " = ?",
 				new String[] { String.valueOf(person) }, null, null, null);
+		cursor.moveToFirst();
+		while (!cursor.isAfterLast()) {
+			SMSs.add(cursorToSMS(cursor));
+			cursor.moveToNext();
+		}
+		cursor.close();
+		return SMSs;
+	}
+	
+	public List<SMS> getSmsAfterDate(Date d) {
+		List<SMS> SMSs = new ArrayList<SMS>();
+		Cursor cursor = database.query(SMSDataBaseHelper.TABLE_SMS,
+				allColumns, SMSDataBaseHelper.COLUMN_ID + " > ?",
+				new String[] { d.toString() }, null, null, null);
 		cursor.moveToFirst();
 		while (!cursor.isAfterLast()) {
 			SMSs.add(cursorToSMS(cursor));
