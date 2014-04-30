@@ -13,7 +13,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.ContactsContract;
 import android.provider.Telephony.Sms;
 import android.telephony.TelephonyManager;
 import android.util.Log;
@@ -27,11 +26,9 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
-import com.cnam.al_sms.BuildConfig;
 import com.cnam.al_sms.Globales;
 import com.cnam.al_sms.R;
 import com.cnam.al_sms.Connectivite.BluetoothService;
-import com.cnam.al_sms.Connectivite.ConnecBluetooth;
 import com.cnam.al_sms.Maitre_Activities.ConnexionMaitreActivity;
 
 public class MainActivity extends Activity {

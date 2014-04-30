@@ -1,14 +1,6 @@
 package com.cnam.al_sms.Maitre_Activities;
 
-import com.cnam.al_sms.R;
-import com.cnam.al_sms.Connectivite.BluetoothService;
-import com.cnam.al_sms.R.id;
-import com.cnam.al_sms.R.layout;
-import com.cnam.al_sms.R.menu;
-
-
 import android.app.Activity;
-import android.app.ActionBar;
 import android.app.Fragment;
 import android.bluetooth.BluetoothAdapter;
 import android.os.Bundle;
@@ -18,7 +10,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.os.Build;
+
+import com.cnam.al_sms.R;
+import com.cnam.al_sms.Connectivite.BluetoothService;
 
 public class ConnexionMaitreActivity extends Activity {
 	private BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();

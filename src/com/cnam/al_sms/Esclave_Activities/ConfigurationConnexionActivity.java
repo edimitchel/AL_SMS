@@ -1,8 +1,6 @@
 package com.cnam.al_sms.Esclave_Activities;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Set;
 
 import shared.BluetoothDeviceAdapter;
@@ -17,15 +15,11 @@ import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Handler.Callback;
-import android.os.Message;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ExpandableListView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.cnam.al_sms.R;
 import com.cnam.al_sms.Connectivite.ConnecBluetooth;
