@@ -8,7 +8,7 @@ import com.cnam.al_sms.Modeles.SyncSMS;
 public class SynchroController {
 
 	public static SyncSMS enregistrerSyncPeriode(Context context,
-			long idPremier, long idDernier) {
+			long idPremier, long idDernier) throws Exception {
 		SyncDataSource sds = new SyncDataSource(context);
 		sds.open();
 		SyncSMS r = sds.addSyncSms(SyncDataSource.newSync(0, idPremier,
@@ -18,7 +18,7 @@ public class SynchroController {
 	}
 
 	public static SyncSMS enregistrerSyncVolee(Context context,
-			long idPremier, long idDernier) {
+			long idPremier, long idDernier) throws Exception {
 		SyncDataSource sds = new SyncDataSource(context);
 		sds.open();
 		SyncSMS r = sds.addSyncSms(SyncDataSource.newSync(1, idPremier,

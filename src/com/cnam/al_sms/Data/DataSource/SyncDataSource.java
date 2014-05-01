@@ -41,15 +41,15 @@ public class SyncDataSource {
 		database.close();
 	}
 
-	public SyncSMS getSyncSMS(long id) {
+	public SyncSMS getSyncSMS(long id) throws Exception {
 		if (database != null) {
 			Cursor c = database.query(
 					SyncSMSDataBaseHelper.TABLE_SYNCHRONISATION, allColumns,
 					SyncSMSDataBaseHelper.COLUMN_ID + " = ?",
 					new String[] { String.valueOf(id) }, null, null, null);
 			return (SyncSMS) cursorToSyncSMS(c);
-		}
-		return null;
+		} else
+			throw new Exception("La base de données n'est pas instanciée.");
 	}
 
 	public SyncSMS getLastSyncSMSDate(int type) {
@@ -58,13 +58,14 @@ public class SyncDataSource {
 					SyncSMSDataBaseHelper.TABLE_SYNCHRONISATION, allColumns,
 					SyncSMSDataBaseHelper.COLUMN_TYPE + " = ?",
 					new String[] { String.valueOf(type) }, null, null,
-					"ORDER BY " + SyncSMSDataBaseHelper.COLUMN_DATE + " DESC","1");
+					"ORDER BY " + SyncSMSDataBaseHelper.COLUMN_DATE + " DESC",
+					"1");
 			c.moveToFirst();
 			return (SyncSMS) cursorToSyncSMS(c);
 		}
 		return null;
 	}
-	
+
 	public List<SMS> getSmsNotSync() {
 		open();
 		Date d = (Date) getLastSyncSMSDate(1).getDateSync();
@@ -75,39 +76,45 @@ public class SyncDataSource {
 		sds.close();
 		return smsNotSync;
 	}
-	
-	public static SyncSMS newSync(int type, long idPremierSms, long idDernierSms){
+
+	public static SyncSMS newSync(int type, long idPremierSms, long idDernierSms) {
 		SyncSMS sSms = new SyncSMS();
 		sSms.setType(type);
 		sSms.setIdPremierSMS(idPremierSms);
-		sSms.setIdDernierSMS(idDernierSms);		
+		sSms.setIdDernierSMS(idDernierSms);
 		return sSms;
 	}
-	
-	public SyncSMS addSyncSms(SyncSMS sSms){
+
+	public SyncSMS addSyncSms(SyncSMS sSms) throws Exception {
 		ContentValues cv = new ContentValues();
+		Date now = new Date(System.currentTimeMillis());
+		cv.put(SyncSMSDataBaseHelper.COLUMN_DATE, now.getTime());
 		cv.put(SyncSMSDataBaseHelper.COLUMN_TYPE, sSms.getType());
 		cv.put(SyncSMSDataBaseHelper.COLUMN_FISRTSMS, sSms.getIdPremierSMS());
 		cv.put(SyncSMSDataBaseHelper.COLUMN_LASTSMS, sSms.getIdDernierSMS());
-		
-		long id = database.insert(SyncSMSDataBaseHelper.TABLE_SYNCHRONISATION, null, cv);
+
+		long id = database.insert(SyncSMSDataBaseHelper.TABLE_SYNCHRONISATION,
+				null, cv);
 		return getSyncSMS(id);
 	}
 
 	public SyncSMS cursorToSyncSMS(Cursor c) {
-		SyncSMS sSms = new SyncSMS();
-		sSms.setIdSync(c.getLong(c
-				.getColumnIndex(SyncSMSDataBaseHelper.COLUMN_ID)));
-		sSms.setDateSync(new Date(c.getInt(c
-				.getColumnIndex(SyncSMSDataBaseHelper.COLUMN_DATE))));
-		sSms.setType(c.getInt(c
-				.getColumnIndex(SyncSMSDataBaseHelper.COLUMN_TYPE)));
-		sSms.setIdPremierSMS(c.getLong(c
-				.getColumnIndex(SyncSMSDataBaseHelper.COLUMN_FISRTSMS)));
-		sSms.setIdDernierSMS(c.getLong(c
-				.getColumnIndex(SyncSMSDataBaseHelper.COLUMN_LASTSMS)));
-
-		return sSms;
+		if (c.moveToFirst()) {
+			SyncSMS sSms = new SyncSMS();
+			sSms.setIdSync(c.getInt(c
+					.getColumnIndexOrThrow(SyncSMSDataBaseHelper.COLUMN_ID)));
+			sSms.setDateSync(new Date(c.getInt(c
+					.getColumnIndexOrThrow(SyncSMSDataBaseHelper.COLUMN_DATE))));
+			sSms.setType(c.getInt(c
+					.getColumnIndexOrThrow(SyncSMSDataBaseHelper.COLUMN_TYPE)));
+			sSms.setIdPremierSMS(c.getInt(c
+					.getColumnIndexOrThrow(SyncSMSDataBaseHelper.COLUMN_FISRTSMS)));
+			sSms.setIdDernierSMS(c.getInt(c
+					.getColumnIndexOrThrow(SyncSMSDataBaseHelper.COLUMN_LASTSMS)));
+			c.close();
+			return sSms;
+		}
+		return null;
 	}
 
 }

@@ -4,17 +4,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import shared.Globales;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.content.ContentResolver;
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Telephony.Sms;
-import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -26,14 +25,14 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
-import com.cnam.al_sms.Globales;
 import com.cnam.al_sms.R;
 import com.cnam.al_sms.Connectivite.BluetoothService;
 import com.cnam.al_sms.Maitre_Activities.ConnexionMaitreActivity;
+import com.cnam.al_sms.Maitre_Activities.SynchronisationActivity;
 
 public class MainActivity extends Activity {
-	private static final String TAG= "ALSMS";
-	
+	private static final String TAG = "ALSMS";
+
 	private static final int CODE_APP = 98651;
 	private ListView m_LVconvstream;
 	private Button m_BTNSync;
@@ -66,17 +65,10 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		TelephonyManager manager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-		String type = null;
-		if (manager.getPhoneType() == TelephonyManager.PHONE_TYPE_NONE) {
-			Globales.typeAppareil =  Globales.DeviceType.tablette;
-			type = "une tablette";
-		} else {
-			type = "un mobile";
-			Globales.typeAppareil =  Globales.DeviceType.phone;
-		}
+		Globales.getDeviceType(this);
 
-		Toast.makeText(this, "Je suis " + type, Toast.LENGTH_LONG).show();
+		Toast.makeText(this, "Je suis " + Globales.typeAppareil,
+				Toast.LENGTH_LONG).show();
 
 		ContentResolver cr = getContentResolver();
 
@@ -88,17 +80,15 @@ public class MainActivity extends Activity {
 		curConversations = cr.query(uConversations, null, null, null,
 				"date DESC");
 
-		Log.i(TAG,
-				Arrays.toString(curConversations.getColumnNames()));
+		Log.i(TAG, Arrays.toString(curConversations.getColumnNames()));
 		while (curConversations.moveToNext()) {
 			/*
 			 * For debbuging ArrayList<String> values = new ArrayList<String>();
 			 * for (int i = 0; i < curConversations.getColumnCount(); i++) {
-			 * values.add(curConversations.getString(i)); }
-			 * Log.i(TAG, values.toString());
+			 * values.add(curConversations.getString(i)); } Log.i(TAG,
+			 * values.toString());
 			 */
-			Log.i(TAG,
-					Arrays.toString(curConversations.getColumnNames()));
+			Log.i(TAG, Arrays.toString(curConversations.getColumnNames()));
 
 			mapConversation = new HashMap<String, String>();
 			String thread_id = curConversations.getString(0);
@@ -112,28 +102,27 @@ public class MainActivity extends Activity {
 			ArrayList<String> nomsContact = new ArrayList<String>();
 
 			// Curseur pour récupérer le contact
-			/*Cursor curContact = cr.query(ContactsContract.Contacts.CONTENT_URI,
-					new String[] { ContactsContract.Contacts.DISPLAY_NAME},
-					ContactsContract.Contacts._ID + " = ?", recipients_id,
-					ContactsContract.Contacts.DISPLAY_NAME
-							+ " ASC");
-			while (curContact.moveToNext()) {
-				nomsContact
-						.add(curContact.getString(curContact
-								.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME)));
-			}
-			curContact.close();
-
-			String nomContactJoined = "";
-
-			for (int n = 0; n < nomsContact.size(); n++) {
-				nomContactJoined.concat(nomsContact.get(n));
-				if (n < nomsContact.size() - 1)
-					nomContactJoined.concat(", ");
-			}*/
+			/*
+			 * Cursor curContact =
+			 * cr.query(ContactsContract.Contacts.CONTENT_URI, new String[] {
+			 * ContactsContract.Contacts.DISPLAY_NAME},
+			 * ContactsContract.Contacts._ID + " = ?", recipients_id,
+			 * ContactsContract.Contacts.DISPLAY_NAME + " ASC"); while
+			 * (curContact.moveToNext()) { nomsContact
+			 * .add(curContact.getString(curContact
+			 * .getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME))); }
+			 * curContact.close();
+			 * 
+			 * String nomContactJoined = "";
+			 * 
+			 * for (int n = 0; n < nomsContact.size(); n++) {
+			 * nomContactJoined.concat(nomsContact.get(n)); if (n <
+			 * nomsContact.size() - 1) nomContactJoined.concat(", "); }
+			 */
 
 			mapConversation.put("thread_id", thread_id);
-			mapConversation.put("nom_contact", String.valueOf(curConversations.getPosition()));
+			mapConversation.put("nom_contact",
+					String.valueOf(curConversations.getPosition()));
 			mapConversation.put("nb_msg", Integer.toString(cMsg));
 			mapConversation.put("last_msg", lst_msg);
 			conversations.add(mapConversation);
@@ -164,13 +153,13 @@ public class MainActivity extends Activity {
 		m_BTNSync.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				
+
 				Intent i_sync = null;
-				if(Globales.typeAppareil==Globales.DeviceType.phone){
+				if (Globales.typeAppareil == Globales.DeviceType.phone) {
 					i_sync = new Intent(MainActivity.this,
 							ConnexionMaitreActivity.class);
-					
-				}else if(Globales.typeAppareil==Globales.DeviceType.tablette){
+
+				} else if (Globales.typeAppareil == Globales.DeviceType.tablette) {
 					i_sync = new Intent(MainActivity.this,
 							ConfigurationConnexionActivity.class);
 				}
@@ -198,6 +187,10 @@ public class MainActivity extends Activity {
 					ConfigurationConnexionActivity.class);
 			startActivityForResult(intent, CODE_APP);
 			return true;
+		} else if (id == R.id.synchroniser) {
+			Intent intent = new Intent(getBaseContext(),
+					SynchronisationActivity.class);
+			startActivity(intent);
 		}
 		return super.onOptionsItemSelected(item);
 	}
