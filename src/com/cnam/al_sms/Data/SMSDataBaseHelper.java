@@ -23,7 +23,7 @@ public class SMSDataBaseHelper extends SQLiteOpenHelper {
 	public static final String COLUMN_BODY = "body";
 	public static final String COLUMN_SEEN = "seen";
 
-	private static final String DATABASE_NAME = "sms.db";
+	private static final String DATABASE_NAME = "alsms.db";
 	private static final int DATABASE_VERSION = 1;
 
 	private static final String DATABASE_CREATE = "create table " + TABLE_SMS

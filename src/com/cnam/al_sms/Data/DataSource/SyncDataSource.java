@@ -17,7 +17,7 @@ import com.cnam.al_sms.Modeles.SyncSMS;
 public class SyncDataSource {
 	private SQLiteDatabase database;
 	private SyncSMSDataBaseHelper dbHelper;
-	private String[] allColumns = { SyncSMSDataBaseHelper.COLUMN_ID,
+	public static String[] allColumns = { SyncSMSDataBaseHelper.COLUMN_ID,
 			SyncSMSDataBaseHelper.COLUMN_DATE,
 			SyncSMSDataBaseHelper.COLUMN_TYPE,
 			SyncSMSDataBaseHelper.COLUMN_FISRTSMS,
@@ -38,7 +38,6 @@ public class SyncDataSource {
 
 	public void close() {
 		dbHelper.close();
-		database.close();
 	}
 
 	public SyncSMS getSyncSMS(long id) throws Exception {
@@ -58,8 +57,7 @@ public class SyncDataSource {
 					SyncSMSDataBaseHelper.TABLE_SYNCHRONISATION, allColumns,
 					SyncSMSDataBaseHelper.COLUMN_TYPE + " = ?",
 					new String[] { String.valueOf(type) }, null, null,
-					"ORDER BY " + SyncSMSDataBaseHelper.COLUMN_DATE + " DESC",
-					"1");
+					SyncSMSDataBaseHelper.COLUMN_DATE + " DESC", "1");
 			c.moveToFirst();
 			return (SyncSMS) cursorToSyncSMS(c);
 		}
@@ -98,6 +96,19 @@ public class SyncDataSource {
 		return getSyncSMS(id);
 	}
 
+	public List<SyncSMS> getAll() {
+		ArrayList<SyncSMS> list = new ArrayList<SyncSMS>();
+		Cursor c = database.query(SyncSMSDataBaseHelper.TABLE_SYNCHRONISATION,
+				allColumns, null, null, null, null, null);
+
+		while (!c.isAfterLast()) {
+			list.add(cursorToSyncSMS(c));
+			c.moveToNext();
+		}
+		c.close();
+		return list;
+	}
+
 	public SyncSMS cursorToSyncSMS(Cursor c) {
 		if (c.moveToFirst()) {
 			SyncSMS sSms = new SyncSMS();
@@ -114,7 +125,7 @@ public class SyncDataSource {
 			c.close();
 			return sSms;
 		}
+		c.close();
 		return null;
 	}
-
 }

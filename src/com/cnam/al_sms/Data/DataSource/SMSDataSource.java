@@ -17,18 +17,14 @@ public class SMSDataSource {
 
 	private SQLiteDatabase database;
 	private SMSDataBaseHelper dbHelper;
-	private String[] allColumns = { SMSDataBaseHelper.COLUMN_ID,
+
+	public static String[] allColumns = { SMSDataBaseHelper.COLUMN_ID,
 			SMSDataBaseHelper.COLUMN_THREADID,
-			SMSDataBaseHelper.COLUMN_ADDRESS,
-			SMSDataBaseHelper.COLUMN_PERSON,
-			SMSDataBaseHelper.COLUMN_DATE,
-			SMSDataBaseHelper.COLUMN_DATESENT,
-			SMSDataBaseHelper.COLUMN_READ,
-			SMSDataBaseHelper.COLUMN_STATUS,
-			SMSDataBaseHelper.COLUMN_TYPE,
-			SMSDataBaseHelper.COLUMN_SUBJECT,
-			SMSDataBaseHelper.COLUMN_BODY,
-			SMSDataBaseHelper.COLUMN_SEEN };
+			SMSDataBaseHelper.COLUMN_ADDRESS, SMSDataBaseHelper.COLUMN_PERSON,
+			SMSDataBaseHelper.COLUMN_DATE, SMSDataBaseHelper.COLUMN_DATESENT,
+			SMSDataBaseHelper.COLUMN_READ, SMSDataBaseHelper.COLUMN_STATUS,
+			SMSDataBaseHelper.COLUMN_TYPE, SMSDataBaseHelper.COLUMN_SUBJECT,
+			SMSDataBaseHelper.COLUMN_BODY, SMSDataBaseHelper.COLUMN_SEEN };
 
 	public SMSDataSource(Context context) {
 		dbHelper = new SMSDataBaseHelper(context);
@@ -42,16 +38,16 @@ public class SMSDataSource {
 		dbHelper.close();
 	}
 
-	public SMS creerSMS(int auteur, String message) {
-		ContentValues values = new ContentValues();
-		values.put(SMSDataBaseHelper.COLUMN_BODY, message);
-		values.put(SMSDataBaseHelper.COLUMN_PERSON, auteur);
-		long insertId = database.insert(SMSDataBaseHelper.TABLE_SMS, null,
-				values);
-		Cursor cursor = database.query(SMSDataBaseHelper.TABLE_SMS,
-				allColumns,
-				SMSDataBaseHelper.COLUMN_ID + " = " + insertId, null,
-				null, null, null);
+	public long creerSMS(ContentValues cval) {
+		long insertId = database
+				.insert(SMSDataBaseHelper.TABLE_SMS, null, cval);
+		return insertId;
+	}
+
+	public SMS getSMS(long id) {
+		Cursor cursor = database.query(SMSDataBaseHelper.TABLE_SMS, allColumns,
+				SMSDataBaseHelper.COLUMN_ID + " = " + id, null, null,
+				null, null);
 		cursor.moveToFirst();
 		SMS newSMS = cursorToSMS(cursor);
 		cursor.close();
@@ -65,10 +61,10 @@ public class SMSDataSource {
 		return result;
 	}
 
-	public List<SMS> getSMS(int person) {
+	public List<SMS> getSMSFrom(int person) {
 		List<SMS> SMSs = new ArrayList<SMS>();
-		Cursor cursor = database.query(SMSDataBaseHelper.TABLE_SMS,
-				allColumns, SMSDataBaseHelper.COLUMN_PERSON + " = ?",
+		Cursor cursor = database.query(SMSDataBaseHelper.TABLE_SMS, allColumns,
+				SMSDataBaseHelper.COLUMN_PERSON + " = ?",
 				new String[] { String.valueOf(person) }, null, null, null);
 		cursor.moveToFirst();
 		while (!cursor.isAfterLast()) {
@@ -78,11 +74,11 @@ public class SMSDataSource {
 		cursor.close();
 		return SMSs;
 	}
-	
+
 	public List<SMS> getSmsAfterDate(Date d) {
 		List<SMS> SMSs = new ArrayList<SMS>();
-		Cursor cursor = database.query(SMSDataBaseHelper.TABLE_SMS,
-				allColumns, SMSDataBaseHelper.COLUMN_ID + " > ?",
+		Cursor cursor = database.query(SMSDataBaseHelper.TABLE_SMS, allColumns,
+				SMSDataBaseHelper.COLUMN_ID + " > ?",
 				new String[] { d.toString() }, null, null, null);
 		cursor.moveToFirst();
 		while (!cursor.isAfterLast()) {
@@ -93,14 +89,41 @@ public class SMSDataSource {
 		return SMSs;
 	}
 
+	/*
+	 * SMSDataBaseHelper.COLUMN_ID, SMSDataBaseHelper.COLUMN_THREADID,
+	 * SMSDataBaseHelper.COLUMN_ADDRESS, SMSDataBaseHelper.COLUMN_PERSON,
+	 * SMSDataBaseHelper.COLUMN_DATE, SMSDataBaseHelper.COLUMN_DATESENT,
+	 * SMSDataBaseHelper.COLUMN_READ, SMSDataBaseHelper.COLUMN_STATUS,
+	 * SMSDataBaseHelper.COLUMN_TYPE, SMSDataBaseHelper.COLUMN_SUBJECT,
+	 * SMSDataBaseHelper.COLUMN_BODY, SMSDataBaseHelper.COLUMN_SEEN
+	 */
+
 	private SMS cursorToSMS(Cursor cursor) {
 		SMS sms = new SMS();
-		sms.setId(cursor.getLong(cursor
+		sms.setId(cursor.getInt(cursor
 				.getColumnIndex(SMSDataBaseHelper.COLUMN_ID)));
-		sms.setMessage(cursor.getString(cursor
-				.getColumnIndex(SMSDataBaseHelper.COLUMN_BODY)));
+		sms.setFilId(cursor.getLong(cursor
+				.getColumnIndex(SMSDataBaseHelper.COLUMN_THREADID)));
+		sms.setAdresse(cursor.getString(cursor
+				.getColumnIndex(SMSDataBaseHelper.COLUMN_ADDRESS)));
 		sms.setPersonne(cursor.getInt(cursor
 				.getColumnIndex(SMSDataBaseHelper.COLUMN_PERSON)));
+		sms.setDate(new Date(cursor.getInt(cursor
+				.getColumnIndex(SMSDataBaseHelper.COLUMN_DATE))));
+		sms.setDateEnvoi(new Date(cursor.getInt(cursor
+				.getColumnIndex(SMSDataBaseHelper.COLUMN_DATESENT))));
+		sms.setLu(cursor.getInt(cursor
+				.getColumnIndex(SMSDataBaseHelper.COLUMN_READ)));
+		sms.setStatut(cursor.getInt(cursor
+				.getColumnIndex(SMSDataBaseHelper.COLUMN_STATUS)));
+		sms.setType(cursor.getInt(cursor
+				.getColumnIndex(SMSDataBaseHelper.COLUMN_TYPE)));
+		sms.setSujet(cursor.getString(cursor
+				.getColumnIndex(SMSDataBaseHelper.COLUMN_SUBJECT)));
+		sms.setMessage(cursor.getString(cursor
+				.getColumnIndex(SMSDataBaseHelper.COLUMN_BODY)));
+		sms.setVu(cursor.getInt(cursor
+				.getColumnIndex(SMSDataBaseHelper.COLUMN_SEEN)));
 		return sms;
 	}
 }

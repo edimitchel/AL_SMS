@@ -11,7 +11,6 @@ public class Globales {
 	
 	public static DeviceType getDeviceType(Context context){
 		TelephonyManager manager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-		String type = null;
 		if (manager.getPhoneType() == TelephonyManager.PHONE_TYPE_NONE) {
 			Globales.typeAppareil =  Globales.DeviceType.tablette;
 		} else {

@@ -13,14 +13,17 @@ public class SyncSMSDataBaseHelper extends SQLiteOpenHelper {
 	public static final String COLUMN_DATE = "date";
 
 	/**
-	 * Type de la synchronisation 0: Synchronisation sur période 1:
-	 * Synchronisation à la volée
+	 * <h1>Type de la synchronisation</h1> 
+	 * <ul>
+	 * 	<li>0: Synchronisation sur période</li> 
+	 * 	<li>1: Synchronisation à la volée</li>
+	 * </ul>
 	 */
 	public static final String COLUMN_TYPE = "type";
 	public static final String COLUMN_FISRTSMS = "first_sms";
 	public static final String COLUMN_LASTSMS = "last_sms";
 
-	private static final String DATABASE_NAME = "synchronisation.db";
+	private static final String DATABASE_NAME = "alsms.db";
 	private static final int DATABASE_VERSION = 1;
 
 	private static final String DATABASE_CREATE = "create table "

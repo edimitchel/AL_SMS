@@ -6,11 +6,11 @@ import java.util.Date;
 public class SMS implements Serializable {
 	private static final long serialVersionUID = 3668704935456458913L;
 	private long id;
-	private long fil_id;
+	private long filId;
 	private String adresse;
 	private int personne;
 	private Date date;
-	private Date date_envoi;
+	private Date dateEnvoi;
 	private int lu;
 	private int statut;
 	private int type;
@@ -26,12 +26,12 @@ public class SMS implements Serializable {
 		this.id = id;
 	}
 
-	public long getFil_id() {
-		return fil_id;
+	public long getFilId() {
+		return filId;
 	}
 
-	public void setFil_id(long fil_id) {
-		this.fil_id = fil_id;
+	public void setFilId(long filId) {
+		this.filId = filId;
 	}
 
 	public String getAdresse() {
@@ -58,12 +58,12 @@ public class SMS implements Serializable {
 		this.date = date;
 	}
 
-	public Date getDate_envoi() {
-		return date_envoi;
+	public Date getDateEnvoi() {
+		return dateEnvoi;
 	}
 
-	public void setDate_envoi(Date date_envoi) {
-		this.date_envoi = date_envoi;
+	public void setDateEnvoi(Date dateEnvoi) {
+		this.dateEnvoi = dateEnvoi;
 	}
 
 	public int getLu() {
@@ -131,15 +131,15 @@ public class SMS implements Serializable {
 	 * @param message
 	 * @param vu
 	 */
-	public SMS(long id, long fil_id, String adresse, int personne, Date date,
-			Date date_envoi, int lu, int statut, int type, String sujet,
+	public SMS(long id, long filId, String adresse, int personne, Date date,
+			Date dateEnvoi, int lu, int statut, int type, String sujet,
 			String message, int vu) {
 		setId(id);
-		setFil_id(fil_id);
+		setFilId(filId);
 		setAdresse(adresse);
 		setPersonne(personne);
 		setDate(date);
-		setDate_envoi(date_envoi);
+		setDateEnvoi(dateEnvoi);
 		setLu(lu);
 		setStatut(statut);
 		setType(type);
