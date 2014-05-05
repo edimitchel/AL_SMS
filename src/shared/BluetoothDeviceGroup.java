@@ -33,4 +33,12 @@ public class BluetoothDeviceGroup {
 	public int size() {
 		return devices.size();
 	}
+
+	public boolean contains(BluetoothDevice device) {
+		for(BluetoothDevice bd: devices){
+			if(bd.getAddress().equals(device.getAddress()))
+				return true;
+		}
+		return false;
+	}
 }
