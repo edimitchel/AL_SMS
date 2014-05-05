@@ -6,13 +6,19 @@ import java.io.OutputStream;
 import java.util.UUID;
 
 import com.cnam.al_sms.BuildConfig;
+import com.cnam.al_sms.Globales;
+import com.cnam.al_sms.Maitre_Activities.ConnexionMaitreActivity;
 
+
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
+import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 
 /**
@@ -168,7 +174,13 @@ public class BluetoothService {
 		mConnectedThread = new ConnectedThread(socket);
 		mConnectedThread.start();
 
-		setState(STATE_CONNECTED);
+		Message msg = mHandler.obtainMessage(Globales.MESSAGE_DEVICE_NAME);
+        Bundle bundle = new Bundle();
+        bundle.putString("Device", device.getName());
+        msg.setData(bundle);
+        mHandler.sendMessage(msg);
+
+        setState(STATE_CONNECTED);
 	}
 
 	/**
@@ -207,6 +219,7 @@ public class BluetoothService {
 			r = mConnectedThread;
 		}
 		r.write(out);
+		
 	}
 
 	/**
@@ -242,11 +255,11 @@ public class BluetoothService {
 
 		public void run() {
 			BluetoothSocket socket = null;
-			while (true) {
+			while (mState != STATE_CONNECTED) {
 				try {
 					socket = mmServerSocket.accept();
 				} catch (IOException e) {
-					break;
+					
 				}
 
 				if (socket != null) {
@@ -255,14 +268,7 @@ public class BluetoothService {
 						case BluetoothService.STATE_LISTEN:
 						case BluetoothService.STATE_CONNECTING:
 							// Situation normal. Start the connected thread.
-							/*
-							 * if(ConnecBluetooth.askAcceptBluetooth(socket.
-							 * getRemoteDevice())){ connected(socket,
-							 * socket.getRemoteDevice()); } else{ try {
-							 * socket.close(); } catch (IOException e) {
-							 * 
-							 * e.printStackTrace(); } }
-							 */
+							connected(socket,	socket.getRemoteDevice()); 						 
 
 							break;
 						case BluetoothService.STATE_NONE:
@@ -273,7 +279,9 @@ public class BluetoothService {
 								Log.e(TAG,
 										"Could not close unwanted socket", e);
 							}
+							
 							break;
+							
 						}
 					}
 				}
@@ -296,6 +304,8 @@ public class BluetoothService {
 		private final OutputStream mmOutStream;
 
 		public ConnectedThread(BluetoothSocket socket) {
+			Log.i("ALSMS-Bluetooth Service", "connected to "+socket.getRemoteDevice().getName());
+
 			mmSocket = socket;
 			InputStream tmpIn = null;
 			OutputStream tmpOut = null;
@@ -317,16 +327,23 @@ public class BluetoothService {
 			while (true) {
 				try {
 					bytes = mmInStream.read(buffer);
+					 mHandler.obtainMessage(Globales.MESSAGE_TOAST, bytes, -1, buffer)
+                     .sendToTarget();
 				} catch (IOException e) {
+					Log.e(TAG, "disconnected", e);
+                    connectionLost();
 					break;
 				}
 			}
+			    
 		}
 
 		/* Appelé afin d'envoyer des données */
 		public void write(byte[] bytes) {
 			try {
 				mmOutStream.write(bytes);
+				 mHandler.obtainMessage(Globales.MESSAGE_WRITE, -1, -1, bytes)
+                 .sendToTarget();
 			} catch (IOException e) {
 			}
 		}
@@ -352,7 +369,6 @@ public class BluetoothService {
 			BluetoothSocket tmp = null;
 			mmDevice = device;
 			mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-			Log.i("ALSMS-Bluetooth Service", "connected to " + mmDevice.getName());
 			// Get a BluetoothSocket to connect with the given BluetoothDevice
 			try {
 				// MY_UUID is the app's UUID string, also used by the server
@@ -377,7 +393,8 @@ public class BluetoothService {
 				return;
 			}
 
-			// TODO Gestion la connexion dans un autre thread
+			
+			 BluetoothService.this.start();
 
 		}
 

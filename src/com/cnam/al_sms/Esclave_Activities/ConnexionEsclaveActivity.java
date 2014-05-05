@@ -18,7 +18,7 @@ import com.cnam.al_sms.R;
 import com.cnam.al_sms.Connectivite.BluetoothService;
 import com.cnam.al_sms.Connectivite.ConnecBluetooth;
 
-public class ConnexionEsclaveActivity extends Activity {
+public class ConnexionEsclaveActivity extends Activity implements View.OnLongClickListener  {
 	private BluetoothService bTService = new BluetoothService(this,
 			new Handler());
 	private BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -27,9 +27,9 @@ public class ConnexionEsclaveActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_connexion_esclave);
-
+		
 		// On récupère les données du Bundle
-		Bundle obunble = this.getIntent().getExtras();
+		Bundle obunble = this.getIntent().getExtras(); 
 		if (obunble != null && obunble.containsKey("Adresse_MAC")) {
 			String adress = this.getIntent().getStringExtra("Adresse_MAC");
 			TextView txt_mac = (TextView) findViewById(R.id.txt_mac);
@@ -38,8 +38,10 @@ public class ConnexionEsclaveActivity extends Activity {
 			// création d'un Bluetooth device grace à l'adresse puis connection grace au Bluetooth Service
 			BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(adress);
 			bTService.connect(device);
+			txt_mac.setOnLongClickListener(this);
 			Toast.makeText(this, "En attente de connexion", Toast.LENGTH_LONG).show();
 			ConnecBluetooth.askAcceptBluetooth(device,this);
+			
 		}
 
 	}
@@ -49,6 +51,7 @@ public class ConnexionEsclaveActivity extends Activity {
 
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.connexion_esclave, menu);
+		
 		return true;
 	}
 
@@ -79,6 +82,17 @@ public class ConnexionEsclaveActivity extends Activity {
 					R.layout.fragment_connexion_esclave, container, false);
 			return rootView;
 		}
+	}
+
+	@Override
+	public boolean onLongClick(View v) {
+		/* temporaire */
+		String message  = "Ceci est un test - ConnexionEsclaveActivity";
+		byte[] send = message.getBytes();
+        bTService.write(send);
+		Toast.makeText(this, "Envoi d'un message : \""+ message +"\"", Toast.LENGTH_LONG).show();
+
+        /* temporaire */		return false;
 	}
 
 	/* Liaison Bluetooth */
