@@ -1,4 +1,4 @@
-package com.cnam.al_sms.Data.DataSource;
+package com.cnam.al_sms.data.datasource;
 
 import java.sql.Date;
 import java.util.ArrayList;
@@ -10,9 +10,9 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.cnam.al_sms.Data.SyncSMSDataBaseHelper;
-import com.cnam.al_sms.Modeles.SMS;
-import com.cnam.al_sms.Modeles.SyncSMS;
+import com.cnam.al_sms.data.SyncSMSDataBaseHelper;
+import com.cnam.al_sms.modeles.SMS;
+import com.cnam.al_sms.modeles.SyncSMS;
 
 public class SyncDataSource {
 	private SQLiteDatabase database;

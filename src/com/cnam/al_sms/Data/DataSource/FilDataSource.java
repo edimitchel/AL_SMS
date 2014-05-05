@@ -1,4 +1,4 @@
-package com.cnam.al_sms.Data.DataSource;
+package com.cnam.al_sms.data.datasource;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,9 +10,9 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import com.cnam.al_sms.Data.FilSMSDataBaseHelper;
-import com.cnam.al_sms.Data.SMSDataBaseHelper;
-import com.cnam.al_sms.Modeles.Fil;
+import com.cnam.al_sms.data.FilSMSDataBaseHelper;
+import com.cnam.al_sms.data.SMSDataBaseHelper;
+import com.cnam.al_sms.modeles.Fil;
 
 public class FilDataSource {
 	private static final String TAG = "ALSMS";

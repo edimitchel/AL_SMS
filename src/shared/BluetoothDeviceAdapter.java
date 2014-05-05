@@ -14,7 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.cnam.al_sms.R;
-import com.cnam.al_sms.Esclave_Activities.ConnexionEsclaveActivity;
+import com.cnam.al_sms.esclave_activities.ConnexionEsclaveActivity;
 
 public class BluetoothDeviceAdapter extends BaseExpandableListAdapter {
 

@@ -1,4 +1,4 @@
-package com.cnam.al_sms.Data;
+package com.cnam.al_sms.data;
 
 import android.content.Context;
 import android.database.DatabaseErrorHandler;

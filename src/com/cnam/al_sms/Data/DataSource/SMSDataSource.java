@@ -1,4 +1,4 @@
-package com.cnam.al_sms.Data.DataSource;
+package com.cnam.al_sms.data.datasource;
 
 import java.sql.Date;
 import java.util.ArrayList;
@@ -10,8 +10,9 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.cnam.al_sms.Data.SMSDataBaseHelper;
-import com.cnam.al_sms.Modeles.SMS;
+import com.cnam.al_sms.data.SMSDataBaseHelper;
+import com.cnam.al_sms.data.SyncSMSDataBaseHelper;
+import com.cnam.al_sms.modeles.SMS;
 
 public class SMSDataSource {
 
@@ -46,8 +47,8 @@ public class SMSDataSource {
 
 	public SMS getSMS(long id) {
 		Cursor cursor = database.query(SMSDataBaseHelper.TABLE_SMS, allColumns,
-				SMSDataBaseHelper.COLUMN_ID + " = " + id, null, null,
-				null, null);
+				SMSDataBaseHelper.COLUMN_ID + " = " + id, null, null, null,
+				null);
 		cursor.moveToFirst();
 		SMS newSMS = cursorToSMS(cursor);
 		cursor.close();
@@ -89,14 +90,27 @@ public class SMSDataSource {
 		return SMSs;
 	}
 
-	/*
-	 * SMSDataBaseHelper.COLUMN_ID, SMSDataBaseHelper.COLUMN_THREADID,
-	 * SMSDataBaseHelper.COLUMN_ADDRESS, SMSDataBaseHelper.COLUMN_PERSON,
-	 * SMSDataBaseHelper.COLUMN_DATE, SMSDataBaseHelper.COLUMN_DATESENT,
-	 * SMSDataBaseHelper.COLUMN_READ, SMSDataBaseHelper.COLUMN_STATUS,
-	 * SMSDataBaseHelper.COLUMN_TYPE, SMSDataBaseHelper.COLUMN_SUBJECT,
-	 * SMSDataBaseHelper.COLUMN_BODY, SMSDataBaseHelper.COLUMN_SEEN
-	 */
+	public List<SMS> getAll() {
+		ArrayList<SMS> list = new ArrayList<SMS>();
+		Cursor c = database.query(SyncSMSDataBaseHelper.TABLE_SYNCHRONISATION,
+				allColumns, null, null, null, null, null);
+
+		while (!c.isAfterLast()) {
+			list.add(cursorToSMS(c));
+			c.moveToNext();
+		}
+		c.close();
+		return list;
+	}
+
+	public int getLastSMSId() {
+		Cursor c = database.query(SMSDataBaseHelper.TABLE_SMS,
+				new String[] { SMSDataBaseHelper.COLUMN_ID }, null, null, null,
+				null, SMSDataBaseHelper.COLUMN_ID + " DESC", "1");
+		c.moveToFirst();
+		int id = c.getInt(c.getColumnIndex(SMSDataBaseHelper.COLUMN_ID));
+		return id;
+	}
 
 	private SMS cursorToSMS(Cursor cursor) {
 		SMS sms = new SMS();

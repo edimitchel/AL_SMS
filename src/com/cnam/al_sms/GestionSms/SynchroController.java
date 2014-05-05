@@ -1,5 +1,6 @@
-package com.cnam.al_sms.GestionSms;
+package com.cnam.al_sms.gestionsms;
 
+import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -9,9 +10,9 @@ import android.net.Uri;
 import android.provider.Telephony.Sms;
 import android.util.Log;
 
-import com.cnam.al_sms.Data.DataSource.SMSDataSource;
-import com.cnam.al_sms.Data.DataSource.SyncDataSource;
-import com.cnam.al_sms.Modeles.SyncSMS;
+import com.cnam.al_sms.data.datasource.SMSDataSource;
+import com.cnam.al_sms.data.datasource.SyncDataSource;
+import com.cnam.al_sms.modeles.SyncSMS;
 
 public class SynchroController {
 
@@ -37,22 +38,64 @@ public class SynchroController {
 		return r;
 	}
 
-	public static void getAllSmsFromMaster(Context context) {
-		ContentResolver cr = context.getContentResolver();
-		Uri uri_sms = Uri.parse("content://sms");
+	private static ProgressDialog dialog;
+
+	/**
+	 * /!\ Il faut trouver un moyen de faire comme ça :
+	 * http://stackoverflow.com/
+	 * questions/3343490/progressdialog-working-in-thread-on-android
+	 * 
+	 * @param context
+	 */
+	public static void getAllSmsFromMaster(final Context context) {
+		final Uri URI_SMS = Uri.parse("content://sms");
+		final ContentResolver cr = context.getContentResolver();
+		final SMSDataSource sds = new SMSDataSource(context);
+
+		Cursor c_nb = context.getContentResolver().query(URI_SMS, null, null,
+				null, null);
+		final int nombreSMS = c_nb.getCount();
+		c_nb.close();
+
+		dialog = ProgressDialog.show(context,
+				"Récupération des SMS de la base officiel.", "En cours");
+		dialog.setCancelable(false);
+		dialog.setInverseBackgroundForced(false);
+
+		sds.open();
+		
+		Thread thread_premieresynchro = new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				int progress = 0;
+				int num_sms = 0;
+
+				Cursor c = cr.query(URI_SMS, SMSDataSource.allColumns, null,
+						null, Sms.DATE + " ASC");
+				c.moveToFirst();
+
+				while (!c.isAfterLast()) {
+					ContentValues vals = new ContentValues();
+					DatabaseUtils.cursorRowToContentValues(c, vals);
+					long idsms = sds.creerSMS(vals);
+					Log.i(TAG, "SMS id " + idsms + " copié.");
+					num_sms++;
+					progress = Math.round((num_sms / nombreSMS) * 100);
+					dialog.setProgress(progress);
+					c.moveToNext();
+				}
+				sds.close();
+				dialog.dismiss();
+			}
+		});
+		thread_premieresynchro.start();
+	}
+
+	public static void getLastSMSId(Context context) {
 		SMSDataSource sds = new SMSDataSource(context);
 		sds.open();
-
-		Cursor c = cr.query(uri_sms, SMSDataSource.allColumns, null, null,
-				Sms.DATE + " ASC");
-		c.moveToFirst();
-		while (!c.isAfterLast()) {
-			ContentValues vals = new ContentValues();
-			DatabaseUtils.cursorRowToContentValues(c, vals);
-			long idsms = sds.creerSMS(vals);
-			Log.i(TAG, "SMS id " + idsms + " copié.");
-			c.moveToNext();
-		}
+		sds.getLastSMSId();
 		sds.close();
 	}
 

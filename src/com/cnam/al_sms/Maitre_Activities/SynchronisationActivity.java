@@ -1,9 +1,11 @@
-package com.cnam.al_sms.Maitre_Activities;
+package com.cnam.al_sms.maitre_activities;
 
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.view.LayoutInflater;
@@ -14,8 +16,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.cnam.al_sms.R;
-import com.cnam.al_sms.Data.DataSource.FilDataSource;
-import com.cnam.al_sms.GestionSms.SynchroController;
+import com.cnam.al_sms.gestionsms.SynchroController;
 
 public class SynchronisationActivity extends Activity implements
 		NavigationDrawerFragment.NavigationDrawerCallbacks {
@@ -32,10 +33,15 @@ public class SynchronisationActivity extends Activity implements
 	 */
 	private CharSequence mTitle;
 
+	private ProgressDialog pd;
+
+	private Context context;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_synchroniser);
+		context = this;
 
 		mNavigationDrawerFragment = (NavigationDrawerFragment) getFragmentManager()
 				.findFragmentById(R.id.navigation_drawer);
@@ -45,20 +51,11 @@ public class SynchronisationActivity extends Activity implements
 		mNavigationDrawerFragment.setUp(R.id.navigation_drawer,
 				(DrawerLayout) findViewById(R.id.drawer_layout));
 
-		Thread thread_ajoutSMS = new Thread(new Runnable() {
-
-			@Override
-			public void run() {
-				SynchroController.getAllSmsFromMaster(getApplicationContext());
-			}
-		});
-
-		thread_ajoutSMS.run();
-
-		FilDataSource fds = new FilDataSource(this);
-		fds.open();
-		fds.generateFil();
-		fds.close();
+		SynchroController.getAllSmsFromMaster(this);
+		/*
+		 * FilDataSource fds = new FilDataSource(this); fds.open();
+		 * fds.generateFil(); fds.close();
+		 */
 	}
 
 	@Override

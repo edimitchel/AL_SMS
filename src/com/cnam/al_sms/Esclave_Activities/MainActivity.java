@@ -1,7 +1,6 @@
-package com.cnam.al_sms.Esclave_Activities;
+package com.cnam.al_sms.esclave_activities;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 
 import shared.Globales;
@@ -26,9 +25,9 @@ import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
 import com.cnam.al_sms.R;
-import com.cnam.al_sms.Connectivite.BluetoothService;
-import com.cnam.al_sms.Maitre_Activities.ConnexionMaitreActivity;
-import com.cnam.al_sms.Maitre_Activities.SynchronisationActivity;
+import com.cnam.al_sms.connectivite.BluetoothService;
+import com.cnam.al_sms.maitre_activities.ConnexionMaitreActivity;
+import com.cnam.al_sms.maitre_activities.SynchronisationActivity;
 
 public class MainActivity extends Activity {
 	private static final String TAG = "ALSMS";
@@ -80,7 +79,7 @@ public class MainActivity extends Activity {
 		curConversations = cr.query(uConversations, null, null, null,
 				"date DESC");
 
-		Log.i(TAG, Arrays.toString(curConversations.getColumnNames()));
+		//Log.i(TAG, Arrays.toString(curConversations.getColumnNames()));
 		while (curConversations.moveToNext()) {
 			/*
 			 * For debbuging ArrayList<String> values = new ArrayList<String>();
@@ -88,7 +87,7 @@ public class MainActivity extends Activity {
 			 * values.add(curConversations.getString(i)); } Log.i(TAG,
 			 * values.toString());
 			 */
-			Log.i(TAG, Arrays.toString(curConversations.getColumnNames()));
+			//Log.i(TAG, Arrays.toString(curConversations.getColumnNames()));
 
 			mapConversation = new HashMap<String, String>();
 			String thread_id = curConversations.getString(0);
@@ -96,8 +95,7 @@ public class MainActivity extends Activity {
 					.getColumnIndexOrThrow(Sms.Conversations.SNIPPET));
 			int cMsg = curConversations.getInt(curConversations
 					.getColumnIndexOrThrow(Sms.Conversations.MESSAGE_COUNT));
-			String[] recipients_id = curConversations.getString(
-					curConversations.getColumnIndex(Sms.THREAD_ID)).split(" ");
+			
 
 			ArrayList<String> nomsContact = new ArrayList<String>();
 

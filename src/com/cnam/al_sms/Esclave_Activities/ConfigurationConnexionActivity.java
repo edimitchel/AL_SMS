@@ -1,4 +1,4 @@
-package com.cnam.al_sms.Esclave_Activities;
+package com.cnam.al_sms.esclave_activities;
 
 import java.util.ArrayList;
 import java.util.Set;
@@ -22,7 +22,7 @@ import android.widget.ExpandableListView;
 import android.widget.TextView;
 
 import com.cnam.al_sms.R;
-import com.cnam.al_sms.Connectivite.ConnecBluetooth;
+import com.cnam.al_sms.connectivite.ConnecBluetooth;
 
 public class ConfigurationConnexionActivity extends Activity implements
 		Runnable {

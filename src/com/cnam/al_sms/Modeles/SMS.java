@@ -1,4 +1,4 @@
-package com.cnam.al_sms.Modeles;
+package com.cnam.al_sms.modeles;
 
 import java.io.Serializable;
 import java.util.Date;

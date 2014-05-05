@@ -1,20 +1,14 @@
-package com.cnam.al_sms.Connectivite;
+package com.cnam.al_sms.connectivite;
 
 import java.util.UUID;
 
-import com.cnam.al_sms.Al_SMS;
-import com.cnam.al_sms.Esclave_Activities.MainActivity;
-
-import android.R.bool;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Application;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.util.Log;
 
 public class ConnecBluetooth {
 	private final static int REQUEST_CODE_ENABLE_BLUETOOTH = 0;

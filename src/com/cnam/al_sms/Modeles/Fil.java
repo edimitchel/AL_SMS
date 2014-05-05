@@ -1,4 +1,4 @@
-package com.cnam.al_sms.Modeles;
+package com.cnam.al_sms.modeles;
 
 public class Fil {
 	private long filId;

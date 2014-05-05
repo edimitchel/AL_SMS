@@ -1,24 +1,16 @@
-package com.cnam.al_sms.Maitre_Activities;
+package com.cnam.al_sms.maitre_activities;
 
 
-import com.cnam.al_sms.R;
-import com.cnam.al_sms.GestionSms.SynchroController;
-import com.cnam.al_sms.R.drawable;
-import com.cnam.al_sms.R.id;
-import com.cnam.al_sms.R.layout;
-import com.cnam.al_sms.R.menu;
-import com.cnam.al_sms.R.string;
-
-import android.app.Activity;
 import android.app.ActionBar;
+import android.app.Activity;
 import android.app.Fragment;
-import android.support.v4.app.ActionBarDrawerToggle;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -29,6 +21,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import com.cnam.al_sms.R;
 
 /**
  * Fragment used for managing interactions for and presentation of a navigation drawer.
