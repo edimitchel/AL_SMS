@@ -19,7 +19,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.cnam.al_sms.Esclave_Activities.MainActivity"
+            android:name="com.cnam.al_sms.esclave_activities.MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -28,12 +28,22 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.cnam.al_sms.Esclave_Activities.ConfigurationConnexionActivity"
+            android:name="com.cnam.al_sms.esclave_activities.ConfigurationConnexionActivity"
             android:label="@string/app_name" >
-            <intent-filter>
-                <action android:name="android.intent.action.SYNC" />
-            </intent-filter>
         </activity>
+        <activity
+            android:name="com.cnam.al_sms.esclave_activities.ConnexionEsclaveActivity"
+            android:label="@string/title_activity_connexion_esclave" >
+        </activity>
+        <activity
+            android:name="com.cnam.al_sms.maitre_activities.ConnexionMaitreActivity"
+            android:label="@string/title_activity_connexion_maitre" >
+        </activity>
+        <activity
+            android:name="com.cnam.al_sms.maitre_activities.SynchronisationActivity"
+            android:label="@string/title_activity_synchronisation" >
+        </activity>
+        
         <activity
             android:name="com.cnam.al_sms.ConfigurationConnexionView"
             android:label="@string/title_activity_configuration_connexion_view" >
@@ -41,18 +51,6 @@
         <activity
             android:name="com.cnam.al_sms.Conversation_View"
             android:label="@string/title_activity_conversation__view" >
-        </activity>
-        <activity
-            android:name="com.cnam.al_sms.Esclave_Activities.ConnexionEsclaveActivity"
-            android:label="@string/title_activity_connexion_esclave" >
-        </activity>
-        <activity
-            android:name="com.cnam.al_sms.Maitre_Activities.ConnexionMaitreActivity"
-            android:label="@string/title_activity_connexion_maitre" >
-        </activity>
-        <activity
-            android:name="com.cnam.al_sms.Maitre_Activities.SynchronisationActivity"
-            android:label="@string/title_activity_synchronisation" >
         </activity>
     </application>
 
