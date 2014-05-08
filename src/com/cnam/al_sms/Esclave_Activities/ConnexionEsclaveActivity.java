@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,7 +19,7 @@ import com.cnam.al_sms.R;
 import com.cnam.al_sms.connectivite.BluetoothService;
 import com.cnam.al_sms.connectivite.ConnecBluetooth;
 
-public class ConnexionEsclaveActivity extends Activity {
+public class ConnexionEsclaveActivity extends Activity implements OnLongClickListener{
 	private BluetoothService bTService = new BluetoothService(this,
 			new Handler());
 	private BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -40,6 +41,7 @@ public class ConnexionEsclaveActivity extends Activity {
 			bTService.connect(device);
 			Toast.makeText(this, "En attente de connexion", Toast.LENGTH_LONG).show();
 			ConnecBluetooth.askAcceptBluetooth(device,this);
+			txt_mac.setOnLongClickListener(this);
 		}
 
 	}
@@ -114,5 +116,16 @@ public class ConnexionEsclaveActivity extends Activity {
 	 * "BT not enabled"); Toast.makeText(this, "Bluetooth not enabled",
 	 * Toast.LENGTH_SHORT).show(); finish(); } } }
 	 */
+	
+	@Override
+	public boolean onLongClick(View v) {
+		/* temporaire */
+		String message  = "Ceci est un test - ConnexionEsclaveActivity";
+		byte[] send = message.getBytes();
+        bTService.write(send);
+		Toast.makeText(this, "Envoi d'un message : \""+ message +"\"", Toast.LENGTH_LONG).show();
+
+        /* temporaire */		return false;
+	}
 
 }

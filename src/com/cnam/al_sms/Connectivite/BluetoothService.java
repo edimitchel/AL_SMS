@@ -5,14 +5,21 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.UUID;
 
+import shared.Globales;
+
 import com.cnam.al_sms.BuildConfig;
 
+
+
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
+import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 
 /**
@@ -166,9 +173,17 @@ public class BluetoothService {
 
 		// Démarre le thread pour la gestion de la connexion et des communicaitons
 		mConnectedThread = new ConnectedThread(socket);
+		Message msg = mHandler.obtainMessage(Globales.MESSAGE_DEVICE_NAME);
+        Bundle bundle = new Bundle();
+        bundle.putString("Device", device.getName());
+        msg.setData(bundle);
+        mHandler.sendMessage(msg);
+        
 		mConnectedThread.start();
 
-		setState(STATE_CONNECTED);
+		
+
+        setState(STATE_CONNECTED);
 	}
 
 	/**
@@ -207,21 +222,36 @@ public class BluetoothService {
 			r = mConnectedThread;
 		}
 		r.write(out);
+		
 	}
 
 	/**
-	 * Indicate that the connection attempt failed and notify the UI Activity.
-	 */
-	private void connectionFailed() {
-		setState(STATE_LISTEN);
-	}
+     * Indicate that the connection attempt failed and notify the UI Activity.
+     */
+    private void connectionFailed() {
+        setState(STATE_LISTEN);
 
-	/**
-	 * Indicate that the connection was lost and notify the UI Activity.
-	 */
-	private void connectionLost() {
-		setState(STATE_LISTEN);
-	}
+        // Send a failure message back to the Activity
+        Message msg = mHandler.obtainMessage(Globales.MESSAGE_TOAST);
+        Bundle bundle = new Bundle();
+        bundle.putString(Globales.TOAST, "Unable to connect device");
+        msg.setData(bundle);
+        mHandler.sendMessage(msg);
+    }
+
+    /**
+     * Indicate that the connection was lost and notify the UI Activity.
+     */
+    private void connectionLost() {
+        setState(STATE_LISTEN);
+
+        // Send a failure message back to the Activity
+        Message msg = mHandler.obtainMessage(Globales.MESSAGE_TOAST);
+        Bundle bundle = new Bundle();
+        bundle.putString(Globales.TOAST, "Device connection was lost");
+        msg.setData(bundle);
+        mHandler.sendMessage(msg);
+    }
 
 	/* Thread permettant d'accepter une demande */
 
@@ -242,11 +272,11 @@ public class BluetoothService {
 
 		public void run() {
 			BluetoothSocket socket = null;
-			while (true) {
+			while (mState != STATE_CONNECTED) {
 				try {
 					socket = mmServerSocket.accept();
 				} catch (IOException e) {
-					break;
+					
 				}
 
 				if (socket != null) {
@@ -255,14 +285,7 @@ public class BluetoothService {
 						case BluetoothService.STATE_LISTEN:
 						case BluetoothService.STATE_CONNECTING:
 							// Situation normal. Start the connected thread.
-							/*
-							 * if(ConnecBluetooth.askAcceptBluetooth(socket.
-							 * getRemoteDevice())){ connected(socket,
-							 * socket.getRemoteDevice()); } else{ try {
-							 * socket.close(); } catch (IOException e) {
-							 * 
-							 * e.printStackTrace(); } }
-							 */
+							connected(socket,	socket.getRemoteDevice()); 						 
 
 							break;
 						case BluetoothService.STATE_NONE:
@@ -273,7 +296,9 @@ public class BluetoothService {
 								Log.e(TAG,
 										"Could not close unwanted socket", e);
 							}
+							
 							break;
+							
 						}
 					}
 				}
@@ -296,6 +321,8 @@ public class BluetoothService {
 		private final OutputStream mmOutStream;
 
 		public ConnectedThread(BluetoothSocket socket) {
+			Log.i("ALSMS-Bluetooth Service", "connected to "+socket.getRemoteDevice().getName());
+
 			mmSocket = socket;
 			InputStream tmpIn = null;
 			OutputStream tmpOut = null;
@@ -316,17 +343,25 @@ public class BluetoothService {
 
 			while (true) {
 				try {
+					Log.i("ALSMS-Bluetooth Service", "obtain");
 					bytes = mmInStream.read(buffer);
+					 mHandler.obtainMessage(Globales.MESSAGE_TOAST, bytes, -1, buffer)
+                     .sendToTarget();
 				} catch (IOException e) {
+					Log.e("ALSMS-Bluetooth Service", "disconnected", e);
+                    connectionLost();
 					break;
 				}
 			}
+			    
 		}
 
 		/* Appelé afin d'envoyer des données */
 		public void write(byte[] bytes) {
 			try {
 				mmOutStream.write(bytes);
+				 mHandler.obtainMessage(Globales.MESSAGE_WRITE, -1, -1, bytes)
+                 .sendToTarget();
 			} catch (IOException e) {
 			}
 		}
@@ -352,7 +387,6 @@ public class BluetoothService {
 			BluetoothSocket tmp = null;
 			mmDevice = device;
 			mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-			Log.i("ALSMS-Bluetooth Service", "connected to " + mmDevice.getName());
 			// Get a BluetoothSocket to connect with the given BluetoothDevice
 			try {
 				// MY_UUID is the app's UUID string, also used by the server
@@ -377,7 +411,8 @@ public class BluetoothService {
 				return;
 			}
 
-			// TODO Gestion la connexion dans un autre thread
+			
+			 BluetoothService.this.start();
 
 		}
 
