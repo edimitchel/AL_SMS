@@ -1,5 +1,7 @@
 package com.cnam.al_sms.maitre_activities;
 
+import java.util.ArrayList;
+
 import shared.Globales;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -109,9 +111,12 @@ public class ConnexionMaitreActivity extends Activity {
             case Globales.MESSAGE_READ:
             	byte[] readBuff = (byte[]) msg.obj;
                 // construct a string from the valid bytes in the buffer
-                SMS readMessage = SMS.getFromBytes(readBuff);
+                ArrayList<SMS> readMessage = SMS.getListFromBytes(readBuff);
             	//String readMessage = new String(readBuff, 0, msg.arg1);
-                Toast.makeText(getApplicationContext(), readMessage.getMessage(),
+                Toast.makeText(getApplicationContext(), readMessage.get(0).getMessage(),
+                        Toast.LENGTH_SHORT).show();
+                
+                Toast.makeText(getApplicationContext(), readMessage.get(1).getMessage(),
                         Toast.LENGTH_SHORT).show();
                 break;
             case Globales.MESSAGE_DEVICE_NAME:

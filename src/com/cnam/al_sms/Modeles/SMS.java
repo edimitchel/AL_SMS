@@ -227,7 +227,7 @@ public class SMS implements Serializable {
 		
 	}
 	
-	public static byte[] getBytesFrom(ArrayList<SMS> sms){
+	public static byte[] getBytesFromList(ArrayList<SMS> sms){
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		ObjectOutput out = null;
 		byte[] smsBytes = null;
@@ -266,7 +266,7 @@ public class SMS implements Serializable {
 		
 	}
 	
-	public static List<SMS> getListFromBytes(byte[] byteSms){
+	public static ArrayList<SMS> getListFromBytes(byte[] byteSms){
 		ByteArrayInputStream bis = new ByteArrayInputStream(byteSms);
 		ObjectInput in = null;
 		ArrayList<SMS> smsRe = null;

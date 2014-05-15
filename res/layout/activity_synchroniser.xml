@@ -23,14 +23,5 @@
          the container.
     -->
 
-<<<<<<< HEAD
-    <fragment
-        android:id="@+id/navigation_drawer"
-        android:name="com.cnam.al_sms.maitre_activities.NavigationDrawerFragment"
-        android:layout_width="@dimen/navigation_drawer_width"
-        android:layout_height="match_parent"
-        android:layout_gravity="start" />
 
-=======
->>>>>>> f8fa0baebf896cbef06e377e10c747172b2d9af9
 </android.support.v4.widget.DrawerLayout>

@@ -1,5 +1,6 @@
 package com.cnam.al_sms.esclave_activities;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import android.app.Activity;
@@ -123,9 +124,11 @@ public class ConnexionEsclaveActivity extends Activity implements OnLongClickLis
 	@Override
 	public boolean onLongClick(View v) {
 		/* temporaire */
-		
-		SMS sms = new SMS(123,123,"adress",1,new Date(),new Date(),1,2,3,"Salut","Salut les amis",2);
-		byte[] data = SMS.getBytes(sms);
+		ArrayList<SMS> aList =new ArrayList<SMS>();
+		aList.add(new SMS(123,123,"adress",1,new Date(),new Date(),1,2,3,"Salut","Salut les amis",2));
+		aList.add(new SMS(43,43,"adrhhess",1,new Date(),new Date(),1,2,3,"Salut","Comment sa va ?",2));
+
+		byte[] data = SMS.getBytesFromList(aList);
 		
         bTService.send(data);
 		Toast.makeText(this, "Transfet d'un message", Toast.LENGTH_LONG).show();
