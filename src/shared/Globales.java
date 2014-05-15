@@ -1,5 +1,8 @@
 package shared;
 
+import com.cnam.al_sms.connectivite.BluetoothService;
+
+import android.app.Activity;
 import android.content.Context;
 import android.telephony.TelephonyManager;
 
@@ -23,8 +26,15 @@ public class Globales {
 
 	}
 	
+	/* BLEUTOOTH SERVICE */
+	public static BluetoothService BTService;
+	
+	/* Activity Courantes */
+	public static Activity curActivity;
+	
 	/* CONSTANTES */
     public static final String TOAST = "toast";
+    
 
 	
 	

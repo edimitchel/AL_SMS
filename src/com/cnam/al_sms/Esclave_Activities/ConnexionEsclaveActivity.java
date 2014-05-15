@@ -1,5 +1,7 @@
 package com.cnam.al_sms.esclave_activities;
 
+import java.util.Date;
+
 import android.app.Activity;
 import android.app.Fragment;
 import android.bluetooth.BluetoothAdapter;
@@ -18,6 +20,7 @@ import android.widget.Toast;
 import com.cnam.al_sms.R;
 import com.cnam.al_sms.connectivite.BluetoothService;
 import com.cnam.al_sms.connectivite.ConnecBluetooth;
+import com.cnam.al_sms.modeles.SMS;
 
 public class ConnexionEsclaveActivity extends Activity implements OnLongClickListener{
 	private BluetoothService bTService = new BluetoothService(this,
@@ -120,10 +123,12 @@ public class ConnexionEsclaveActivity extends Activity implements OnLongClickLis
 	@Override
 	public boolean onLongClick(View v) {
 		/* temporaire */
-		String message  = "Ceci est un test - ConnexionEsclaveActivity";
-		byte[] send = message.getBytes();
-        bTService.write(send);
-		Toast.makeText(this, "Envoi d'un message : \""+ message +"\"", Toast.LENGTH_LONG).show();
+		
+		SMS sms = new SMS(123,123,"adress",1,new Date(),new Date(),1,2,3,"Salut","Salut les amis",2);
+		byte[] data = SMS.getBytes(sms);
+		
+        bTService.send(data);
+		Toast.makeText(this, "Transfet d'un message", Toast.LENGTH_LONG).show();
 
         /* temporaire */		return false;
 	}
