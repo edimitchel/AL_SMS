@@ -7,6 +7,7 @@ import shared.Globales;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -28,6 +29,7 @@ import com.cnam.al_sms.R;
 import com.cnam.al_sms.connectivite.BluetoothService;
 import com.cnam.al_sms.maitre_activities.ConnexionMaitreActivity;
 import com.cnam.al_sms.maitre_activities.SynchronisationActivity;
+import com.cnam.al_sms.data.datasource.*;
 
 public class MainActivity extends Activity {
 	private static final String TAG = "ALSMS";
@@ -164,6 +166,8 @@ public class MainActivity extends Activity {
 				startActivityForResult(i_sync, CODE_APP);
 			}
 		});
+		
+		initDatabase(this.getApplicationContext());
 	}
 
 	@Override
@@ -192,5 +196,19 @@ public class MainActivity extends Activity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
-
+	
+	//Fonction qui permet d'initialiser toutes les bases de données.
+	public static void initDatabase(Context context){
+		FilDataSource fds = new FilDataSource(context);
+		SMSDataSource smsds = new SMSDataSource(context);
+		SyncDataSource sds = new SyncDataSource(context);
+		
+		fds.open();
+		smsds.open();
+		sds.open();
+		
+		fds.close();
+		smsds.close();
+		sds.close();		
+	}
 }
