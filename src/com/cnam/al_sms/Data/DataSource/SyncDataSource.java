@@ -10,25 +10,25 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.cnam.al_sms.data.SyncSMSDataBaseHelper;
+import com.cnam.al_sms.data.DataBaseHelper;
 import com.cnam.al_sms.modeles.SMS;
 import com.cnam.al_sms.modeles.SyncSMS;
 
 public class SyncDataSource {
 	private SQLiteDatabase database;
-	private SyncSMSDataBaseHelper dbHelper;
-	public static String[] allColumns = { SyncSMSDataBaseHelper.COLUMN_ID,
-			SyncSMSDataBaseHelper.COLUMN_DATE,
-			SyncSMSDataBaseHelper.COLUMN_TYPE,
-			SyncSMSDataBaseHelper.COLUMN_FISRTSMS,
-			SyncSMSDataBaseHelper.COLUMN_LASTSMS };
+	private DataBaseHelper dbHelper;
+	public static String[] allColumns = { DataBaseHelper.COLUMN_ID,
+			DataBaseHelper.COLUMN_DATE,
+			DataBaseHelper.COLUMN_TYPE,
+			DataBaseHelper.COLUMN_FISRTSMS,
+			DataBaseHelper.COLUMN_LASTSMS };
 	private Context contexte;
 
 	public SyncDataSource() {
 	}
 
 	public SyncDataSource(Context context) {
-		dbHelper = new SyncSMSDataBaseHelper(context);
+		dbHelper = new DataBaseHelper(context);
 		contexte = context;
 	}
 
@@ -43,8 +43,8 @@ public class SyncDataSource {
 	public SyncSMS getSyncSMS(long id) throws Exception {
 		if (database != null) {
 			Cursor c = database.query(
-					SyncSMSDataBaseHelper.TABLE_SYNCHRONISATION, allColumns,
-					SyncSMSDataBaseHelper.COLUMN_ID + " = ?",
+					DataBaseHelper.TABLE_SYNCHRONISATION, allColumns,
+					DataBaseHelper.COLUMN_ID + " = ?",
 					new String[] { String.valueOf(id) }, null, null, null);
 			return (SyncSMS) cursorToSyncSMS(c);
 		} else
@@ -54,10 +54,10 @@ public class SyncDataSource {
 	public SyncSMS getLastSyncSMSDate(int type) {
 		if (database != null) {
 			Cursor c = database.query(
-					SyncSMSDataBaseHelper.TABLE_SYNCHRONISATION, allColumns,
-					SyncSMSDataBaseHelper.COLUMN_TYPE + " = ?",
+					DataBaseHelper.TABLE_SYNCHRONISATION, allColumns,
+					DataBaseHelper.COLUMN_TYPE + " = ?",
 					new String[] { String.valueOf(type) }, null, null,
-					SyncSMSDataBaseHelper.COLUMN_DATE + " DESC", "1");
+					DataBaseHelper.COLUMN_DATE + " DESC", "1");
 			c.moveToFirst();
 			return (SyncSMS) cursorToSyncSMS(c);
 		}
@@ -86,19 +86,19 @@ public class SyncDataSource {
 	public SyncSMS addSyncSms(SyncSMS sSms) throws Exception {
 		ContentValues cv = new ContentValues();
 		Date now = new Date(System.currentTimeMillis());
-		cv.put(SyncSMSDataBaseHelper.COLUMN_DATE, now.getTime());
-		cv.put(SyncSMSDataBaseHelper.COLUMN_TYPE, sSms.getType());
-		cv.put(SyncSMSDataBaseHelper.COLUMN_FISRTSMS, sSms.getIdPremierSMS());
-		cv.put(SyncSMSDataBaseHelper.COLUMN_LASTSMS, sSms.getIdDernierSMS());
+		cv.put(DataBaseHelper.COLUMN_DATE, now.getTime());
+		cv.put(DataBaseHelper.COLUMN_TYPE, sSms.getType());
+		cv.put(DataBaseHelper.COLUMN_FISRTSMS, sSms.getIdPremierSMS());
+		cv.put(DataBaseHelper.COLUMN_LASTSMS, sSms.getIdDernierSMS());
 
-		long id = database.insert(SyncSMSDataBaseHelper.TABLE_SYNCHRONISATION,
+		long id = database.insert(DataBaseHelper.TABLE_SYNCHRONISATION,
 				null, cv);
 		return getSyncSMS(id);
 	}
 
 	public List<SyncSMS> getAll() {
 		ArrayList<SyncSMS> list = new ArrayList<SyncSMS>();
-		Cursor c = database.query(SyncSMSDataBaseHelper.TABLE_SYNCHRONISATION,
+		Cursor c = database.query(DataBaseHelper.TABLE_SYNCHRONISATION,
 				allColumns, null, null, null, null, null);
 
 		while (!c.isAfterLast()) {
@@ -113,15 +113,15 @@ public class SyncDataSource {
 		if (c.moveToFirst()) {
 			SyncSMS sSms = new SyncSMS();
 			sSms.setIdSync(c.getInt(c
-					.getColumnIndexOrThrow(SyncSMSDataBaseHelper.COLUMN_ID)));
+					.getColumnIndexOrThrow(DataBaseHelper.COLUMN_ID)));
 			sSms.setDateSync(new Date(c.getInt(c
-					.getColumnIndexOrThrow(SyncSMSDataBaseHelper.COLUMN_DATE))));
+					.getColumnIndexOrThrow(DataBaseHelper.COLUMN_DATE))));
 			sSms.setType(c.getInt(c
-					.getColumnIndexOrThrow(SyncSMSDataBaseHelper.COLUMN_TYPE)));
+					.getColumnIndexOrThrow(DataBaseHelper.COLUMN_TYPE)));
 			sSms.setIdPremierSMS(c.getInt(c
-					.getColumnIndexOrThrow(SyncSMSDataBaseHelper.COLUMN_FISRTSMS)));
+					.getColumnIndexOrThrow(DataBaseHelper.COLUMN_FISRTSMS)));
 			sSms.setIdDernierSMS(c.getInt(c
-					.getColumnIndexOrThrow(SyncSMSDataBaseHelper.COLUMN_LASTSMS)));
+					.getColumnIndexOrThrow(DataBaseHelper.COLUMN_LASTSMS)));
 			c.close();
 			return sSms;
 		}

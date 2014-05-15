@@ -1,7 +1,19 @@
 package com.cnam.al_sms.modeles;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.io.StreamCorruptedException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
+import android.provider.Telephony.Sms;
 
 public class SMS implements Serializable {
 	private static final long serialVersionUID = 3668704935456458913L;
@@ -146,5 +158,140 @@ public class SMS implements Serializable {
 		setSujet(sujet);
 		setMessage(message);
 		setVu(vu);
+	}
+	
+	public static byte[] getBytes(SMS sms){
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		ObjectOutput out = null;
+		byte[] smsBytes = null;
+		try {
+		  try {
+			out = new ObjectOutputStream(bos);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}   
+		  try {
+			out.writeObject(sms);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		  smsBytes = bos.toByteArray();
+		  
+		} finally {
+		  
+		    if (out != null) {
+		      try {
+				out.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		    }
+		  
+		    try {
+				bos.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		  
+		  
+		}
+		return smsBytes;
+		
+	}
+	
+	public static SMS getFromBytes(byte[] byteSms){
+		ByteArrayInputStream bis = new ByteArrayInputStream(byteSms);
+		ObjectInput in = null;
+		SMS smsRe = null;
+		  try {
+			in = new ObjectInputStream(bis);
+			Object o = in.readObject();
+			smsRe = (SMS) o;
+			bis.close();
+			if (in != null) {
+			      in.close();
+			}
+		} catch (StreamCorruptedException e) {
+			
+			e.printStackTrace();
+		} catch (IOException e) {
+			
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		  
+		  return smsRe;
+		    
+		    
+		
+	}
+	
+	public static byte[] getBytesFrom(ArrayList<SMS> sms){
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		ObjectOutput out = null;
+		byte[] smsBytes = null;
+		try {
+		  try {
+			out = new ObjectOutputStream(bos);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}   
+		  try {
+			out.writeObject(sms);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		  smsBytes = bos.toByteArray();
+		  
+		} finally {
+		  
+		    if (out != null) {
+		      try {
+				out.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		    }
+		  
+		    try {
+				bos.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		  
+		  
+		}
+		return smsBytes;
+		
+	}
+	
+	public static List<SMS> getListFromBytes(byte[] byteSms){
+		ByteArrayInputStream bis = new ByteArrayInputStream(byteSms);
+		ObjectInput in = null;
+		ArrayList<SMS> smsRe = null;
+		  try {
+			in = new ObjectInputStream(bis);
+			Object o = in.readObject();
+			smsRe = (ArrayList<SMS>) o;
+			bis.close();
+			if (in != null) {
+			      in.close();
+			}
+		} catch (StreamCorruptedException e) {
+			
+			e.printStackTrace();
+		} catch (IOException e) {
+			
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			
+			e.printStackTrace();
+		}
+		  
+		  return smsRe;
+		    
+		    
+		
 	}
 }

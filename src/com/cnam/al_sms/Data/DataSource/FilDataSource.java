@@ -1,7 +1,6 @@
 package com.cnam.al_sms.data.datasource;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -10,25 +9,24 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import com.cnam.al_sms.data.FilSMSDataBaseHelper;
-import com.cnam.al_sms.data.SMSDataBaseHelper;
+import com.cnam.al_sms.data.DataBaseHelper;
 import com.cnam.al_sms.modeles.Fil;
 
 public class FilDataSource {
 	private static final String TAG = "ALSMS";
 
 	private SQLiteDatabase database;
-	private FilSMSDataBaseHelper dbHelper;
-	public static String[] allColumns = { FilSMSDataBaseHelper.COLUMN_ID,
-			FilSMSDataBaseHelper.COLUMN_SNIPPET,
-			FilSMSDataBaseHelper.COLUMN_MESSAGECOUNT };
+	private DataBaseHelper dbHelper;
+	public static String[] allColumns = { DataBaseHelper.COLUMN_ID,
+			DataBaseHelper.COLUMN_SNIPPET,
+			DataBaseHelper.COLUMN_MESSAGECOUNT };
 	private Context contexte;
 
 	public FilDataSource() {
 	}
 
 	public FilDataSource(Context context) {
-		dbHelper = new FilSMSDataBaseHelper(context);
+		dbHelper = new DataBaseHelper(context);
 		contexte = context;
 	}
 
@@ -42,102 +40,98 @@ public class FilDataSource {
 	}
 
 	public Fil getFil(long threadid) {
-		Cursor c = database.query(FilSMSDataBaseHelper.TABLE_FIL, allColumns,
-				FilSMSDataBaseHelper.COLUMN_ID + " = ?",
+		Cursor c = database.query(DataBaseHelper.TABLE_FIL, allColumns,
+				DataBaseHelper.COLUMN_ID + " = ?",
 				new String[] { String.valueOf(threadid) }, null, null, null);
 		c.moveToFirst();
 		return (Fil) cursorToFilSMS(c);
 	}
 
 	public int updateFil(long threadid) {
-		Cursor c = database.query(SMSDataBaseHelper.TABLE_SMS,
-				new String[] { SMSDataBaseHelper.COLUMN_SUBJECT,
-						SMSDataBaseHelper.COLUMN_BODY },
-				SMSDataBaseHelper.COLUMN_THREADID + " = ?",
+		Cursor c = database.query(DataBaseHelper.TABLE_SMS,
+				new String[] { DataBaseHelper.COLUMN_SUBJECT,
+						DataBaseHelper.COLUMN_BODY },
+				DataBaseHelper.COLUMN_THREADID + " = ?",
 				new String[] { String.valueOf(threadid) }, null, null,
-				SMSDataBaseHelper.COLUMN_DATE + " DESC");
+				DataBaseHelper.COLUMN_DATE + " DESC");
 		c.moveToFirst();
 
 		int nb_message = c.getCount();
 		String extrait = c.getString(c
-				.getColumnIndex(SMSDataBaseHelper.COLUMN_BODY));
+				.getColumnIndex(DataBaseHelper.COLUMN_BODY));
 
 		ContentValues cvUpdate = new ContentValues();
-		cvUpdate.put(FilSMSDataBaseHelper.COLUMN_MESSAGECOUNT, nb_message);
-		cvUpdate.put(FilSMSDataBaseHelper.COLUMN_SNIPPET, extrait);
+		cvUpdate.put(DataBaseHelper.COLUMN_MESSAGECOUNT, nb_message);
+		cvUpdate.put(DataBaseHelper.COLUMN_SNIPPET, extrait);
 
-		int nbRowUpdate = database.update(FilSMSDataBaseHelper.TABLE_FIL,
-				cvUpdate, FilSMSDataBaseHelper.COLUMN_ID,
+		int nbRowUpdate = database.update(DataBaseHelper.TABLE_FIL,
+				cvUpdate, DataBaseHelper.COLUMN_ID,
 				new String[] { String.valueOf(threadid) });
 
 		return nbRowUpdate;
 	}
 
 	public void generateFil() {
-		Log.i(TAG, "SELECT " + FilSMSDataBaseHelper.TABLE_FIL + "."
-				+ FilSMSDataBaseHelper.COLUMN_ID
+		Log.i(TAG, "SELECT " + DataBaseHelper.TABLE_FIL + "."
+				+ DataBaseHelper.COLUMN_ID
 				+ " THREAD_ID, count(sms.*) NB_MESSAGE, "
-				+ SMSDataBaseHelper.TABLE_SMS + "."
-				+ SMSDataBaseHelper.COLUMN_BODY + " EXTRAIT " + " FROM "
-				+ FilSMSDataBaseHelper.TABLE_FIL + ", "
-				+ SMSDataBaseHelper.TABLE_SMS + " WHERE "
-				+ FilSMSDataBaseHelper.TABLE_FIL + "."
-				+ FilSMSDataBaseHelper.COLUMN_ID + " = "
-				+ SMSDataBaseHelper.TABLE_SMS + "."
-				+ SMSDataBaseHelper.COLUMN_THREADID + " GROUP BY "
-				+ SMSDataBaseHelper.TABLE_SMS + "."
-				+ SMSDataBaseHelper.COLUMN_THREADID);
-		/*Cursor c = database.rawQuery("SELECT " + FilSMSDataBaseHelper.TABLE_FIL
-				+ "." + FilSMSDataBaseHelper.COLUMN_ID
-				+ " THREAD_ID, count(sms.*) NB_MESSAGE, "
-				+ SMSDataBaseHelper.TABLE_SMS + "."
-				+ SMSDataBaseHelper.COLUMN_BODY + " EXTRAIT " + " FROM "
-				+ FilSMSDataBaseHelper.TABLE_FIL + ", "
-				+ SMSDataBaseHelper.TABLE_SMS + " WHERE "
-				+ FilSMSDataBaseHelper.TABLE_FIL + "."
-				+ FilSMSDataBaseHelper.COLUMN_ID + " = "
-				+ SMSDataBaseHelper.TABLE_SMS + "."
-				+ SMSDataBaseHelper.COLUMN_THREADID + " GROUP BY "
-				+ SMSDataBaseHelper.TABLE_SMS + "."
-				+ SMSDataBaseHelper.COLUMN_THREADID, null);*/
+				+ DataBaseHelper.TABLE_SMS + "."
+				+ DataBaseHelper.COLUMN_BODY + " EXTRAIT " + " FROM "
+				+ DataBaseHelper.TABLE_FIL + ", "
+				+ DataBaseHelper.TABLE_SMS + " WHERE "
+				+ DataBaseHelper.TABLE_FIL + "."
+				+ DataBaseHelper.COLUMN_ID + " = "
+				+ DataBaseHelper.TABLE_SMS + "."
+				+ DataBaseHelper.COLUMN_THREADID + " GROUP BY "
+				+ DataBaseHelper.TABLE_SMS + "."
+				+ DataBaseHelper.COLUMN_THREADID);
+
+		Cursor c = database.rawQuery("SELECT " + DataBaseHelper.TABLE_FIL
+				+ "." + DataBaseHelper.COLUMN_ID
+				+ " THREAD_ID, 1 NB_MESSAGE, "
+				+ DataBaseHelper.TABLE_SMS + "."
+				+ DataBaseHelper.COLUMN_BODY + " EXTRAIT " + " FROM "
+				+ DataBaseHelper.TABLE_FIL + ", "
+				+ DataBaseHelper.TABLE_SMS + " WHERE "
+				+ DataBaseHelper.TABLE_FIL + "."
+				+ DataBaseHelper.COLUMN_ID + " = "
+				+ DataBaseHelper.TABLE_SMS + "."
+				+ DataBaseHelper.COLUMN_THREADID, null);
+
 	}
 
 	public Fil cursorToFilSMS(Cursor c) {
 		if (c.moveToFirst()) {
 			Fil fil = new Fil();
 			fil.setFilId(c.getInt(c
-					.getColumnIndexOrThrow(FilSMSDataBaseHelper.COLUMN_ID)));
+					.getColumnIndexOrThrow(DataBaseHelper.COLUMN_ID)));
 			fil.setExtrait(c.getString(c
-					.getColumnIndexOrThrow(FilSMSDataBaseHelper.COLUMN_SNIPPET)));
+					.getColumnIndexOrThrow(DataBaseHelper.COLUMN_SNIPPET)));
 			fil.setNombreMessage(c.getInt(c
-					.getColumnIndexOrThrow(FilSMSDataBaseHelper.COLUMN_MESSAGECOUNT)));
+					.getColumnIndexOrThrow(DataBaseHelper.COLUMN_MESSAGECOUNT)));
 			c.close();
 			return fil;
 		}
 		return null;
 	}
 
-	public List<Fil> getAll() {
+	public Cursor getAll() {
 		ArrayList<Fil> list = new ArrayList<Fil>();
-		Cursor c = database.query(FilSMSDataBaseHelper.TABLE_FIL, allColumns,
+		Cursor c = database.query(DataBaseHelper.TABLE_FIL, allColumns,
 				null, null, null, null, null);
 
-		while (!c.isAfterLast()) {
-			list.add(cursorToFilSMS(c));
-			c.moveToNext();
-		}
-		return list;
+		return c;
 	}
 
-	public Fil cursorToSyncSMS(Cursor c) {
+	public Fil cursorToFil(Cursor c) {
 		if (c.moveToFirst()) {
 			Fil fil = new Fil();
 			fil.setFilId(c.getInt(c
-					.getColumnIndexOrThrow(FilSMSDataBaseHelper.COLUMN_ID)));
+					.getColumnIndexOrThrow(DataBaseHelper.COLUMN_ID)));
 			fil.setExtrait(c.getString(c
-					.getColumnIndexOrThrow(FilSMSDataBaseHelper.COLUMN_SNIPPET)));
+					.getColumnIndexOrThrow(DataBaseHelper.COLUMN_SNIPPET)));
 			fil.setNombreMessage(c.getInt(c
-					.getColumnIndexOrThrow(FilSMSDataBaseHelper.COLUMN_MESSAGECOUNT)));
+					.getColumnIndexOrThrow(DataBaseHelper.COLUMN_MESSAGECOUNT)));
 			c.close();
 			return fil;
 		}

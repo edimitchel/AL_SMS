@@ -1,9 +1,9 @@
 package com.cnam.al_sms.maitre_activities;
 
 import shared.Globales;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Fragment;
-import android.bluetooth.BluetoothAdapter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -16,11 +16,11 @@ import android.widget.Toast;
 
 import com.cnam.al_sms.R;
 import com.cnam.al_sms.connectivite.BluetoothService;
+import com.cnam.al_sms.modeles.SMS;
 
 public class ConnexionMaitreActivity extends Activity {
-	private BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     // Member object for the chat services
-    private BluetoothService bTService;
+    
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -31,12 +31,12 @@ public class ConnexionMaitreActivity extends Activity {
 			getFragmentManager().beginTransaction()
 					.add(R.id.container, new PlaceholderFragment()).commit();
 		}
-		bTService =  new BluetoothService(this, mHandler);
-		 if (bTService != null) {
+		Globales.BTService =  new BluetoothService(this, mHandler);
+		 if (Globales.BTService != null) {
 	            // Seulement si le statut de la connection Bluetooth est NONE (pas de connection pour le moment)
-	            if (bTService.getState() == BluetoothService.STATE_NONE) {
+	            if (Globales.BTService.getState() == BluetoothService.STATE_NONE) {
 	              // on lance le service
-	            	bTService.start();
+	            	Globales.BTService.start();
 	            }
 	        }
 		
@@ -87,7 +87,8 @@ public class ConnexionMaitreActivity extends Activity {
 	
 	/* tmp */
 	// The Handler that gets information back from the BluetoothChatService
-    private final Handler mHandler = new Handler() {
+  
+	private final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
@@ -106,18 +107,21 @@ public class ConnexionMaitreActivity extends Activity {
             case Globales.MESSAGE_WRITE:
                    break;
             case Globales.MESSAGE_READ:
-                
+            	byte[] readBuff = (byte[]) msg.obj;
+                // construct a string from the valid bytes in the buffer
+                SMS readMessage = SMS.getFromBytes(readBuff);
+            	//String readMessage = new String(readBuff, 0, msg.arg1);
+                Toast.makeText(getApplicationContext(), readMessage.getMessage(),
+                        Toast.LENGTH_SHORT).show();
                 break;
             case Globales.MESSAGE_DEVICE_NAME:
-            	byte[] readB = (byte[]) msg.obj;
-                // construct a string from the valid bytes in the buffer
+            	// construct a string from the valid bytes in the buffer
             	String mConnectedDeviceName = msg.getData().getString("Device");
                 Toast.makeText(getApplicationContext(), "Connected to "
                                + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
                 break;
             case Globales.MESSAGE_TOAST:
-            	byte[] readBuf = (byte[]) msg.obj;
-                // construct a string from the valid bytes in the buffer
+            	// construct a string from the valid bytes in the buffer
                 String readMessag = msg.getData().getString(Globales.TOAST);
                 Toast.makeText(getApplicationContext(), readMessag,
                                Toast.LENGTH_SHORT).show();
