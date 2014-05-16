@@ -6,7 +6,7 @@ import android.util.Log;
 
 import com.cnam.al_sms.data.datasource.FilDataSource;
 
-public class MessagerieController {
+public abstract class MessagerieController {
 
 	public MessagerieController() {
 	}

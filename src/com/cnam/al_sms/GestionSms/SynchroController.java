@@ -20,7 +20,7 @@ import com.cnam.al_sms.data.datasource.SyncDataSource;
 import com.cnam.al_sms.modeles.SMS;
 import com.cnam.al_sms.modeles.SyncSMS;
 
-public class SynchroController {
+public abstract class SynchroController {
 
 	private static final String TAG = "ALSMS";
 
