@@ -18,7 +18,8 @@ public class FilDataSource {
 	private SQLiteDatabase database;
 	private DataBaseHelper dbHelper;
 	public static String[] allColumns = { DataBaseHelper.COLUMN_ID,
-			DataBaseHelper.COLUMN_SNIPPET, DataBaseHelper.COLUMN_MESSAGECOUNT };
+			DataBaseHelper.COLUMN_SNIPPET, DataBaseHelper.COLUMN_MESSAGECOUNT,
+			DataBaseHelper.COLUMN_DATE };
 	private Context contexte;
 
 	public FilDataSource() {
@@ -47,22 +48,40 @@ public class FilDataSource {
 	}
 
 	public void updateFils() {
+
+		final String DATE_S = "dateS";
+
+		ArrayList<String> cols = new ArrayList<String>();
+		for (int i = 0; i < SMSDataSource.allColumns.length; i++) {
+			cols.add(SMSDataSource.allColumns[i]);
+
+		}
+		cols.add("" + DATE_S);
+
 		Cursor cThreads = database.query(DataBaseHelper.TABLE_SMS,
-				new String[] { DataBaseHelper.COLUMN_THREADID,
-						DataBaseHelper.COLUMN_BODY, "count(*)" }, null, null,
-				DataBaseHelper.COLUMN_THREADID, null, null);
+				new String[] {
+						DataBaseHelper.COLUMN_THREADID,
+						DataBaseHelper.COLUMN_BODY,
+						"count(*)",
+						"max(" + DataBaseHelper.COLUMN_DATE + ") "
+								+ DataBaseHelper.COLUMN_DATE }, null, null,
+				null, null,	DataBaseHelper.COLUMN_THREADID);
 
 		cThreads.moveToFirst();
 		while (!cThreads.isAfterLast()) {
 			long thread_id = cThreads.getLong(cThreads
 					.getColumnIndex(DataBaseHelper.COLUMN_THREADID));
-			int nb_message = cThreads.getInt(2);
+			int nb_message = cThreads.getInt(cThreads
+					.getColumnIndex(DataBaseHelper.COLUMN_MESSAGECOUNT));
 			String extrait = cThreads.getString(cThreads
 					.getColumnIndex(DataBaseHelper.COLUMN_BODY));
+			int date = cThreads.getInt(cThreads
+					.getColumnIndex(DataBaseHelper.COLUMN_DATE));
 
 			ContentValues cvUpdate = new ContentValues();
 			cvUpdate.put(DataBaseHelper.COLUMN_MESSAGECOUNT, nb_message);
 			cvUpdate.put(DataBaseHelper.COLUMN_SNIPPET, extrait);
+			cvUpdate.put(DataBaseHelper.COLUMN_DATE, date);
 
 			Cursor cFil = database.query(DataBaseHelper.TABLE_FIL, null,
 					DataBaseHelper.COLUMN_ID + " = ?",
@@ -72,12 +91,14 @@ public class FilDataSource {
 			long nbRowUpdate = 0;
 			if (cFil.getCount() == 1) {
 				nbRowUpdate = database.update(DataBaseHelper.TABLE_FIL,
-						cvUpdate, DataBaseHelper.COLUMN_ID,
+						cvUpdate, DataBaseHelper.COLUMN_ID + " = ?",
 						new String[] { String.valueOf(thread_id) });
+				Log.i(TAG,"Mise à jour du fil de conversation n°"+thread_id);
 			} else {
 				cvUpdate.put(DataBaseHelper.COLUMN_ID, thread_id);
 				nbRowUpdate = database.insert(DataBaseHelper.TABLE_FIL, null,
 						cvUpdate);
+				Log.i(TAG,"Insertion fil de conversation n°"+thread_id);
 			}
 
 			cFil.close();
@@ -86,28 +107,13 @@ public class FilDataSource {
 		cThreads.close();
 	}
 
-	public void generateFil() {
-		Log.i(TAG, "SELECT " + DataBaseHelper.TABLE_FIL + "."
-				+ DataBaseHelper.COLUMN_ID
-				+ " THREAD_ID, count(sms.*) NB_MESSAGE, "
-				+ DataBaseHelper.TABLE_SMS + "." + DataBaseHelper.COLUMN_BODY
-				+ " EXTRAIT " + " FROM " + DataBaseHelper.TABLE_FIL + ", "
-				+ DataBaseHelper.TABLE_SMS + " WHERE "
-				+ DataBaseHelper.TABLE_FIL + "." + DataBaseHelper.COLUMN_ID
-				+ " = " + DataBaseHelper.TABLE_SMS + "."
-				+ DataBaseHelper.COLUMN_THREADID + " GROUP BY "
-				+ DataBaseHelper.TABLE_SMS + "."
-				+ DataBaseHelper.COLUMN_THREADID);
-
-	}
-
 	public Cursor getAll() {
 		return getAll(allColumns);
 	}
 
 	public Cursor getAll(String[] columns) {
-		Cursor c = database.query(DataBaseHelper.TABLE_FIL, columns, null,
-				null, null, null, DataBaseHelper.COLUMN_ID + " ASC");
+		Cursor c = database.query(DataBaseHelper.TABLE_FIL, null, null, null,
+				null, null, null);
 		return c;
 	}
 

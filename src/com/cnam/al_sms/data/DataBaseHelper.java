@@ -70,22 +70,22 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
 	private static final String TABLE_FIL_CREATE = "create table " + TABLE_FIL
 			+ " (" + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-			+ " INTEGER," + COLUMN_SNIPPET + " TEXT," + COLUMN_MESSAGECOUNT
-			+ " INTEGER" + ");";
+			+ COLUMN_SNIPPET + " TEXT," + COLUMN_MESSAGECOUNT + " INTEGER, "
+			+ COLUMN_DATE + " INTEGER" + ");";
 
 	public DataBaseHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
 	}
 
-	public DataBaseHelper(Context context, String name,
-			CursorFactory factory, int version,
-			DatabaseErrorHandler errorHandler) {
+	public DataBaseHelper(Context context, String name, CursorFactory factory,
+			int version, DatabaseErrorHandler errorHandler) {
 		super(context, name, factory, version, errorHandler);
 	}
 
 	@Override
 	public void onCreate(SQLiteDatabase db) {
-		Log.i(DataBaseHelper.class.getName(), "Création de la table SMS, FIL et SYNCHRONISATION");
+		Log.i(DataBaseHelper.class.getName(),
+				"Création de la table SMS, FIL et SYNCHRONISATION");
 		db.execSQL(TABLE_SMS_CREATE);
 		db.execSQL(TABLE_SYNC_CREATE);
 		db.execSQL(TABLE_FIL_CREATE);
@@ -95,8 +95,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		if (oldVersion != newVersion) {
 			Log.w(DataBaseHelper.class.getName(),
-					"Mise à jour de la base de donnée depuis la version  " + oldVersion + " vers la version "
-							+ newVersion + ", les données seront supprimées.");
+					"Mise à jour de la base de donnée depuis la version  "
+							+ oldVersion + " vers la version " + newVersion
+							+ ", les données seront supprimées.");
 			db.execSQL("DROP TABLE IF EXISTS " + TABLE_SMS);
 			db.execSQL("DROP TABLE IF EXISTS " + TABLE_FIL);
 			db.execSQL("DROP TABLE IF EXISTS " + TABLE_SYNCHRONISATION);

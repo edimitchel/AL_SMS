@@ -1,19 +1,17 @@
 package com.cnam.al_sms.esclave_activities;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 import shared.Globales;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.Telephony.Sms;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -27,9 +25,13 @@ import android.widget.Toast;
 
 import com.cnam.al_sms.R;
 import com.cnam.al_sms.connectivite.BluetoothService;
+import com.cnam.al_sms.data.DataBaseHelper;
+import com.cnam.al_sms.data.datasource.FilDataSource;
+import com.cnam.al_sms.data.datasource.SMSDataSource;
+import com.cnam.al_sms.data.datasource.SyncDataSource;
+import com.cnam.al_sms.gestionsms.MessagerieController;
 import com.cnam.al_sms.maitre_activities.ConnexionMaitreActivity;
 import com.cnam.al_sms.maitre_activities.SynchronisationActivity;
-import com.cnam.al_sms.data.datasource.*;
 
 public class MainActivity extends Activity {
 	private static final String TAG = "ALSMS";
@@ -71,63 +73,29 @@ public class MainActivity extends Activity {
 		Toast.makeText(this, "Je suis " + Globales.typeAppareil,
 				Toast.LENGTH_LONG).show();
 
-		ContentResolver cr = getContentResolver();
-
 		HashMap<String, String> mapConversation;
 
-		Cursor curConversations;
-		Uri uConversations = Uri
-				.parse("content://sms/conversations?simple=true");
-		curConversations = cr.query(uConversations, null, null, null,
-				"date DESC");
+		Cursor cFil = MessagerieController.getConversations(this);
 
-		//Log.i(TAG, Arrays.toString(curConversations.getColumnNames()));
-		while (curConversations.moveToNext()) {
-			/*
-			 * For debbuging ArrayList<String> values = new ArrayList<String>();
-			 * for (int i = 0; i < curConversations.getColumnCount(); i++) {
-			 * values.add(curConversations.getString(i)); } Log.i(TAG,
-			 * values.toString());
-			 */
-			//Log.i(TAG, Arrays.toString(curConversations.getColumnNames()));
-
+		Log.i(TAG, String.valueOf(cFil.getCount()));
+		while (cFil.moveToNext()) {
 			mapConversation = new HashMap<String, String>();
-			String thread_id = curConversations.getString(0);
-			String lst_msg = curConversations.getString(curConversations
-					.getColumnIndexOrThrow(Sms.Conversations.SNIPPET));
-			int cMsg = curConversations.getInt(curConversations
-					.getColumnIndexOrThrow(Sms.Conversations.MESSAGE_COUNT));
-			
 
-			ArrayList<String> nomsContact = new ArrayList<String>();
+			long thread_id = cFil.getLong(cFil
+					.getColumnIndex(DataBaseHelper.COLUMN_ID));
+			String lst_msg = cFil.getString(cFil
+					.getColumnIndex(DataBaseHelper.COLUMN_SNIPPET));
+			int cMsg = cFil.getInt(cFil
+					.getColumnIndex(DataBaseHelper.COLUMN_MESSAGECOUNT));
 
-			// Curseur pour récupérer le contact
-			/*
-			 * Cursor curContact =
-			 * cr.query(ContactsContract.Contacts.CONTENT_URI, new String[] {
-			 * ContactsContract.Contacts.DISPLAY_NAME},
-			 * ContactsContract.Contacts._ID + " = ?", recipients_id,
-			 * ContactsContract.Contacts.DISPLAY_NAME + " ASC"); while
-			 * (curContact.moveToNext()) { nomsContact
-			 * .add(curContact.getString(curContact
-			 * .getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME))); }
-			 * curContact.close();
-			 * 
-			 * String nomContactJoined = "";
-			 * 
-			 * for (int n = 0; n < nomsContact.size(); n++) {
-			 * nomContactJoined.concat(nomsContact.get(n)); if (n <
-			 * nomsContact.size() - 1) nomContactJoined.concat(", "); }
-			 */
-
-			mapConversation.put("thread_id", thread_id);
+			// mapConversation.put("thread_id", String.valueOf(thread_id));
 			mapConversation.put("nom_contact",
-					String.valueOf(curConversations.getPosition()));
+					String.valueOf(cFil.getPosition()));
 			mapConversation.put("nb_msg", Integer.toString(cMsg));
 			mapConversation.put("last_msg", lst_msg);
 			conversations.add(mapConversation);
 		}
-		curConversations.close();
+		cFil.close();
 
 		SimpleAdapter adapteur = new SimpleAdapter(this, conversations,
 				R.layout.liste_conversation_layout, new String[] {
@@ -143,7 +111,6 @@ public class MainActivity extends Activity {
 					int position, long id) {
 				HashMap<String, String> item_conversation = conversations
 						.get(position);
-				Log.d("ALSMS", item_conversation.toString());
 			}
 		};
 
@@ -166,8 +133,6 @@ public class MainActivity extends Activity {
 				startActivityForResult(i_sync, CODE_APP);
 			}
 		});
-		
-		initDatabase(this.getApplicationContext());
 	}
 
 	@Override
@@ -196,19 +161,19 @@ public class MainActivity extends Activity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
-	
-	//Fonction qui permet d'initialiser toutes les bases de données.
-	public static void initDatabase(Context context){
+
+	// Fonction qui permet d'initialiser toutes les bases de données.
+	public static void initDatabase(Context context) {
 		FilDataSource fds = new FilDataSource(context);
 		SMSDataSource smsds = new SMSDataSource(context);
 		SyncDataSource sds = new SyncDataSource(context);
-		
+
 		fds.open();
 		smsds.open();
 		sds.open();
-		
+
 		fds.close();
 		smsds.close();
-		sds.close();		
+		sds.close();
 	}
 }

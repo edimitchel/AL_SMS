@@ -1,5 +1,7 @@
 package com.cnam.al_sms.gestionsms;
 
+import java.util.ArrayList;
+
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -7,12 +9,15 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.net.Uri;
-import android.provider.Telephony.Sms;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 
+import com.cnam.al_sms.data.DataBaseHelper;
 import com.cnam.al_sms.data.datasource.FilDataSource;
 import com.cnam.al_sms.data.datasource.SMSDataSource;
 import com.cnam.al_sms.data.datasource.SyncDataSource;
+import com.cnam.al_sms.maitre_activities.SynchronisationActivity;
 import com.cnam.al_sms.modeles.SyncSMS;
 
 public class SynchroController {
@@ -39,16 +44,9 @@ public class SynchroController {
 		return r;
 	}
 
-	private static ProgressDialog dialog;
+	private static ProgressDialog dialog_getsms;
 
-	/**
-	 * /!\ Il faut trouver un moyen de faire comme ça :
-	 * http://stackoverflow.com/
-	 * questions/3343490/progressdialog-working-in-thread-on-android
-	 * 
-	 * @param context
-	 */
-	public static void getAllSmsFromMaster(final Context context) {
+	public static void getAllSmsFromMasterBase(final Context context) {
 		final Uri URI_SMS = Uri.parse("content://sms");
 		final ContentResolver cr = context.getContentResolver();
 		final SMSDataSource sds = new SMSDataSource(context);
@@ -58,13 +56,10 @@ public class SynchroController {
 		final int nombreSMS = c_nb.getCount();
 		c_nb.close();
 
-		dialog = ProgressDialog.show(context,
-				"Récupération des SMS de la base officiel.", "En cours");
-		dialog.setCancelable(false);
-		dialog.setInverseBackgroundForced(false);
-
+		dialog_getsms = ProgressDialog.show(context,
+				"Récupération des SMS de la base officiel.", "En cours", false);
 		sds.open();
-		
+
 		Thread thread_premieresynchro = new Thread(new Runnable() {
 
 			@Override
@@ -72,8 +67,7 @@ public class SynchroController {
 				int progress = 0;
 				int num_sms = 0;
 
-				Cursor c = cr.query(URI_SMS, SMSDataSource.allColumns, null,
-						null, Sms.DATE + " ASC");
+				Cursor c = cr.query(URI_SMS, SMSDataSource.allColumns, null, null, DataBaseHelper.COLUMN_ID);
 				c.moveToFirst();
 
 				while (!c.isAfterLast()) {
@@ -81,41 +75,34 @@ public class SynchroController {
 					DatabaseUtils.cursorRowToContentValues(c, vals);
 					long idsms = sds.creerSMS(vals);
 					Log.i(TAG, "SMS id " + idsms + " copié.");
-					num_sms++;
 					progress = Math.round((num_sms / nombreSMS) * 100);
-					dialog.setProgress(progress);
+					/*
+					 * dialog_getsms.setProgress(progress);
+					 * dialog_getsms.setMessage(num_sms + "/" + nombreSMS);
+					 */
+					num_sms++;
 					c.moveToNext();
 				}
 				sds.close();
-				dialog.dismiss();
+				dialog_getsms.dismiss();
+				SynchroController.updateFils(context);
 			}
 		});
 		thread_premieresynchro.start();
-	}	/**
-	 * /!\ Il faut trouver un moyen de faire comme ça :
-	 * http://stackoverflow.com/
-	 * questions/3343490/progressdialog-working-in-thread-on-android
-	 * 
-	 * @param context
-	 */
+	}
+
+	private static ProgressDialog dialog_update;
+
 	public static void updateFils(final Context context) {
 		final FilDataSource fds = new FilDataSource(context);
 
-		dialog = ProgressDialog.show(context,
-				"Mise à jour des fils de conversations", "En cours");
-		dialog.setCancelable(false);
-		dialog.setInverseBackgroundForced(false);
-		dialog.setIndeterminate(false);
-
-		fds.open();
-		
 		Thread thread_updateFil = new Thread(new Runnable() {
 
 			@Override
 			public void run() {
+				fds.open();
 				fds.updateFils();
 				fds.close();
-				dialog.dismiss();
 			}
 		});
 		thread_updateFil.start();
