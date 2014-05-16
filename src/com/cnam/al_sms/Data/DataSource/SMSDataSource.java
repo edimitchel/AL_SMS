@@ -20,12 +20,12 @@ public class SMSDataSource {
 	private DataBaseHelper dbHelper;
 
 	public static String[] allColumns = { DataBaseHelper.COLUMN_ID,
-			DataBaseHelper.COLUMN_THREADID,
-			DataBaseHelper.COLUMN_ADDRESS, DataBaseHelper.COLUMN_PERSON,
-			DataBaseHelper.COLUMN_DATE, DataBaseHelper.COLUMN_DATESENT,
-			DataBaseHelper.COLUMN_READ, DataBaseHelper.COLUMN_STATUS,
-			DataBaseHelper.COLUMN_TYPE, DataBaseHelper.COLUMN_SUBJECT,
-			DataBaseHelper.COLUMN_BODY, DataBaseHelper.COLUMN_SEEN };
+			DataBaseHelper.COLUMN_THREADID, DataBaseHelper.COLUMN_ADDRESS,
+			DataBaseHelper.COLUMN_PERSON, DataBaseHelper.COLUMN_DATE,
+			DataBaseHelper.COLUMN_DATESENT, DataBaseHelper.COLUMN_READ,
+			DataBaseHelper.COLUMN_STATUS, DataBaseHelper.COLUMN_TYPE,
+			DataBaseHelper.COLUMN_SUBJECT, DataBaseHelper.COLUMN_BODY,
+			DataBaseHelper.COLUMN_SEEN };
 
 	public SMSDataSource(Context context) {
 		dbHelper = new DataBaseHelper(context);
@@ -40,15 +40,13 @@ public class SMSDataSource {
 	}
 
 	public long creerSMS(ContentValues cval) {
-		long insertId = database
-				.insert(DataBaseHelper.TABLE_SMS, null, cval);
+		long insertId = database.insert(DataBaseHelper.TABLE_SMS, null, cval);
 		return insertId;
 	}
 
 	public SMS getSMS(long id) {
 		Cursor cursor = database.query(DataBaseHelper.TABLE_SMS, allColumns,
-				DataBaseHelper.COLUMN_ID + " = " + id, null, null, null,
-				null);
+				DataBaseHelper.COLUMN_ID + " = " + id, null, null, null, null);
 		cursor.moveToFirst();
 		SMS newSMS = cursorToSMS(cursor);
 		cursor.close();
@@ -103,19 +101,23 @@ public class SMSDataSource {
 		return list;
 	}
 
-	public int getLastSMSId() {
+	public long getLastSMSId() {
 		Cursor c = database.query(DataBaseHelper.TABLE_SMS,
 				new String[] { DataBaseHelper.COLUMN_ID }, null, null, null,
 				null, DataBaseHelper.COLUMN_ID + " DESC", "1");
-		c.moveToFirst();
-		int id = c.getInt(c.getColumnIndex(DataBaseHelper.COLUMN_ID));
-		return id;
+		if (c.getCount() == 0) {
+			return 0;
+		} else {
+			c.moveToFirst();
+			long id = c.getLong(c.getColumnIndex(DataBaseHelper.COLUMN_ID));
+			return id;
+		}
+
 	}
 
 	private SMS cursorToSMS(Cursor cursor) {
 		SMS sms = new SMS();
-		sms.setId(cursor.getInt(cursor
-				.getColumnIndex(DataBaseHelper.COLUMN_ID)));
+		sms.setId(cursor.getInt(cursor.getColumnIndex(DataBaseHelper.COLUMN_ID)));
 		sms.setFilId(cursor.getLong(cursor
 				.getColumnIndex(DataBaseHelper.COLUMN_THREADID)));
 		sms.setAdresse(cursor.getString(cursor

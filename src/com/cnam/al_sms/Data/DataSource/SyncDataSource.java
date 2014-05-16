@@ -18,10 +18,8 @@ public class SyncDataSource {
 	private SQLiteDatabase database;
 	private DataBaseHelper dbHelper;
 	public static String[] allColumns = { DataBaseHelper.COLUMN_ID,
-			DataBaseHelper.COLUMN_DATE,
-			DataBaseHelper.COLUMN_TYPE,
-			DataBaseHelper.COLUMN_FISRTSMS,
-			DataBaseHelper.COLUMN_LASTSMS };
+			DataBaseHelper.COLUMN_DATE, DataBaseHelper.COLUMN_TYPE,
+			DataBaseHelper.COLUMN_FISRTSMS, DataBaseHelper.COLUMN_LASTSMS };
 	private Context contexte;
 
 	public SyncDataSource() {
@@ -42,21 +40,19 @@ public class SyncDataSource {
 
 	public SyncSMS getSyncSMS(long id) throws Exception {
 		if (database != null) {
-			Cursor c = database.query(
-					DataBaseHelper.TABLE_SYNCHRONISATION, allColumns,
-					DataBaseHelper.COLUMN_ID + " = ?",
+			Cursor c = database.query(DataBaseHelper.TABLE_SYNCHRONISATION,
+					allColumns, DataBaseHelper.COLUMN_ID + " = ?",
 					new String[] { String.valueOf(id) }, null, null, null);
 			return (SyncSMS) cursorToSyncSMS(c);
 		} else
 			throw new Exception("La base de données n'est pas instanciée.");
 	}
 
-	public SyncSMS getLastSyncSMSDate(int type) {
+	public SyncSMS getLastSyncSMSDate() {
 		if (database != null) {
-			Cursor c = database.query(
-					DataBaseHelper.TABLE_SYNCHRONISATION, allColumns,
-					DataBaseHelper.COLUMN_TYPE + " = ?",
-					new String[] { String.valueOf(type) }, null, null,
+
+			Cursor c = database.query(DataBaseHelper.TABLE_SYNCHRONISATION,
+					allColumns, null, null, null, null,
 					DataBaseHelper.COLUMN_DATE + " DESC", "1");
 			c.moveToFirst();
 			return (SyncSMS) cursorToSyncSMS(c);
@@ -66,11 +62,11 @@ public class SyncDataSource {
 
 	public List<SMS> getSmsNotSync() {
 		open();
-		Date d = (Date) getLastSyncSMSDate(1).getDateSync();
+		Date d = (Date) getLastSyncSMSDate().getDateSync();
 		close();
 		SMSDataSource sds = new SMSDataSource(contexte);
 		sds.open();
-		ArrayList<SMS> smsNotSync = (ArrayList<SMS>) sds.getSmsAfterDate(d);
+		List<SMS> smsNotSync = sds.getSmsAfterDate(d);
 		sds.close();
 		return smsNotSync;
 	}
@@ -91,8 +87,8 @@ public class SyncDataSource {
 		cv.put(DataBaseHelper.COLUMN_FISRTSMS, sSms.getIdPremierSMS());
 		cv.put(DataBaseHelper.COLUMN_LASTSMS, sSms.getIdDernierSMS());
 
-		long id = database.insert(DataBaseHelper.TABLE_SYNCHRONISATION,
-				null, cv);
+		long id = database.insert(DataBaseHelper.TABLE_SYNCHRONISATION, null,
+				cv);
 		return getSyncSMS(id);
 	}
 

@@ -1,6 +1,8 @@
 package com.cnam.al_sms.gestionsms;
 
+import java.sql.Date;
 import java.util.ArrayList;
+import java.util.List;
 
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
@@ -9,15 +11,13 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.net.Uri;
-import android.os.Handler;
-import android.os.Message;
 import android.util.Log;
 
 import com.cnam.al_sms.data.DataBaseHelper;
 import com.cnam.al_sms.data.datasource.FilDataSource;
 import com.cnam.al_sms.data.datasource.SMSDataSource;
 import com.cnam.al_sms.data.datasource.SyncDataSource;
-import com.cnam.al_sms.maitre_activities.SynchronisationActivity;
+import com.cnam.al_sms.modeles.SMS;
 import com.cnam.al_sms.modeles.SyncSMS;
 
 public class SynchroController {
@@ -119,6 +119,14 @@ public class SynchroController {
 		sds.open();
 		sds.getLastSMSId();
 		sds.close();
+	}
+
+	public static List<SMS> getSMSAfterDate(Context context) {
+		SyncDataSource sds = new SyncDataSource(context);
+		sds.open();
+		List<SMS> r = sds.getSmsNotSync();
+		sds.close();
+		return r;
 	}
 
 	public static boolean synchroPeriode() {
