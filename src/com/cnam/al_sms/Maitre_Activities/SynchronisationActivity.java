@@ -11,6 +11,7 @@ import com.cnam.al_sms.R;
 import com.cnam.al_sms.data.datasource.FilDataSource;
 import com.cnam.al_sms.data.datasource.SMSDataSource;
 import com.cnam.al_sms.data.datasource.SyncDataSource;
+import com.cnam.al_sms.gestionsms.SynchroController;
 
 public class SynchronisationActivity extends Activity {
 
@@ -24,12 +25,7 @@ public class SynchronisationActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_synchroniser);
 
-		FilDataSource fds = new FilDataSource(this);
-	
-		fds.open();
-		fds.generateFil();
-		fds.close();
-
+		SynchroController.updateFils(this);
 	}
 
 	@Override

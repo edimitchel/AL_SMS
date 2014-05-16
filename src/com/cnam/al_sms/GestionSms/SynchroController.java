@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.provider.Telephony.Sms;
 import android.util.Log;
 
+import com.cnam.al_sms.data.datasource.FilDataSource;
 import com.cnam.al_sms.data.datasource.SMSDataSource;
 import com.cnam.al_sms.data.datasource.SyncDataSource;
 import com.cnam.al_sms.modeles.SyncSMS;
@@ -90,6 +91,34 @@ public class SynchroController {
 			}
 		});
 		thread_premieresynchro.start();
+	}	/**
+	 * /!\ Il faut trouver un moyen de faire comme ça :
+	 * http://stackoverflow.com/
+	 * questions/3343490/progressdialog-working-in-thread-on-android
+	 * 
+	 * @param context
+	 */
+	public static void updateFils(final Context context) {
+		final FilDataSource fds = new FilDataSource(context);
+
+		dialog = ProgressDialog.show(context,
+				"Mise à jour des fils de conversations", "En cours");
+		dialog.setCancelable(false);
+		dialog.setInverseBackgroundForced(false);
+		dialog.setIndeterminate(false);
+
+		fds.open();
+		
+		Thread thread_updateFil = new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				fds.updateFils();
+				fds.close();
+				dialog.dismiss();
+			}
+		});
+		thread_updateFil.start();
 	}
 
 	public static void getLastSMSId(Context context) {
