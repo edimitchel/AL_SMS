@@ -62,10 +62,11 @@ public class FilDataSource {
 				new String[] {
 						DataBaseHelper.COLUMN_THREADID,
 						DataBaseHelper.COLUMN_BODY,
-						"count(*)",
+						"count(*) " + DataBaseHelper.COLUMN_MESSAGECOUNT,
 						"max(" + DataBaseHelper.COLUMN_DATE + ") "
 								+ DataBaseHelper.COLUMN_DATE }, null, null,
-				null, null,	DataBaseHelper.COLUMN_THREADID);
+				DataBaseHelper.COLUMN_THREADID, null,
+				DataBaseHelper.COLUMN_THREADID);
 
 		cThreads.moveToFirst();
 		while (!cThreads.isAfterLast()) {
@@ -75,7 +76,7 @@ public class FilDataSource {
 					.getColumnIndex(DataBaseHelper.COLUMN_MESSAGECOUNT));
 			String extrait = cThreads.getString(cThreads
 					.getColumnIndex(DataBaseHelper.COLUMN_BODY));
-			int date = cThreads.getInt(cThreads
+			long date = cThreads.getLong(cThreads
 					.getColumnIndex(DataBaseHelper.COLUMN_DATE));
 
 			ContentValues cvUpdate = new ContentValues();
@@ -88,17 +89,15 @@ public class FilDataSource {
 					new String[] { String.valueOf(thread_id) }, null, null,
 					null);
 
-			long nbRowUpdate = 0;
 			if (cFil.getCount() == 1) {
-				nbRowUpdate = database.update(DataBaseHelper.TABLE_FIL,
-						cvUpdate, DataBaseHelper.COLUMN_ID + " = ?",
+				database.update(DataBaseHelper.TABLE_FIL, cvUpdate,
+						DataBaseHelper.COLUMN_ID + " = ?",
 						new String[] { String.valueOf(thread_id) });
-				Log.i(TAG,"Mise à jour du fil de conversation n°"+thread_id);
+				Log.i(TAG, "Mise à jour du fil de conversation n°" + thread_id);
 			} else {
 				cvUpdate.put(DataBaseHelper.COLUMN_ID, thread_id);
-				nbRowUpdate = database.insert(DataBaseHelper.TABLE_FIL, null,
-						cvUpdate);
-				Log.i(TAG,"Insertion fil de conversation n°"+thread_id);
+				database.insert(DataBaseHelper.TABLE_FIL, null, cvUpdate);
+				Log.i(TAG, "Insertion fil de conversation n°" + thread_id);
 			}
 
 			cFil.close();
@@ -113,7 +112,7 @@ public class FilDataSource {
 
 	public Cursor getAll(String[] columns) {
 		Cursor c = database.query(DataBaseHelper.TABLE_FIL, null, null, null,
-				null, null, null);
+				null, null, DataBaseHelper.COLUMN_DATE + " DESC");
 		return c;
 	}
 
