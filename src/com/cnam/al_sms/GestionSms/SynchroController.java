@@ -60,6 +60,9 @@ public class SynchroController {
 				"Récupération des SMS de la base officiel.", "En cours", false);
 		sds.open();
 
+		long last_id = sds.getLastSMSId();
+		final String[] whereArgs = new String[] { last_id + "" };
+
 		Thread thread_premieresynchro = new Thread(new Runnable() {
 
 			@Override
@@ -67,7 +70,9 @@ public class SynchroController {
 				int progress = 0;
 				int num_sms = 0;
 
-				Cursor c = cr.query(URI_SMS, SMSDataSource.allColumns, null, null, DataBaseHelper.COLUMN_ID);
+				Cursor c = cr.query(URI_SMS, SMSDataSource.allColumns,
+						DataBaseHelper.COLUMN_ID + " > ?", whereArgs,
+						DataBaseHelper.COLUMN_ID);
 				c.moveToFirst();
 
 				while (!c.isAfterLast()) {
@@ -83,6 +88,7 @@ public class SynchroController {
 					num_sms++;
 					c.moveToNext();
 				}
+				c.close();
 				sds.close();
 				dialog_getsms.dismiss();
 				SynchroController.updateFils(context);
