@@ -29,6 +29,7 @@ import com.cnam.al_sms.data.DataBaseHelper;
 import com.cnam.al_sms.data.datasource.FilDataSource;
 import com.cnam.al_sms.data.datasource.SMSDataSource;
 import com.cnam.al_sms.data.datasource.SyncDataSource;
+import com.cnam.al_sms.gestionsms.ContactController;
 import com.cnam.al_sms.gestionsms.MessagerieController;
 import com.cnam.al_sms.maitre_activities.ConnexionMaitreActivity;
 import com.cnam.al_sms.maitre_activities.SynchronisationActivity;
@@ -72,7 +73,7 @@ public class MainActivity extends Activity {
 
 		Toast.makeText(this, "Je suis " + Globales.typeAppareil,
 				Toast.LENGTH_LONG).show();
-
+		
 		HashMap<String, String> mapConversation;
 
 		Cursor cFil = MessagerieController.getConversations(this);
@@ -133,6 +134,9 @@ public class MainActivity extends Activity {
 				startActivityForResult(i_sync, CODE_APP);
 			}
 		});
+		
+		//Affichage des contacts
+		ContactController.getContactFromMasterBase(this);
 	}
 
 	@Override
