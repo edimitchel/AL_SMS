@@ -16,9 +16,7 @@ import java.util.List;
 import android.provider.Telephony.Sms;
 
 public class Contact implements Serializable {
-		public Contact() {
-			
-		}
+		
 	
 		public static byte[] getBytes(Contact contact){
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();

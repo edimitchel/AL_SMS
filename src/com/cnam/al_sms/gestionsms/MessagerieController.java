@@ -1,10 +1,14 @@
 package com.cnam.al_sms.gestionsms;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.content.Context;
 import android.database.Cursor;
-import android.util.Log;
 
 import com.cnam.al_sms.data.datasource.FilDataSource;
+import com.cnam.al_sms.data.datasource.SMSDataSource;
+import com.cnam.al_sms.modeles.SMS;
 
 public abstract class MessagerieController {
 
@@ -18,14 +22,14 @@ public abstract class MessagerieController {
 		return c;
 	}
 
-	/*
-	 * TODO
-	public static Cursor getSMS(Context context, long thread_id) {
-		FilDataSource fds = new FilDataSource(context);
-		fds.open();
-		Cursor c = fds.getAll();
-		fds.close();
-		return c;
+	public static List<SMS> getSMS(long thread_id, Context context) {
+		ArrayList<SMS> smsList = new ArrayList<SMS>();
+		SMSDataSource sds = new SMSDataSource(context);
+		sds.open();
+		Cursor sms = sds.getAllOfThread(thread_id);
+		while (sms.moveToNext()) {
+			smsList.add(sds.cursorToSMS(sms));
+		}
+		return smsList;
 	}
-	 */
 }

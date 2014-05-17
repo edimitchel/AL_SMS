@@ -1,18 +1,19 @@
 package com.cnam.al_sms.gestionsms;
 
-import java.util.Iterator;
-
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.CursorJoiner;
+import android.net.Uri;
 import android.provider.ContactsContract;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.cnam.al_sms.data.DataBaseHelper;
 import com.cnam.al_sms.data.datasource.SMSDataSource;
 
 public abstract class ContactController {
+	private static final String TAG = "ALSMS";
+
 	// Fonction permettant de rcupérer les cotact du téléphone
 	public static void getContactFromMasterBase(Context context) {
 		int cpt = 0;
@@ -50,29 +51,35 @@ public abstract class ContactController {
 		}
 	}
 
+	// TODO Développer cette méthode pour récupérer un contact grâce à
+	// l'identifiant d'une conversation.
 	public static String getContactByThread(long thread_id, Context context) {
 		SMSDataSource sds = new SMSDataSource(context);
 		sds.open();
-		Cursor sms = sds.getAllOfThread(thread_id);
+		Cursor contact = sds.getSmsOfThread(thread_id);
+		if (contact.getCount() == 0) {
+			return "";
+		}
+		String number = contact.getString(contact
+				.getColumnIndexOrThrow(DataBaseHelper.COLUMN_ADDRESS));
 
 		ContentResolver cr = context.getContentResolver();
-		Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI, null,
-				null, null, null);
-		CursorJoiner cj = new CursorJoiner(sms, new String[] { DataBaseHelper.COLUMN_PERSON }, cur, new String[] { ContactsContract.Contacts._ID });
-		
-		for(CursorJoiner.Result joinerResult : cj){
-			switch (joinerResult) {
-			case LEFT:
-				
-				break;
-			case RIGHT:
-				
-				break;
-			case BOTH:
-					Iterator it = cj.iterator();
-				break;
-			}
+
+		Uri uri = Uri.withAppendedPath(
+				ContactsContract.PhoneLookup.CONTENT_FILTER_URI,
+				Uri.encode(number));
+
+		Cursor cur = cr.query(uri, null, null, null, null);
+		contact.close();
+		String contactName;
+		if (cur.getCount() > 0) {
+			cur.moveToFirst();
+			contactName = cur.getString(cur
+					.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+		} else {
+			contactName = number;
 		}
-		return "0605116117";
+		cur.close();
+		return contactName;
 	}
 }

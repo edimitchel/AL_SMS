@@ -25,7 +25,7 @@ public class SynchronisationActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_synchroniser);
 
-		SynchroController.getAllSmsFromMasterBase(this);
+		SynchroController.getAllSmsFromMasterBase(SynchronisationActivity.this);
 	}
 
 	@Override

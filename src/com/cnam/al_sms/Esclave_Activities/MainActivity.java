@@ -23,6 +23,7 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
+import com.cnam.al_sms.ConversationActivity;
 import com.cnam.al_sms.R;
 import com.cnam.al_sms.connectivite.BluetoothService;
 import com.cnam.al_sms.data.DataBaseHelper;
@@ -89,9 +90,8 @@ public class MainActivity extends Activity {
 			int cMsg = cFil.getInt(cFil
 					.getColumnIndex(DataBaseHelper.COLUMN_MESSAGECOUNT));
 
-			// mapConversation.put("thread_id", String.valueOf(thread_id));
-			mapConversation.put("nom_contact",
-					String.valueOf(cFil.getPosition()));
+			mapConversation.put("thread_id", thread_id+"");
+			mapConversation.put("nom_contact",ContactController.getContactByThread(thread_id, this));
 			mapConversation.put("nb_msg", Integer.toString(cMsg));
 			mapConversation.put("last_msg", lst_msg);
 			conversations.add(mapConversation);
@@ -112,6 +112,12 @@ public class MainActivity extends Activity {
 					int position, long id) {
 				HashMap<String, String> item_conversation = conversations
 						.get(position);
+				Intent intentConversation = new Intent(MainActivity.this, ConversationActivity.class);
+				intentConversation.putExtra("threadID", item_conversation.get("thread_id"));
+				
+				Toast.makeText(MainActivity.this, "LOADING CONVERSATION", Toast.LENGTH_LONG).show();
+				
+				startActivity(intentConversation);
 			}
 		};
 
@@ -136,7 +142,7 @@ public class MainActivity extends Activity {
 		});
 		
 		//Affichage des contacts
-		ContactController.getContactFromMasterBase(this);
+		//ContactController.getContactFromMasterBase(this);
 	}
 
 	@Override

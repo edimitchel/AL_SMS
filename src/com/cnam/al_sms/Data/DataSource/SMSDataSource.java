@@ -101,6 +101,17 @@ public class SMSDataSource {
 		return list;
 	}
 
+	public Cursor getAllOfThread(long thread_id) {
+		Cursor c = database.query(DataBaseHelper.TABLE_SMS, allColumns,
+				DataBaseHelper.COLUMN_THREADID + " = ?",
+				new String[] { thread_id + "" }, null, null, null, "1");
+		if (c.getCount() == 0)
+			return null;
+		else {
+			return c;
+		}
+	}
+
 	public long getLastSMSId() {
 		Cursor c = database.query(DataBaseHelper.TABLE_SMS,
 				new String[] { DataBaseHelper.COLUMN_ID }, null, null, null,
@@ -115,7 +126,15 @@ public class SMSDataSource {
 
 	}
 
-	private SMS cursorToSMS(Cursor cursor) {
+	public Cursor getSmsOfThread(long thread_id) {
+		Cursor c = database.query(DataBaseHelper.TABLE_SMS, allColumns,
+				DataBaseHelper.COLUMN_THREADID + " = ?",
+				new String[] { thread_id + "" }, null, null, null, "1");
+		c.moveToFirst();
+		return c;
+	}
+
+	public SMS cursorToSMS(Cursor cursor) {
 		SMS sms = new SMS();
 		sms.setId(cursor.getInt(cursor.getColumnIndex(DataBaseHelper.COLUMN_ID)));
 		sms.setFilId(cursor.getLong(cursor
