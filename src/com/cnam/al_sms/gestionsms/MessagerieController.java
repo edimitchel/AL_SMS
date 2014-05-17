@@ -26,10 +26,13 @@ public abstract class MessagerieController {
 		ArrayList<SMS> smsList = new ArrayList<SMS>();
 		SMSDataSource sds = new SMSDataSource(context);
 		sds.open();
-		Cursor sms = sds.getAllOfThread(thread_id);
-		while (sms.moveToNext()) {
+		Cursor sms = sds.getAll(thread_id);
+		sms.moveToLast();
+		while (sms.moveToPrevious()) {
 			smsList.add(sds.cursorToSMS(sms));
 		}
+		sds.close();
+		sms.close();
 		return smsList;
 	}
 }

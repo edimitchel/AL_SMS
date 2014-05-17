@@ -5,19 +5,23 @@ import java.util.List;
 
 import shared.ConversationArrayAdapter;
 import android.app.Activity;
+import android.database.Cursor;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
+import com.cnam.al_sms.gestionsms.ContactController;
 import com.cnam.al_sms.gestionsms.MessagerieController;
 import com.cnam.al_sms.modeles.SMS;
 
 public class ConversationActivity extends Activity {
 
-	private ArrayList<SMS> smsList = new ArrayList<SMS>();
+	private static final String TAG = "ALSMS";
+
+	private List<SMS> smsList = new ArrayList<SMS>();
 
 	private ListView mLVConversation; 
 	
@@ -26,21 +30,26 @@ public class ConversationActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_conversation);
 		
+		Bundle bundle = this.getIntent().getExtras();
+		
 		mLVConversation = (ListView) findViewById(R.id.LV_conversation);
 
-		Long threadId = savedInstanceState.getLong("threadID");
-		if (threadId != null) {
-			//loadSMS(threadId);
-			Toast.makeText(this, "Conversation à charger : "+threadId, Toast.LENGTH_LONG).show();
+		Long threadId = Long.valueOf(bundle.getString("threadID","0"));
+		if (threadId != 0) {
+			loadSMS(threadId);
+			
+			String contactName = ContactController.getContactByThread(threadId, this);
+			this.setTitle(contactName);
 		} else {
 			finishActivity(-1);
 		}
 	}
 
 	private void loadSMS(Long threadId) {
-		List<SMS> sms = MessagerieController.getSMS(threadId, this);
+		smsList = MessagerieController.getSMS(threadId, this);
+		Log.i(TAG,"Nombre SMS: "+smsList.size());
 		
-		ArrayAdapter<SMS> adapter = new ConversationArrayAdapter(this, R.id.LV_conversation, sms);
+		ArrayAdapter<SMS> adapter = new ConversationArrayAdapter(this, R.id.LV_conversation, smsList);
 		
 		mLVConversation.setAdapter(adapter);
 	}

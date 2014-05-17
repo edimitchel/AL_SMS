@@ -4,18 +4,20 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
+import shared.Globales;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
-import com.cnam.al_sms.data.DataBaseHelper;
 import com.cnam.al_sms.data.DataBaseHelper;
 import com.cnam.al_sms.modeles.SMS;
 
 public class SMSDataSource {
 
+	private static final String TAG = "ALSMS";
 	private SQLiteDatabase database;
 	private DataBaseHelper dbHelper;
 
@@ -91,7 +93,8 @@ public class SMSDataSource {
 	public List<SMS> getAll() {
 		ArrayList<SMS> list = new ArrayList<SMS>();
 		Cursor c = database.query(DataBaseHelper.TABLE_SYNCHRONISATION,
-				allColumns, null, null, null, null, null);
+				allColumns, null, null, null, null, DataBaseHelper.COLUMN_DATE
+						+ " DESC", Globales.MESSAGE_COUNT_AFFICHER + "");
 
 		while (!c.isAfterLast()) {
 			list.add(cursorToSMS(c));
@@ -101,10 +104,16 @@ public class SMSDataSource {
 		return list;
 	}
 
-	public Cursor getAllOfThread(long thread_id) {
+	public Cursor getAll(long thread_id) {
 		Cursor c = database.query(DataBaseHelper.TABLE_SMS, allColumns,
 				DataBaseHelper.COLUMN_THREADID + " = ?",
-				new String[] { thread_id + "" }, null, null, null, "1");
+				new String[] { thread_id + "" }, null, null,
+				DataBaseHelper.COLUMN_DATE + " DESC",
+				Globales.MESSAGE_COUNT_AFFICHER + "");
+		Log.i(TAG,
+				"Nombre SMS pour le thread n°" + thread_id + " : "
+						+ c.getCount());
+
 		if (c.getCount() == 0)
 			return null;
 		else {

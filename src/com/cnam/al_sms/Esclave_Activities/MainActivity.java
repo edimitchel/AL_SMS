@@ -43,8 +43,6 @@ public class MainActivity extends Activity {
 	private Button m_BTNSync;
 	private BluetoothService bTService = new BluetoothService(this,
 			new Handler());
-	// String buffer for outgoing messages
-	private StringBuffer mOutStringBuffer;
 
 	// Message types sent from the BluetoothChatService Handler
 	public static final int MESSAGE_STATE_CHANGE = 1;
@@ -115,8 +113,6 @@ public class MainActivity extends Activity {
 				Intent intentConversation = new Intent(MainActivity.this, ConversationActivity.class);
 				intentConversation.putExtra("threadID", item_conversation.get("thread_id"));
 				
-				Toast.makeText(MainActivity.this, "LOADING CONVERSATION", Toast.LENGTH_LONG).show();
-				
 				startActivity(intentConversation);
 			}
 		};
@@ -170,20 +166,5 @@ public class MainActivity extends Activity {
 			startActivity(intent);
 		}
 		return super.onOptionsItemSelected(item);
-	}
-
-	// Fonction qui permet d'initialiser toutes les bases de données.
-	public static void initDatabase(Context context) {
-		FilDataSource fds = new FilDataSource(context);
-		SMSDataSource smsds = new SMSDataSource(context);
-		SyncDataSource sds = new SyncDataSource(context);
-
-		fds.open();
-		smsds.open();
-		sds.open();
-
-		fds.close();
-		smsds.close();
-		sds.close();
 	}
 }
