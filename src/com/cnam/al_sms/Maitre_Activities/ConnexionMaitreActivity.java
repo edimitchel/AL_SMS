@@ -1,30 +1,21 @@
 package com.cnam.al_sms.maitre_activities;
 
-import java.util.ArrayList;
-
 import shared.Globales;
-import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.cnam.al_sms.R;
 import com.cnam.al_sms.connectivite.BluetoothService;
 import com.cnam.al_sms.connectivite.ConnectiviteFactory;
 import com.cnam.al_sms.esclave_activities.AlsmsActivity;
-import com.cnam.al_sms.modeles.SMS;
 
 public class ConnexionMaitreActivity extends AlsmsActivity {
-    // Member object for the chat services
-    
+	// Member object for the chat services
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -35,20 +26,20 @@ public class ConnexionMaitreActivity extends AlsmsActivity {
 			getFragmentManager().beginTransaction()
 					.add(R.id.container, new PlaceholderFragment()).commit();
 		}
-		
-		 if (Globales.BTService != null) {
-	            // Seulement si le statut de la connection Bluetooth est NONE (pas de connection pour le moment)
-	            if (Globales.BTService.getState() == BluetoothService.STATE_NONE) {
-	              // on lance le service
-	            	Globales.BTService.start();
-	            }
-	        }
-		
-		
+
+		if (Globales.BTService != null) {
+			// Seulement si le statut de la connection Bluetooth est NONE (pas
+			// de connection pour le moment)
+			if (Globales.BTService.getState() == BluetoothService.STATE_NONE) {
+				// on lance le service
+				Globales.BTService.start();
+			}
+		}
+
 	}
-	
+
 	@Override
-	protected void onResume(){
+	protected void onResume() {
 		super.onResume();
 	}
 
@@ -92,18 +83,21 @@ public class ConnexionMaitreActivity extends AlsmsActivity {
 	@Override
 	public void onConnected() {
 		finish();
-		
+
 	}
-	
+
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		if(Globales.BTService.getState() == ConnectiviteFactory.STATE_LISTEN){
+		if (Globales.BTService.getState() == ConnectiviteFactory.STATE_LISTEN) {
 			Globales.BTService.stop();
 		}
 	}
-	
-	
-	
+
+	@Override
+	public void onFailedConnection() {
+		// Do Nothing
+		
+	}
 
 }

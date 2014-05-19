@@ -1,16 +1,11 @@
 package com.cnam.al_sms.maitre_activities;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.cnam.al_sms.R;
-import com.cnam.al_sms.data.datasource.FilDataSource;
-import com.cnam.al_sms.data.datasource.SMSDataSource;
-import com.cnam.al_sms.data.datasource.SyncDataSource;
 import com.cnam.al_sms.gestionsms.SynchroController;
 
 public class SynchronisationActivity extends Activity {

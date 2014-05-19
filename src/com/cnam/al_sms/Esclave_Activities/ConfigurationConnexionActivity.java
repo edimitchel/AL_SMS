@@ -23,7 +23,6 @@ import android.widget.ExpandableListView;
 import android.widget.TextView;
 
 import com.cnam.al_sms.R;
-import com.cnam.al_sms.connectivite.BluetoothService;
 import com.cnam.al_sms.connectivite.ConnecBluetooth;
 import com.cnam.al_sms.connectivite.ConnectiviteFactory;
 
@@ -126,7 +125,7 @@ public class ConfigurationConnexionActivity extends AlsmsActivity implements
 
 	protected void setRechercheMode(boolean b) {
 		setRefreshActionButtonState(b);
-		if(b)
+		if (b)
 			showMessage("Recherche en cours ...", 1);
 	}
 
@@ -181,8 +180,6 @@ public class ConfigurationConnexionActivity extends AlsmsActivity implements
 		}
 	}
 
-	
-
 	public void run() {
 		if (ba.isDiscovering())
 			ba.cancelDiscovery();
@@ -206,11 +203,10 @@ public class ConfigurationConnexionActivity extends AlsmsActivity implements
 			listeGroupes.add(mPairedDeviceGroup);
 
 		if (null == adapter) {
-			Log.d(TAG,"Instanciation de adapter");
-			adapter = new BluetoothDeviceAdapter(
-					this, listeGroupes);
+			Log.d(TAG, "Instanciation de adapter");
+			adapter = new BluetoothDeviceAdapter(this, listeGroupes);
 			mExpendableList.setAdapter(adapter);
-			
+
 		}
 
 		for (int i = 0; i < adapter.getGroupCount(); i++) {
@@ -238,20 +234,24 @@ public class ConfigurationConnexionActivity extends AlsmsActivity implements
 			}
 		}, TEMPS_RAFFRAICHISSEMENT_RECHERCHE);
 	}
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		
-	         if (Globales.BTService.getState() == ConnectiviteFactory.STATE_CONNECTED) {
-	            this.finish();
-	         }
 
-	         
+		if (Globales.BTService.getState() == ConnectiviteFactory.STATE_CONNECTED) {
+			this.finish();
+		}
+
 	}
-	
-	
 
 	@Override
 	public void onConnected() {
+		// Do Nothing
+
+	}
+
+	@Override
+	public void onFailedConnection() {
 		// Do Nothing
 		
 	}

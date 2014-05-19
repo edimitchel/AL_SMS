@@ -12,7 +12,6 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.cnam.al_sms.data.DataBaseHelper;
-import com.cnam.al_sms.data.datasource.FilDataSource;
 import com.cnam.al_sms.data.datasource.SMSDataSource;
 import com.cnam.al_sms.gestionsms.SynchroController;
 
@@ -39,8 +38,8 @@ public class TacheSMSFromMaster extends AsyncTask<String, Integer, Boolean> {
 		dialog.setCancelable(false);
 		dialog.setInverseBackgroundForced(false);
 		dialog.setIndeterminate(false);
-		
-		if(!dialog.isShowing())
+
+		if (!dialog.isShowing())
 			dialog.show();
 
 		Cursor c_nb = context.getContentResolver().query(URI_SMS, null, null,
@@ -59,8 +58,9 @@ public class TacheSMSFromMaster extends AsyncTask<String, Integer, Boolean> {
 		if (dialog.isShowing()) {
 			dialog.dismiss();
 		}
-		
-		Toast.makeText(context, "Messages rappatriés sur la base maître.", Toast.LENGTH_LONG);
+
+		Toast.makeText(context, "Messages rappatriés sur la base maître.",
+				Toast.LENGTH_LONG);
 		SynchroController.updateFils(context);
 	}
 
@@ -83,10 +83,12 @@ public class TacheSMSFromMaster extends AsyncTask<String, Integer, Boolean> {
 			long idsms = sds.creerSMS(vals);
 			Log.i(TAG, "SMS id " + idsms + " copié.");
 			progress = Math.round((num_sms / nombreSMS) * 100);
-			
-			/*dialog.setProgress(progress);
-			dialog.setMessage(num_sms+" / " + nombreSMS);*/
-			
+
+			/*
+			 * dialog.setProgress(progress); dialog.setMessage(num_sms+" / " +
+			 * nombreSMS);
+			 */
+
 			num_sms++;
 			c.moveToNext();
 		}

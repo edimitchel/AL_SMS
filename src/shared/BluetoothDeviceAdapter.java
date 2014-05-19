@@ -3,7 +3,6 @@ package shared;
 import java.util.ArrayList;
 
 import android.bluetooth.BluetoothDevice;
-import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,8 +46,7 @@ public class BluetoothDeviceAdapter extends BaseExpandableListAdapter {
 
 	@Override
 	public Object getChild(int groupPosition, int childPosition) {
-		return getGroup(groupPosition).getDevices()
-				.get(childPosition);
+		return getGroup(groupPosition).getDevices().get(childPosition);
 	}
 
 	@Override

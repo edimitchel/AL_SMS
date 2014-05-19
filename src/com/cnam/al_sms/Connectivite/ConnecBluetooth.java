@@ -3,11 +3,7 @@ package com.cnam.al_sms.connectivite;
 import java.util.UUID;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 
 public class ConnecBluetooth {
@@ -15,7 +11,6 @@ public class ConnecBluetooth {
 	public final static UUID APPUUID = UUID
 			.fromString("a60f35f0-b93a-11de-8a39-08102009c666");
 	public final static String APPNAME = "ALSMS";
-	private static boolean allowConnection;
 
 	/**
 	 * 
@@ -46,29 +41,4 @@ public class ConnecBluetooth {
 
 	}
 
-	public static boolean askAcceptBluetooth(BluetoothDevice bd, Context c) {
-		ConnecBluetooth.allowConnection = false;
-		DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				switch (which) {
-				case DialogInterface.BUTTON_POSITIVE:
-					ConnecBluetooth.allowConnection = true;
-					break;
-
-				case DialogInterface.BUTTON_NEGATIVE:
-					ConnecBluetooth.allowConnection = false;
-					break;
-				}
-			}
-		};
-
-		// Log.i("ALSMS-test",Al_SMS.getAppContext().toString());
-		AlertDialog.Builder builder = new AlertDialog.Builder(c);
-		builder.setMessage(
-				"Se connecter au périphéque suivant : " + bd.getName() + "?")
-				.setPositiveButton("Ok", dialogClickListener)
-				.setNegativeButton("Annuler", dialogClickListener).show();
-		return ConnecBluetooth.allowConnection = false;
-	}
 }
