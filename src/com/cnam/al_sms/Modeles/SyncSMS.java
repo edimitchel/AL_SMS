@@ -54,18 +54,21 @@ public class SyncSMS {
 	}
 
 	public SyncSMS() {
-		
+
 	}
 
 	/**
-	 * @param idSync Identifiant de la synchronisation 
-	 * @param dateSync Date de la synchronisation
-	 * @param type Type de la synchronisation
+	 * @param idSync
+	 *            Identifiant de la synchronisation
+	 * @param dateSync
+	 *            Date de la synchronisation
+	 * @param type
+	 *            Type de la synchronisation
 	 * @param idPremierSMS
 	 * @param idDernierSMS
 	 */
-	public SyncSMS(long idSync, Date dateSync, int type,
-			long idPremierSMS, long idDernierSMS) {
+	public SyncSMS(long idSync, Date dateSync, int type, long idPremierSMS,
+			long idDernierSMS) {
 		super();
 		setIdSync(idSync);
 		setDateSync(dateSync);

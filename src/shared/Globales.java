@@ -56,7 +56,6 @@ public class Globales {
 
 	public final static Handler mHandler = new Handler() {
 		@Override
-		
 		public void handleMessage(Message msg) {
 			String readMessag;
 			switch (msg.what) {
@@ -113,7 +112,7 @@ public class Globales {
 				readMessag = msg.getData().getString(Globales.TOAST);
 				Toast.makeText(curActivity, readMessag, Toast.LENGTH_SHORT)
 						.show();
-				
+
 				break;
 			}
 		}

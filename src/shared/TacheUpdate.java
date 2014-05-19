@@ -1,32 +1,23 @@
 package shared;
 
-import android.app.ProgressDialog;
+import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
-import android.widget.Toast;
 
 import com.cnam.al_sms.data.datasource.FilDataSource;
 
 public class TacheUpdate extends AsyncTask<String, Integer, Boolean> {
 
-	private ProgressDialog dialog;
+	private Activity activity;
 	private Context context;
-	private int progress;
 
 	// private List<Message> messages;
-	public TacheUpdate(Context _context) {
-		context = _context;
-		/*
-		 * dialog = new ProgressDialog(context); dialog.setCancelable(false);
-		 * dialog.setInverseBackgroundForced(false);
-		 */
+	public TacheUpdate(Activity _activity) {
+		activity = _activity;
+		context = _activity.getApplicationContext();
 	}
 
 	protected void onPreExecute() {
-		/*
-		 * dialog.setTitle("Mise à jour des conversations..");
-		 * dialog.setMessage("En cours .. (" + "/" + ")"); dialog.show();
-		 */
 	}
 
 	@Override
@@ -34,7 +25,7 @@ public class TacheUpdate extends AsyncTask<String, Integer, Boolean> {
 		/*
 		 * if (dialog.isShowing()) { dialog.dismiss(); }
 		 */
-		Toast.makeText(context, "FINISH", Toast.LENGTH_SHORT);
+		activity.recreate();
 	}
 
 	protected Boolean doInBackground(final String... args) {

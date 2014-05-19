@@ -253,7 +253,7 @@ public class ConfigurationConnexionActivity extends AlsmsActivity implements
 	@Override
 	public void onFailedConnection() {
 		// Do Nothing
-		
+
 	}
 
 }

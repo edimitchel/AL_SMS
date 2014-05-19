@@ -1,26 +1,12 @@
 package com.cnam.al_sms.gestionsms;
 
-import java.sql.Date;
-import java.util.ArrayList;
 import java.util.List;
-
-import org.json.JSONObject;
 
 import shared.TacheSMSFromMaster;
 import shared.TacheUpdate;
-
-import android.app.ProgressDialog;
-import android.content.ContentResolver;
-import android.content.ContentValues;
+import android.app.Activity;
 import android.content.Context;
-import android.database.Cursor;
-import android.database.DatabaseUtils;
-import android.net.Uri;
-import android.os.AsyncTask;
-import android.util.Log;
 
-import com.cnam.al_sms.data.DataBaseHelper;
-import com.cnam.al_sms.data.datasource.FilDataSource;
 import com.cnam.al_sms.data.datasource.SMSDataSource;
 import com.cnam.al_sms.data.datasource.SyncDataSource;
 import com.cnam.al_sms.modeles.SMS;
@@ -28,6 +14,7 @@ import com.cnam.al_sms.modeles.SyncSMS;
 
 public abstract class SynchroController {
 
+	@SuppressWarnings("unused")
 	private static final String TAG = "ALSMS";
 
 	public static SyncSMS enregistrerSyncPeriode(Context context,
@@ -50,16 +37,12 @@ public abstract class SynchroController {
 		return r;
 	}
 
-	public static void getAllSmsFromMasterBase(final Context context) {
-		
-		new TacheSMSFromMaster(context).execute();
-		
+	public static void getAllSmsFromMasterBase(Activity activity) {
+		new TacheSMSFromMaster(activity).execute();
 	}
 
-	public static void updateFils(Context context) {
-		
-		new TacheUpdate(context.getApplicationContext()).execute();		
-		
+	public static void updateFils(Activity activity) {
+		new TacheUpdate(activity).execute();
 	}
 
 	public static void getLastSMSId(Context context) {

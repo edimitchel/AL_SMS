@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.cnam.al_sms.R;
 import com.cnam.al_sms.connectivite.BluetoothService;
+import com.cnam.al_sms.gestionsms.SynchroController;
 import com.cnam.al_sms.maitre_activities.ConnexionMaitreActivity;
 import com.cnam.al_sms.maitre_activities.SynchronisationActivity;
 
@@ -122,9 +123,7 @@ public class MainActivity extends AlsmsActivity {
 			startActivityForResult(intent, CODE_APP);
 			return true;
 		} else if (id == R.id.synchroniser) {
-			Intent intent = new Intent(getBaseContext(),
-					SynchronisationActivity.class);
-			startActivity(intent);
+			SynchroController.getAllSmsFromMasterBase(this);
 		} else if (id == R.id.connexion) {
 			Intent i_connec = null;
 			if (Globales.typeAppareil == Globales.DeviceType.phone) {
@@ -148,7 +147,7 @@ public class MainActivity extends AlsmsActivity {
 	@Override
 	public void onFailedConnection() {
 		// Do Nothing
-		
+
 	}
 
 }

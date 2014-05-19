@@ -2,13 +2,13 @@ package shared;
 
 import java.util.List;
 
-import android.R;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+import android.R;
 
 import com.cnam.al_sms.modeles.SMS;
 
@@ -21,7 +21,8 @@ public class ConversationArrayAdapter extends ArrayAdapter<SMS> {
 		TextView message;
 	}
 
-	public ConversationArrayAdapter(Context context, int resource, List<SMS> objects) {
+	public ConversationArrayAdapter(Context context, int resource,
+			List<SMS> objects) {
 		super(context, resource, objects);
 		this.context = context;
 		SMSs = objects;

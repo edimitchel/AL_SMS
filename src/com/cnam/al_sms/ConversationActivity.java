@@ -23,22 +23,23 @@ public class ConversationActivity extends Activity {
 
 	private List<SMS> smsList = new ArrayList<SMS>();
 
-	private ListView mLVConversation; 
-	
+	private ListView mLVConversation;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_conversation);
-		
+
 		Bundle bundle = this.getIntent().getExtras();
-		
+
 		mLVConversation = (ListView) findViewById(R.id.LV_conversation);
 
-		Long threadId = Long.valueOf(bundle.getString("threadID","0"));
+		Long threadId = Long.valueOf(bundle.getString("threadID", "0"));
 		if (threadId != 0) {
 			loadSMS(threadId);
-			
-			String contactName = ContactController.getContactByThread(threadId, this);
+
+			String contactName = ContactController.getContactByThread(threadId,
+					this);
 			this.setTitle(contactName);
 		} else {
 			finishActivity(-1);
@@ -47,10 +48,11 @@ public class ConversationActivity extends Activity {
 
 	private void loadSMS(Long threadId) {
 		smsList = MessagerieController.getSMS(threadId, this);
-		Log.i(TAG,"Nombre SMS: "+smsList.size());
-		
-		ArrayAdapter<SMS> adapter = new ConversationArrayAdapter(this, R.id.LV_conversation, smsList);
-		
+		Log.i(TAG, "Nombre SMS: " + smsList.size());
+
+		ArrayAdapter<SMS> adapter = new ConversationArrayAdapter(this,
+				R.id.LV_conversation, smsList);
+
 		mLVConversation.setAdapter(adapter);
 	}
 

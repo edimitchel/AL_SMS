@@ -89,7 +89,7 @@ public class ConnexionEsclaveActivity extends AlsmsActivity {
 	@Override
 	public void onFailedConnection() {
 		finish();
-		
+
 	}
 
 }

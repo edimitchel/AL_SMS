@@ -97,7 +97,7 @@ public class ConnexionMaitreActivity extends AlsmsActivity {
 	@Override
 	public void onFailedConnection() {
 		// Do Nothing
-		
+
 	}
 
 }
