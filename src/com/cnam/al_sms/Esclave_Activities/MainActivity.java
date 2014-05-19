@@ -35,13 +35,13 @@ import com.cnam.al_sms.gestionsms.MessagerieController;
 import com.cnam.al_sms.maitre_activities.ConnexionMaitreActivity;
 import com.cnam.al_sms.maitre_activities.SynchronisationActivity;
 
-public class MainActivity extends Activity {
+public class MainActivity extends AlsmsActivity {
 	private static final String TAG = "ALSMS";
 
 	private static final int CODE_APP = 98651;
 	private ListView m_LVconvstream;
 	private Button m_BTNSync;
-	private BluetoothService bTService = new BluetoothService(this,
+	private BluetoothService bTService = new BluetoothService(
 			new Handler());
 
 	// Message types sent from the BluetoothChatService Handler
@@ -75,7 +75,7 @@ public class MainActivity extends Activity {
 		
 		HashMap<String, String> mapConversation;
 
-		Cursor cFil = MessagerieController.getConversations(this);
+		/*Cursor cFil = MessagerieController.getConversations(this);
 
 		Log.i(TAG, String.valueOf(cFil.getCount()));
 		while (cFil.moveToNext()) {
@@ -118,7 +118,7 @@ public class MainActivity extends Activity {
 		};
 
 		m_LVconvstream.setOnItemClickListener(listener);
-
+*/
 		m_BTNSync = (Button) findViewById(R.id.btn_start_sync);
 		m_BTNSync.setOnClickListener(new View.OnClickListener() {
 			@Override

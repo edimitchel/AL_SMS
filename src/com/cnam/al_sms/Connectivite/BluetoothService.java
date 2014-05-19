@@ -11,7 +11,6 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
-import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -23,7 +22,7 @@ import android.util.Log;
  * incoming connections, a thread for connecting with a device, and a
  * thread for performing data transmissions when connected.
  */
-public class BluetoothService {
+public class BluetoothService extends ConnectiviteFactory{
     // Debugging
     private static final String TAG = "ALSMS - BluetoothService";
     private static final boolean D = true;
@@ -36,27 +35,23 @@ public class BluetoothService {
 
     // Member fields
     private final BluetoothAdapter mAdapter;
-    private final Handler mHandler;
+    
     private AcceptThread mAcceptThread;
     private ConnectThread mConnectThread;
     private ConnectedThread mConnectedThread;
-    private int mState;
-
-    // Constants that indicate the current connection state
-    public static final int STATE_NONE = 0;       // we're doing nothing
-    public static final int STATE_LISTEN = 1;     // now listening for incoming connections
-    public static final int STATE_CONNECTING = 2; // now initiating an outgoing connection
-    public static final int STATE_CONNECTED = 3;  // now connected to a remote device
+    
+    
 
     /**
      * Constructor. Prepares a new BluetoothChat session.
      * @param context  The UI Activity Context
      * @param handler  A Handler to send messages back to the UI Activity
      */
-    public BluetoothService(Context context, Handler handler) {
+    public BluetoothService(Handler handler) {
+    	super(handler);
         mAdapter = BluetoothAdapter.getDefaultAdapter();
         mState = STATE_NONE;
-        mHandler = handler;
+        
     }
 
     /**
@@ -180,7 +175,7 @@ public class BluetoothService {
     /**
      * Indicate that the connection attempt failed and notify the UI Activity.
      */
-    private void connectionFailed() {
+    protected void connectionFailed() {
         setState(STATE_LISTEN);
 
         // Send a failure message back to the Activity
@@ -194,7 +189,7 @@ public class BluetoothService {
     /**
      * Indicate that the connection was lost and notify the UI Activity.
      */
-    private void connectionLost() {
+    protected void connectionLost() {
         setState(STATE_LISTEN);
 
         // Send a failure message back to the Activity

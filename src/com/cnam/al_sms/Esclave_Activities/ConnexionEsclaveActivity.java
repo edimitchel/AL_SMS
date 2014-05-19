@@ -3,6 +3,8 @@ package com.cnam.al_sms.esclave_activities;
 import java.util.ArrayList;
 import java.util.Date;
 
+import shared.Globales;
+
 import android.app.Activity;
 import android.app.Fragment;
 import android.bluetooth.BluetoothAdapter;
@@ -23,9 +25,8 @@ import com.cnam.al_sms.connectivite.BluetoothService;
 import com.cnam.al_sms.connectivite.ConnecBluetooth;
 import com.cnam.al_sms.modeles.SMS;
 
-public class ConnexionEsclaveActivity extends Activity implements OnLongClickListener{
-	private BluetoothService bTService = new BluetoothService(this,
-			new Handler());
+public class ConnexionEsclaveActivity extends AlsmsActivity implements OnLongClickListener{
+	private BluetoothService bTService = new BluetoothService(Globales.mHandler);
 	private BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
 	@Override
@@ -35,17 +36,19 @@ public class ConnexionEsclaveActivity extends Activity implements OnLongClickLis
 
 		// On récupère les données du Bundle
 		Bundle obunble = this.getIntent().getExtras();
-		if (obunble != null && obunble.containsKey("Adresse_MAC")) {
+		if (obunble != null && obunble.containsKey("Adresse_MAC") ) {
 			String adress = this.getIntent().getStringExtra("Adresse_MAC");
-			TextView txt_mac = (TextView) findViewById(R.id.txt_mac);
-			txt_mac.setText("Vous souhaitez vous connectez à l'adresse MAC :"
-					+ adress);
+			/*String name = this.getIntent().getStringExtra("Device_Name");
+			
+			TextView txt_mac = (TextView) findViewById(R.id.txtv_attente);
+			txt_mac.setText("@string/attenteCo à " + name + " ["
+					+ adress + "]");*/
 			// création d'un Bluetooth device grace à l'adresse puis connection grace au Bluetooth Service
 			BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(adress);
 			bTService.connect(device);
 			Toast.makeText(this, "En attente de connexion", Toast.LENGTH_LONG).show();
-			ConnecBluetooth.askAcceptBluetooth(device,this);
-			txt_mac.setOnLongClickListener(this);
+			//ConnecBluetooth.askAcceptBluetooth(device,this);
+			//txt_mac.setOnLongClickListener(this);
 		}
 
 	}
@@ -87,43 +90,10 @@ public class ConnexionEsclaveActivity extends Activity implements OnLongClickLis
 		}
 	}
 
-	/* Liaison Bluetooth */
-	/*
-	 * private void sendMessage(String message) { // Check that we're actually
-	 * connected before trying anything if (bTService.getState() !=
-	 * BluetoothService.STATE_CONNECTED) { Toast.makeText(this, "Pas connecté",
-	 * Toast.LENGTH_SHORT).show(); return; }
-	 * 
-	 * // Check that there's actually something to send if (message.length() >
-	 * 0) { // Get the message bytes and tell the BluetoothChatService to write
-	 * byte[] send = message.getBytes(); bTService.write(send);
-	 * 
-	 * // Reset out string buffer to zero and clear the edit text field
-	 * mOutStringBuffer.setLength(0);
-	 * 
-	 * } }
-	 * 
-	 * public void onActivityResult(int requestCode, int resultCode, Intent
-	 * data) { if(D) Log.d(TAG, "onActivityResult " + resultCode); switch
-	 * (requestCode) { case REQUEST_CONNECT_DEVICE: // When DeviceListActivity
-	 * returns with a device to connect if (resultCode == Activity.RESULT_OK) {
-	 * // Get the device MAC address String address =
-	 * data.getExtras().getString("Adresse_MAC"); Log.i(TAG,
-	 * "adress: "+address); // Get the BLuetoothDevice object BluetoothDevice
-	 * device = mBluetoothAdapter.getRemoteDevice(address); // Attempt to
-	 * connect to the device bTService.connect(device); } break; case
-	 * REQUEST_ENABLE_BT: // When the request to enable Bluetooth returns if
-	 * (resultCode == Activity.RESULT_OK) { // Bluetooth is now enabled, so set
-	 * up a chat session
-	 * 
-	 * } else { // User did not enable Bluetooth or an error occured Log.d(TAG,
-	 * "BT not enabled"); Toast.makeText(this, "Bluetooth not enabled",
-	 * Toast.LENGTH_SHORT).show(); finish(); } } }
-	 */
 	
 	@Override
 	public boolean onLongClick(View v) {
-		/* temporaire */
+		
 		ArrayList<SMS> aList =new ArrayList<SMS>();
 		aList.add(new SMS(123,123,"adress",1,new Date(),new Date(),1,2,3,"Salut","Salut les amis",2));
 		aList.add(new SMS(43,43,"adrhhess",1,new Date(),new Date(),1,2,3,"Salut","Comment sa va ?",2));
@@ -133,7 +103,7 @@ public class ConnexionEsclaveActivity extends Activity implements OnLongClickLis
         bTService.send(data);
 		Toast.makeText(this, "Transfet d'un message", Toast.LENGTH_LONG).show();
 
-        /* temporaire */		return false;
+        		return false;
 	}
 
 }

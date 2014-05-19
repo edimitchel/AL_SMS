@@ -33,7 +33,7 @@ public class ConnexionMaitreActivity extends Activity {
 			getFragmentManager().beginTransaction()
 					.add(R.id.container, new PlaceholderFragment()).commit();
 		}
-		Globales.BTService =  new BluetoothService(this, mHandler);
+		Globales.BTService =  new BluetoothService(Globales.mHandler);
 		 if (Globales.BTService != null) {
 	            // Seulement si le statut de la connection Bluetooth est NONE (pas de connection pour le moment)
 	            if (Globales.BTService.getState() == BluetoothService.STATE_NONE) {
@@ -87,53 +87,8 @@ public class ConnexionMaitreActivity extends Activity {
 		}
 	}
 	
-	/* tmp */
-	// The Handler that gets information back from the BluetoothChatService
-  
-	private final Handler mHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-            case Globales.MESSAGE_STATE_CHANGE:
-                switch (msg.arg1) {
-                case BluetoothService.STATE_CONNECTED:
-                    
-                    break;
-                case BluetoothService.STATE_CONNECTING:
-                    break;
-                case BluetoothService.STATE_LISTEN:
-                case BluetoothService.STATE_NONE:
-                    break;
-                }
-                break;
-            case Globales.MESSAGE_WRITE:
-                   break;
-            case Globales.MESSAGE_READ:
-            	byte[] readBuff = (byte[]) msg.obj;
-                // construct a string from the valid bytes in the buffer
-                ArrayList<SMS> readMessage = SMS.getListFromBytes(readBuff);
-            	//String readMessage = new String(readBuff, 0, msg.arg1);
-                Toast.makeText(getApplicationContext(), readMessage.get(0).getMessage(),
-                        Toast.LENGTH_SHORT).show();
-                
-                Toast.makeText(getApplicationContext(), readMessage.get(1).getMessage(),
-                        Toast.LENGTH_SHORT).show();
-                break;
-            case Globales.MESSAGE_DEVICE_NAME:
-            	// construct a string from the valid bytes in the buffer
-            	String mConnectedDeviceName = msg.getData().getString("Device");
-                Toast.makeText(getApplicationContext(), "Connected to "
-                               + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
-                break;
-            case Globales.MESSAGE_TOAST:
-            	// construct a string from the valid bytes in the buffer
-                String readMessag = msg.getData().getString(Globales.TOAST);
-                Toast.makeText(getApplicationContext(), readMessag,
-                               Toast.LENGTH_SHORT).show();
-                break;
-            }
-        }
-    };
+	
+	
 	/* tmp */
 
 }
