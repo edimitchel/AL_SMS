@@ -3,6 +3,7 @@ package shared;
 import java.util.ArrayList;
 
 import com.cnam.al_sms.connectivite.BluetoothService;
+import com.cnam.al_sms.esclave_activities.AlsmsActivity;
 import com.cnam.al_sms.modeles.SMS;
 
 import android.app.Activity;
@@ -37,7 +38,7 @@ public class Globales {
 	public static BluetoothService BTService;
 
 	/* Activity Courantes */
-	public static Activity curActivity;
+	public static AlsmsActivity curActivity;
 
 	/* CONSTANTES */
 	public static final String TOAST = "toast";
@@ -45,7 +46,7 @@ public class Globales {
 	public static final int MESSAGE_STATE_CHANGE = 1;
 	public static final int MESSAGE_READ = 2;
 	public static final int MESSAGE_WRITE = 3;
-	public static final int MESSAGE_DEVICE_NAME = 4;
+	public static final int MESSAGE_CONNECTED = 4;
 	public static final int MESSAGE_TOAST = 5;
 	
 	/* Nombre de messages à afficher (premettre de la configurer) */
@@ -81,11 +82,12 @@ public class Globales {
                 Toast.makeText(curActivity, readMessage.get(1).getMessage(),
                         Toast.LENGTH_SHORT).show();
                 break;
-            case Globales.MESSAGE_DEVICE_NAME:
+            case Globales.MESSAGE_CONNECTED:
             	// construct a string from the valid bytes in the buffer
             	String mConnectedDeviceName = msg.getData().getString("Device");
                 Toast.makeText(curActivity, "Connected to "
                                + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
+                curActivity.onConnected();
                 break;
             case Globales.MESSAGE_TOAST:
             	// construct a string from the valid bytes in the buffer

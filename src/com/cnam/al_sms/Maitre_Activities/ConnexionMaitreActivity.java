@@ -18,9 +18,11 @@ import android.widget.Toast;
 
 import com.cnam.al_sms.R;
 import com.cnam.al_sms.connectivite.BluetoothService;
+import com.cnam.al_sms.connectivite.ConnectiviteFactory;
+import com.cnam.al_sms.esclave_activities.AlsmsActivity;
 import com.cnam.al_sms.modeles.SMS;
 
-public class ConnexionMaitreActivity extends Activity {
+public class ConnexionMaitreActivity extends AlsmsActivity {
     // Member object for the chat services
     
 
@@ -33,7 +35,7 @@ public class ConnexionMaitreActivity extends Activity {
 			getFragmentManager().beginTransaction()
 					.add(R.id.container, new PlaceholderFragment()).commit();
 		}
-		Globales.BTService =  new BluetoothService(Globales.mHandler);
+		
 		 if (Globales.BTService != null) {
 	            // Seulement si le statut de la connection Bluetooth est NONE (pas de connection pour le moment)
 	            if (Globales.BTService.getState() == BluetoothService.STATE_NONE) {
@@ -86,9 +88,22 @@ public class ConnexionMaitreActivity extends Activity {
 			return rootView;
 		}
 	}
+
+	@Override
+	public void onConnected() {
+		finish();
+		
+	}
+	
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		if(Globales.BTService.getState() == ConnectiviteFactory.STATE_LISTEN){
+			Globales.BTService.stop();
+		}
+	}
 	
 	
 	
-	/* tmp */
 
 }

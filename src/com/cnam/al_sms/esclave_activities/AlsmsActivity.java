@@ -4,7 +4,7 @@ import shared.Globales;
 import android.app.Activity;
 import android.os.Bundle;
 
-public class AlsmsActivity extends Activity{
+public abstract class AlsmsActivity extends Activity{
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		
@@ -22,5 +22,7 @@ public class AlsmsActivity extends Activity{
 	private void saveIntoGlobales(){
 		Globales.curActivity = this;
 	}
+	
+	public abstract void onConnected();
 	
 }

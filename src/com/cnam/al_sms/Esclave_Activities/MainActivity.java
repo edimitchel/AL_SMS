@@ -41,15 +41,7 @@ public class MainActivity extends AlsmsActivity {
 	private static final int CODE_APP = 98651;
 	private ListView m_LVconvstream;
 	private Button m_BTNSync;
-	private BluetoothService bTService = new BluetoothService(
-			new Handler());
 
-	// Message types sent from the BluetoothChatService Handler
-	public static final int MESSAGE_STATE_CHANGE = 1;
-	public static final int MESSAGE_READ = 2;
-	public static final int MESSAGE_WRITE = 3;
-	public static final int MESSAGE_DEVICE_NAME = 4;
-	public static final int MESSAGE_TOAST = 5;
 
 	// Key names received from the BluetoothChatService Handler
 	public static final String DEVICE_NAME = "device_name";
@@ -69,7 +61,7 @@ public class MainActivity extends AlsmsActivity {
 		setContentView(R.layout.activity_main);
 
 		Globales.getDeviceType(this);
-
+		Globales.BTService = new BluetoothService(Globales.mHandler);
 		Toast.makeText(this, "Je suis " + Globales.typeAppareil,
 				Toast.LENGTH_LONG).show();
 		
@@ -124,16 +116,7 @@ public class MainActivity extends AlsmsActivity {
 			@Override
 			public void onClick(View v) {
 
-				Intent i_sync = null;
-				if (Globales.typeAppareil == Globales.DeviceType.phone) {
-					i_sync = new Intent(MainActivity.this,
-							ConnexionMaitreActivity.class);
-
-				} else if (Globales.typeAppareil == Globales.DeviceType.tablette) {
-					i_sync = new Intent(MainActivity.this,
-							ConfigurationConnexionActivity.class);
-				}
-				startActivityForResult(i_sync, CODE_APP);
+				
 			}
 		});
 		
@@ -165,6 +148,27 @@ public class MainActivity extends AlsmsActivity {
 					SynchronisationActivity.class);
 			startActivity(intent);
 		}
+		else if (id == R.id.connexion) {
+			Intent i_connec = null;
+			if (Globales.typeAppareil == Globales.DeviceType.phone) {
+				i_connec = new Intent(MainActivity.this,
+						ConnexionMaitreActivity.class);
+
+			} else if (Globales.typeAppareil == Globales.DeviceType.tablette) {
+				i_connec = new Intent(MainActivity.this,
+						ConfigurationConnexionActivity.class);
+			}
+			startActivityForResult(i_connec, CODE_APP);
+		}
 		return super.onOptionsItemSelected(item);
 	}
+
+	@Override
+	public void onConnected() {	
+		// Do Nothing
+	}
+
+	
+	
+	
 }

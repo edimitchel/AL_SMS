@@ -14,15 +14,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.cnam.al_sms.R;
+import com.cnam.al_sms.esclave_activities.AlsmsActivity;
 import com.cnam.al_sms.esclave_activities.ConnexionEsclaveActivity;
 
 public class BluetoothDeviceAdapter extends BaseExpandableListAdapter {
 
-	private Context contexte;
+	private AlsmsActivity contexte;
 	private ArrayList<BluetoothDeviceGroup> groupes_peripherique;
 	private LayoutInflater inflater;
 
-	public BluetoothDeviceAdapter(Context context,
+	public BluetoothDeviceAdapter(AlsmsActivity context,
 			ArrayList<BluetoothDeviceGroup> devices) {
 		this.contexte = context;
 		this.groupes_peripherique = devices;
@@ -124,7 +125,7 @@ public class BluetoothDeviceAdapter extends BaseExpandableListAdapter {
 						ConnexionEsclaveActivity.class);
 				DeviceToConnect.putExtra("Adresse_MAC", objet.getAddress());
 				DeviceToConnect.putExtra("Device_Name", objet.getName());
-				contexte.startActivity(DeviceToConnect);
+				contexte.startActivityForResult(DeviceToConnect, 0);
 			}
 		});
 

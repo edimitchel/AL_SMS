@@ -135,7 +135,7 @@ public class BluetoothService extends ConnectiviteFactory{
         mConnectedThread.start();
 
         // Send the name of the connected device back to the UI Activity
-        Message msg = mHandler.obtainMessage(Globales.MESSAGE_DEVICE_NAME);
+        Message msg = mHandler.obtainMessage(Globales.MESSAGE_CONNECTED);
         Bundle bundle = new Bundle();
         bundle.putString("Device", device.getName());
         msg.setData(bundle);

@@ -8,4 +8,5 @@
         android:showAsAction="never"
         android:title="@string/action_settings"/>
     <item android:id="@+id/synchroniser" android:title="@string/sync" android:menuCategory="secondary"></item>
+    <item android:id="@+id/connexion" android:title="Connexion" android:orderInCategory="200" android:menuCategory="secondary"></item>
 </menu>

@@ -26,8 +26,8 @@ import com.cnam.al_sms.connectivite.BluetoothService;
 import com.cnam.al_sms.connectivite.ConnecBluetooth;
 import com.cnam.al_sms.modeles.SMS;
 
-public class ConnexionEsclaveActivity extends AlsmsActivity implements OnLongClickListener{
-	private BluetoothService bTService = new BluetoothService(Globales.mHandler);
+public class ConnexionEsclaveActivity extends AlsmsActivity {
+	
 	private BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
 	@Override
@@ -42,12 +42,12 @@ public class ConnexionEsclaveActivity extends AlsmsActivity implements OnLongCli
 			String name = this.getIntent().getStringExtra("Device_Name");
 			
 			TextView txt_mac = (TextView) findViewById(R.id.txt_attenteCo);
-			txt_mac.setText(R.string.AttenteCo + " à " + name + " ["
+			txt_mac.setText(getString(R.string.AttenteCo) + " à " + name + " ["
 					+ adress + "]");
 			// création d'un Bluetooth device grace à l'adresse puis connection grace au Bluetooth Service
 			BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(adress);
-			bTService.connect(device);
-			txt_mac.setOnLongClickListener(this);
+			Globales.BTService.connect(device);
+			
 		}
 
 	}
@@ -90,19 +90,17 @@ public class ConnexionEsclaveActivity extends AlsmsActivity implements OnLongCli
 	}
 
 	
+
 	@Override
-	public boolean onLongClick(View v) {
+	public void onConnected() {
+		this.setResult(RESULT_OK);
+		this.finish();
 		
-		ArrayList<SMS> aList =new ArrayList<SMS>();
-		aList.add(new SMS(123,123,"adress",1,new Date(),new Date(),1,2,3,"Salut","Salut les amis",2));
-		aList.add(new SMS(43,43,"adrhhess",1,new Date(),new Date(),1,2,3,"Salut","Comment sa va ?",2));
-
-		byte[] data = SMS.getBytesFromList(aList);
-		
-        bTService.send(data);
-		Toast.makeText(this, "Transfet d'un message", Toast.LENGTH_LONG).show();
-
-        		return false;
 	}
+
+	
+	
+
+	
 
 }

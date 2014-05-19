@@ -5,6 +5,7 @@ import java.util.Set;
 
 import shared.BluetoothDeviceAdapter;
 import shared.BluetoothDeviceGroup;
+import shared.Globales;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -22,9 +23,11 @@ import android.widget.ExpandableListView;
 import android.widget.TextView;
 
 import com.cnam.al_sms.R;
+import com.cnam.al_sms.connectivite.BluetoothService;
 import com.cnam.al_sms.connectivite.ConnecBluetooth;
+import com.cnam.al_sms.connectivite.ConnectiviteFactory;
 
-public class ConfigurationConnexionActivity extends Activity implements
+public class ConfigurationConnexionActivity extends AlsmsActivity implements
 		Runnable {
 	private static final String TAG = "ALSMS";
 
@@ -205,7 +208,7 @@ public class ConfigurationConnexionActivity extends Activity implements
 		if (null == adapter) {
 			Log.d(TAG,"Instanciation de adapter");
 			adapter = new BluetoothDeviceAdapter(
-					ConfigurationConnexionActivity.this, listeGroupes);
+					this, listeGroupes);
 			mExpendableList.setAdapter(adapter);
 			
 		}
@@ -234,6 +237,23 @@ public class ConfigurationConnexionActivity extends Activity implements
 				}
 			}
 		}, TEMPS_RAFFRAICHISSEMENT_RECHERCHE);
+	}
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		
+	         if (Globales.BTService.getState() == ConnectiviteFactory.STATE_CONNECTED) {
+	            this.finish();
+	         }
+
+	         
+	}
+	
+	
+
+	@Override
+	public void onConnected() {
+		// Do Nothing
+		
 	}
 
 }
