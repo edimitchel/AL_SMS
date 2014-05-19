@@ -179,7 +179,7 @@ public class BluetoothService extends ConnectiviteFactory{
         setState(STATE_LISTEN);
 
         // Send a failure message back to the Activity
-        Message msg = mHandler.obtainMessage(Globales.MESSAGE_TOAST);
+        Message msg = mHandler.obtainMessage(Globales.MESSAGE_FAILED);
         Bundle bundle = new Bundle();
         bundle.putString(Globales.TOAST, "Unable to connect device");
         msg.setData(bundle);
@@ -193,7 +193,7 @@ public class BluetoothService extends ConnectiviteFactory{
         setState(STATE_LISTEN);
 
         // Send a failure message back to the Activity
-        Message msg = mHandler.obtainMessage(Globales.MESSAGE_TOAST);
+        Message msg = mHandler.obtainMessage(Globales.MESSAGE_LOST);
         Bundle bundle = new Bundle();
         bundle.putString(Globales.TOAST, "Device connection was lost");
         msg.setData(bundle);

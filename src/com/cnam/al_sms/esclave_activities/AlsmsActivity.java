@@ -25,4 +25,6 @@ public abstract class AlsmsActivity extends Activity{
 	
 	public abstract void onConnected();
 	
+	public abstract void onFailedConnection();
+	
 }
