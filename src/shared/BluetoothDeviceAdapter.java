@@ -123,6 +123,7 @@ public class BluetoothDeviceAdapter extends BaseExpandableListAdapter {
 				Intent DeviceToConnect = new Intent(contexte,
 						ConnexionEsclaveActivity.class);
 				DeviceToConnect.putExtra("Adresse_MAC", objet.getAddress());
+				DeviceToConnect.putExtra("Device_Name", objet.getName());
 				contexte.startActivity(DeviceToConnect);
 			}
 		});

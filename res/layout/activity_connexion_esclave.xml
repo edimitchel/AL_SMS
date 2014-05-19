@@ -6,15 +6,23 @@
     tools:context="com.cnam.al_sms.esclave_activities.ConnexionEsclaveActivity"
     tools:ignore="MergeRootFrame" >
 
+  <ProgressBar
+      android:id="@+id/progressBar1"
+      style="?android:attr/progressBarStyleLarge"
+      android:layout_width="118dp"
+      android:layout_height="99dp"
+      android:layout_gravity="center" />
+
   <TextView
-        android:id="@+id/txt_mac"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginLeft="25dp"
-        android:layout_marginTop="63dp"
-        android:text="Large Text"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+      android:id="@+id/txt_attenteCo"
+      android:layout_width="match_parent"
+      android:layout_height="170dp"
+      android:layout_gravity="bottom"
+      android:gravity="top|center"
+      android:text="@string/AttenteCo"
+      android:textAppearance="?android:attr/textAppearanceLarge"
+      android:textColor="@color/DarkGrey"
+      android:textColorHint="@color/Grey"
+      android:textSize="20sp" />
   
   </FrameLayout>

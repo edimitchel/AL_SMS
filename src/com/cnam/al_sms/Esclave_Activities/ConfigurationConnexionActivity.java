@@ -178,13 +178,7 @@ public class ConfigurationConnexionActivity extends Activity implements
 		}
 	}
 
-	public void envoyerAdressePeripherique(BluetoothDevice bd) {
-		Intent DeviceToConnect = new Intent(
-				ConfigurationConnexionActivity.this,
-				ConnexionEsclaveActivity.class);
-		DeviceToConnect.putExtra("Adresse_MAC", bd.getAddress());
-		startActivity(DeviceToConnect);
-	}
+	
 
 	public void run() {
 		if (ba.isDiscovering())

@@ -25,5 +25,6 @@
     <string name="action_example">Example action</string>
     <string name="title_activity_conversation">Conversation</string>
     <string name="temp_message_sms">Ceci est un message temporaire!</string>
+    <string name="AttenteCo">En attente de connexion</string>
 
 </resources>

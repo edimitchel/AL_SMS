@@ -11,6 +11,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -38,17 +39,15 @@ public class ConnexionEsclaveActivity extends AlsmsActivity implements OnLongCli
 		Bundle obunble = this.getIntent().getExtras();
 		if (obunble != null && obunble.containsKey("Adresse_MAC") ) {
 			String adress = this.getIntent().getStringExtra("Adresse_MAC");
-			/*String name = this.getIntent().getStringExtra("Device_Name");
+			String name = this.getIntent().getStringExtra("Device_Name");
 			
-			TextView txt_mac = (TextView) findViewById(R.id.txtv_attente);
-			txt_mac.setText("@string/attenteCo à " + name + " ["
-					+ adress + "]");*/
+			TextView txt_mac = (TextView) findViewById(R.id.txt_attenteCo);
+			txt_mac.setText(R.string.AttenteCo + " à " + name + " ["
+					+ adress + "]");
 			// création d'un Bluetooth device grace à l'adresse puis connection grace au Bluetooth Service
 			BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(adress);
 			bTService.connect(device);
-			Toast.makeText(this, "En attente de connexion", Toast.LENGTH_LONG).show();
-			//ConnecBluetooth.askAcceptBluetooth(device,this);
-			//txt_mac.setOnLongClickListener(this);
+			txt_mac.setOnLongClickListener(this);
 		}
 
 	}
