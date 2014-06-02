@@ -13,6 +13,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.cnam.al_sms.data.DataBaseHelper;
+
+import android.content.ContentValues;
 import android.provider.Telephony.Sms;
 
 public class SMS implements Serializable {
@@ -224,7 +227,7 @@ public class SMS implements Serializable {
 
 	}
 
-	public static byte[] getBytesFromList(ArrayList<SMS> sms) {
+	public static byte[] getBytesFromList(ArrayList<SMS> list) {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		ObjectOutput out = null;
 		byte[] smsBytes = null;
@@ -235,7 +238,7 @@ public class SMS implements Serializable {
 				e.printStackTrace();
 			}
 			try {
-				out.writeObject(sms);
+				out.writeObject(list);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -262,6 +265,7 @@ public class SMS implements Serializable {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	public static ArrayList<SMS> getListFromBytes(byte[] byteSms) {
 		ByteArrayInputStream bis = new ByteArrayInputStream(byteSms);
 		ObjectInput in = null;
@@ -287,5 +291,22 @@ public class SMS implements Serializable {
 
 		return smsRe;
 
+	}
+	
+	public ContentValues contentValuesFromSMS(){
+		ContentValues cValues = new ContentValues();
+		cValues.put(DataBaseHelper.COLUMN_ID, this.id);
+		cValues.put(DataBaseHelper.COLUMN_THREADID, this.filId);
+		cValues.put(DataBaseHelper.COLUMN_ADDRESS, this.adresse);
+		cValues.put(DataBaseHelper.COLUMN_PERSON, this.personne);
+		cValues.put(DataBaseHelper.COLUMN_DATE, this.date.toString());
+		cValues.put(DataBaseHelper.COLUMN_DATESENT, this.dateEnvoi.toString());
+		cValues.put(DataBaseHelper.COLUMN_READ, this.lu);
+		cValues.put(DataBaseHelper.COLUMN_STATUS, this.statut);
+		cValues.put(DataBaseHelper.COLUMN_TYPE, this.type);
+		cValues.put(DataBaseHelper.COLUMN_SUBJECT, this.sujet);
+		cValues.put(DataBaseHelper.COLUMN_BODY, this.message);
+		cValues.put(DataBaseHelper.COLUMN_SEEN, this.vu);
+		return cValues;
 	}
 }
