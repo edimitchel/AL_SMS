@@ -92,11 +92,13 @@ public class SMSDataSource {
 	}
 	
 	public List<SMS> getNsms(int n) {
-		ArrayList<SMS> list = new ArrayList<SMS>();
+		List<SMS> list = new ArrayList<SMS>();
 		Cursor c = database.query(DataBaseHelper.TABLE_SMS,
-				allColumns, null, null, null, null, DataBaseHelper.COLUMN_DATE
-						+ " DESC", Globales.MESSAGE_COUNT_AFFICHER + "");
+				allColumns, null, null, null,null, DataBaseHelper.COLUMN_DATE + " ASC",
+						 n+"");
+		
 		int i =0;
+		c.moveToFirst();
 		while (!c.isAfterLast() && i<n) {
 			list.add(cursorToSMS(c));
 			c.moveToNext();
@@ -162,7 +164,7 @@ public class SMSDataSource {
 
 	public SMS cursorToSMS(Cursor cursor) {
 		SMS sms = new SMS();
-		cursor.moveToFirst();
+		
 		int n = cursor.getColumnIndex(DataBaseHelper.COLUMN_ID);
 		sms.setId(cursor.getInt(n));
 		sms.setFilId(cursor.getLong(cursor

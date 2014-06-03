@@ -61,6 +61,7 @@ public class Globales {
 	public static final int MESSAGE_COUNT_AFFICHER = 150;
 
 	public final static Handler mHandler = new Handler() {
+		@SuppressWarnings("deprecation")
 		@Override
 		public void handleMessage(Message msg) {
 			String readMessag;
@@ -85,7 +86,7 @@ public class Globales {
 				SMS sms = SMS.getFromBytes(readBuff);
 				// String readMessage = new String(readBuff, 0, msg.arg1);
 				
-				Toast.makeText(curActivity, sms.getPersonne()+":\""+sms.getMessage()+"\"", Toast.LENGTH_LONG).show();
+				Toast.makeText(curActivity, sms.getAdresse()+":\""+sms.getMessage()+"\"", Toast.LENGTH_LONG).show();
 
 				SMSDataSource smsdata = new SMSDataSource(curActivity);
 				smsdata.open();
@@ -93,6 +94,9 @@ public class Globales {
 					smsdata.creerSMS(sms.contentValuesFromSMS());
 				
 				smsdata.close();
+				if(Globales.getDeviceType(Globales.curActivity)==DeviceType.phone){
+					//SmsManager.getDefault().sendTextMessage(sms.getAdresse(), null, sms.getMessage(), null, null);
+				}
 				
 				break;
 			case Globales.MESSAGE_CONNECTED:

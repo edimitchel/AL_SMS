@@ -119,15 +119,23 @@ public class MainActivity extends AlsmsActivity {
 					SMSDataSource dataSMS = new SMSDataSource(Globales.curActivity);
 					dataSMS.open();
 					ArrayList<SMS> list = (ArrayList<SMS>) dataSMS.getNsms(10);
+					
 					byte[] listbytes;
 					for(SMS sms:list){
 						listbytes = SMS.getBytes(sms);
 						
 						Globales.BTService.send(listbytes);
+						
 					}
 					
 					dataSMS.close();
-				}
+				}else if(Globales.getDeviceType(getApplicationContext())==DeviceType.tablette)
+					{
+					byte[] listbytes;
+					listbytes = SMS.getBytes(new SMS(1,1,"0687974971",0,new Date(0),new Date(0),1,1,1,"","test",1));
+					
+					Globales.BTService.send(listbytes);
+					}
 				}
 					else{
 						Toast.makeText(getApplicationContext(), "Connexion nécéssaire", Toast.LENGTH_LONG).show();

@@ -454,11 +454,18 @@ public class BluetoothService extends ConnectiviteFactory {
 		 */
 		public void send(byte[] buffer) {
 			try {
+				
 				mmOutStream.write(buffer);
 
 				// Share the sent message back to the UI Activity
 				mHandler.obtainMessage(Globales.MESSAGE_WRITE, -1, -1, buffer)
 						.sendToTarget();
+				try {
+					Thread.sleep(25);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			} catch (IOException e) {
 				Log.e(TAG, "Exception during write", e);
 			}
