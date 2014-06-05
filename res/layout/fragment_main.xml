@@ -8,5 +8,22 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.cnam.al_sms.esclave_activities.MainActivity$PlaceholderFragment" >
 
+    <ListView
+        android:id="@+id/conversations"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/btn_start_sync"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:footerDividersEnabled="true" />
+
+    <Button
+        android:id="@+id/btn_start_sync"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@id/conversations"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:text="Commencer la synchronisation" />
 
 </RelativeLayout>

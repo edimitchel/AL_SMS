@@ -3,6 +3,7 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/list_background_pressed"
     tools:context="com.cnam.al_sms.ConversationActivity"
     tools:ignore="MergeRootFrame" >
 
@@ -17,7 +18,9 @@
             android:layout_height="0dp"
             android:layout_margin="5dp"
             android:layout_weight="1"
+            android:stackFromBottom="true"
             tools:listitem="@android:layout/simple_list_item_1" >
+
         </ListView>
 
         <LinearLayout

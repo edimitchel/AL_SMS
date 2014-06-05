@@ -28,7 +28,7 @@ public class ConversationActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_conversation);
+		setContentView(R.layout.fragment_conversation);
 
 		Bundle bundle = this.getIntent().getExtras();
 
