@@ -1,10 +1,12 @@
 package com.cnam.al_sms.esclave_activities;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import shared.Globales;
+import shared.Globales.DeviceType;
 import shared.NavDrawerListAdapter;
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -13,6 +15,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
@@ -28,18 +31,18 @@ import android.widget.Toast;
 import com.cnam.al_sms.R;
 import com.cnam.al_sms.connectivite.BluetoothService;
 import com.cnam.al_sms.data.DataBaseHelper;
+import com.cnam.al_sms.data.datasource.SMSDataSource;
 import com.cnam.al_sms.gestionsms.ContactController;
 import com.cnam.al_sms.gestionsms.MessagerieController;
 import com.cnam.al_sms.gestionsms.SynchroController;
 import com.cnam.al_sms.maitre_activities.ConnexionMaitreActivity;
 import com.cnam.al_sms.modeles.NavDrawerItem;
+import com.cnam.al_sms.modeles.SMS;
 
 public class MainActivity extends AlsmsActivity {
 	private static final String TAG = "ALSMS";
 
 	private static final int CODE_APP = 98651;
-	private ListView m_LVconvstream;
-	private Button m_BTNSync;
 
 	// Key names received from the BluetoothChatService Handler
 	public static final String DEVICE_NAME = "device_name";
@@ -51,7 +54,7 @@ public class MainActivity extends AlsmsActivity {
 	/* fin variable liaison Bluetooth */
 	BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
-	private ArrayList<HashMap<String, String>> conversations = new ArrayList<HashMap<String, String>>();
+	private static ArrayList<HashMap<String, String>> conversations = new ArrayList<HashMap<String, String>>();
 
 	/*
 	 * Navigation
@@ -71,7 +74,7 @@ public class MainActivity extends AlsmsActivity {
 	private String[] navMenuTitles;
 	private TypedArray navMenuIcons;
 
-	private ArrayList<NavDrawerItem> navDrawerItems;
+	private static ArrayList<NavDrawerItem> navDrawerItems = new ArrayList<NavDrawerItem>();
 	private NavDrawerListAdapter adapter;
 
 	@Override
@@ -96,14 +99,20 @@ public class MainActivity extends AlsmsActivity {
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 		mDrawerList = (ListView) findViewById(R.id.list_slidermenu);
 
-		navDrawerItems = new ArrayList<NavDrawerItem>();
+		if (savedInstanceState == null) {
+			displayView(0);
+		}
+
+		if (navDrawerItems.size() == 0) {
+			navDrawerItems.add(new NavDrawerItem("Accueil", navMenuIcons
+					.getResourceId(0, -1)));
+		}
 
 		HashMap<String, String> mapConversation;
 
 		Cursor cFil = MessagerieController.getConversations(this);
 
-		Log.i(TAG, String.valueOf(cFil.getCount()));
-		while (cFil.moveToNext()) {
+		while (cFil.moveToNext() && conversations.size() != cFil.getCount()) {
 			mapConversation = new HashMap<String, String>();
 
 			long thread_id = cFil.getLong(cFil
@@ -120,7 +129,11 @@ public class MainActivity extends AlsmsActivity {
 			mapConversation.put("last_msg", lst_msg);
 
 			navDrawerItems.add(new NavDrawerItem(mapConversation
-					.get("nom_contact"), true, mapConversation.get("nb_msg")));
+					.get("nom_contact"), ContactController
+					.getContactImageUriByThread(
+							Long.valueOf(mapConversation.get("thread_id")),
+							this.getApplicationContext()), true,
+					mapConversation.get("nb_msg")));
 			conversations.add(mapConversation);
 		}
 		cFil.close();
@@ -188,9 +201,6 @@ public class MainActivity extends AlsmsActivity {
 			}
 		};
 		mDrawerLayout.setDrawerListener(mDrawerToggle);
-
-		// Affichage des contacts
-		// ContactController.getContactFromMasterBase(this);
 	}
 
 	@Override
@@ -268,10 +278,23 @@ public class MainActivity extends AlsmsActivity {
 	 * Diplaying fragment view for selected nav drawer list item
 	 * */
 	private void displayView(int position) {
-		Map map = conversations.get(position); 
-		
+		Map map = null;
+
+		CharSequence title = mTitle;
+
 		// update the main content by replacing fragments
-		Fragment fragment = new ConversationFragment(Long.valueOf(map.get("thread_id").toString()));
+		Fragment fragment = null;
+
+		if (position == 0) {
+			// ACCUEIL
+			title = "Accueil";
+			fragment = new AccueilFragment();
+		} else {
+			map = conversations.get(position);
+			title = map.get("nom_contact").toString();
+			fragment = new ConversationFragment(Long.valueOf(map.get(
+					"thread_id").toString()));
+		}
 
 		if (fragment != null) {
 			FragmentManager fragmentManager = getFragmentManager();
@@ -281,7 +304,7 @@ public class MainActivity extends AlsmsActivity {
 			// update selected item and title, then close the drawer
 			mDrawerList.setItemChecked(position, true);
 			mDrawerList.setSelection(position);
-			setTitle(map.get("nom_contact").toString());
+			setTitle(title);
 			mDrawerLayout.closeDrawer(mDrawerList);
 		}
 	}
