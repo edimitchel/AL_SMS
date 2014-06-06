@@ -55,9 +55,9 @@ public class NavDrawerListAdapter extends BaseAdapter {
 
 		NavDrawerItem ndi = navDrawerItems.get(position);
 
-		TypedArray navMenuIcons = this.context.getResources()
-				.obtainTypedArray(R.array.nav_drawer_icons);
-		
+		TypedArray navMenuIcons = this.context.getResources().obtainTypedArray(
+				R.array.nav_drawer_icons);
+
 		if (ndi.isImageUri()) {
 			if (ndi.getIconUri() == null) {
 				imgIcon.setImageResource(navMenuIcons.getResourceId(2, -1));

@@ -13,10 +13,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.cnam.al_sms.data.DataBaseHelper;
-
 import android.content.ContentValues;
-import android.provider.Telephony.Sms;
+
+import com.cnam.al_sms.data.DataBaseHelper;
 
 public class SMS implements Serializable {
 	private static final long serialVersionUID = 3668704935456458913L;
@@ -227,7 +226,7 @@ public class SMS implements Serializable {
 
 	}
 
-	public static byte[] getBytesFromList(ArrayList<SMS> list) {
+	public static byte[] getBytesFromList(List<SMS> list) {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		ObjectOutput out = null;
 		byte[] smsBytes = null;
@@ -292,8 +291,8 @@ public class SMS implements Serializable {
 		return smsRe;
 
 	}
-	
-	public ContentValues contentValuesFromSMS(){
+
+	public ContentValues contentValuesFromSMS() {
 		ContentValues cValues = new ContentValues();
 		cValues.put(DataBaseHelper.COLUMN_ID, this.id);
 		cValues.put(DataBaseHelper.COLUMN_THREADID, this.filId);

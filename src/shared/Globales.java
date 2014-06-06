@@ -30,7 +30,14 @@ public class Globales {
 			Globales.typeAppareil = Globales.DeviceType.phone;
 		}
 		return Globales.typeAppareil;
+	}
 
+	public static boolean isPhone(Context context) {
+		return getDeviceType(context) == DeviceType.phone;
+	}
+
+	public static boolean isTablet(Context context) {
+		return getDeviceType(context) == DeviceType.tablette;
 	}
 
 	/* BLUETOOTH SERVICE */

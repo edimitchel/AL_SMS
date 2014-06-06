@@ -47,7 +47,8 @@ public class TacheSMSFromMaster extends AsyncTask<String, Integer, Boolean> {
 
 	@Override
 	protected void onProgressUpdate(Integer... values) {
-		dialog.setMessage("En cours de récupération .. ("+values[0] + " / " + nombreSMS+ ")");
+		dialog.setMessage("En cours de récupération .. (" + values[0] + " / "
+				+ nombreSMS + ")");
 		dialog.setProgress((values[0] / nombreSMS) * 100);
 		super.onProgressUpdate(values);
 	}
@@ -84,7 +85,7 @@ public class TacheSMSFromMaster extends AsyncTask<String, Integer, Boolean> {
 			DatabaseUtils.cursorRowToContentValues(c, vals);
 			long idsms = sds.creerSMS(vals);
 			Log.i(TAG, "SMS id " + idsms + " copié.");
-			
+
 			num_sms++;
 			publishProgress(num_sms);
 			c.moveToNext();

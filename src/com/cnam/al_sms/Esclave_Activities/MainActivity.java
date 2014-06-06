@@ -1,12 +1,10 @@
 package com.cnam.al_sms.esclave_activities;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import shared.Globales;
-import shared.Globales.DeviceType;
 import shared.NavDrawerListAdapter;
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -15,29 +13,24 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.cnam.al_sms.R;
 import com.cnam.al_sms.connectivite.BluetoothService;
 import com.cnam.al_sms.data.DataBaseHelper;
-import com.cnam.al_sms.data.datasource.SMSDataSource;
 import com.cnam.al_sms.gestionsms.ContactController;
 import com.cnam.al_sms.gestionsms.MessagerieController;
 import com.cnam.al_sms.gestionsms.SynchroController;
 import com.cnam.al_sms.maitre_activities.ConnexionMaitreActivity;
 import com.cnam.al_sms.modeles.NavDrawerItem;
-import com.cnam.al_sms.modeles.SMS;
 
 public class MainActivity extends AlsmsActivity {
 	private static final String TAG = "ALSMS";
@@ -138,34 +131,6 @@ public class MainActivity extends AlsmsActivity {
 		}
 		cFil.close();
 
-		/*
-		 * SimpleAdapter adapteur = new SimpleAdapter(this, conversations,
-		 * R.layout.liste_conversation_layout, new String[] { "nom_contact",
-		 * "nb_msg", "last_msg" }, new int[] { R.id.nomcontact, R.id.nb_msg,
-		 * R.id.lst_msg }); m_LVconvstream = (ListView)
-		 * findViewById(R.id.conversations);
-		 * m_LVconvstream.setAdapter(adapteur);
-		 * 
-		 * OnItemClickListener listener = new OnItemClickListener() {
-		 * 
-		 * @Override public void onItemClick(AdapterView<?> parent, View view,
-		 * int position, long id) { HashMap<String, String> item_conversation =
-		 * conversations .get(position); Intent intentConversation = new
-		 * Intent(MainActivity.this, ConversationActivity.class);
-		 * intentConversation.putExtra("threadID",
-		 * item_conversation.get("thread_id"));
-		 * 
-		 * startActivity(intentConversation); } };
-		 * 
-		 * m_LVconvstream.setOnItemClickListener(listener);
-		 * 
-		 * m_BTNSync = (Button) findViewById(R.id.btn_start_sync);
-		 * m_BTNSync.setOnClickListener(new View.OnClickListener() {
-		 * 
-		 * @Override public void onClick(View v) {
-		 * 
-		 * } });
-		 */
 		navMenuIcons.recycle();
 
 		mDrawerList.setOnItemClickListener(new SlideMenuClickListener());
@@ -223,7 +188,11 @@ public class MainActivity extends AlsmsActivity {
 			startActivityForResult(intent, CODE_APP);
 			return true;
 		} else if (id == R.id.synchroniser) {
-			SynchroController.getAllSmsFromMasterBase(this);
+			if (Globales.typeAppareil == Globales.DeviceType.phone) {
+				SynchroController.getAllSmsFromMasterBase(this);
+			} else if (Globales.typeAppareil == Globales.DeviceType.tablette) {
+				SynchroController.synchroPeriode(this.getApplicationContext());
+			}
 		} else if (id == R.id.connexion) {
 			Intent i_connec = null;
 			if (Globales.typeAppareil == Globales.DeviceType.phone) {

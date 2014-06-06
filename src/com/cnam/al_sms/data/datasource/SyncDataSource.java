@@ -50,7 +50,6 @@ public class SyncDataSource {
 
 	public SyncSMS getLastSyncSMSDate() {
 		if (database != null) {
-
 			Cursor c = database.query(DataBaseHelper.TABLE_SYNCHRONISATION,
 					allColumns, null, null, null, null,
 					DataBaseHelper.COLUMN_DATE + " DESC", "1");
@@ -61,7 +60,6 @@ public class SyncDataSource {
 	}
 
 	public List<SMS> getSmsNotSync() {
-		open();
 		Date d = (Date) getLastSyncSMSDate().getDateSync();
 		close();
 		SMSDataSource sds = new SMSDataSource(contexte);

@@ -62,7 +62,7 @@ public class NavDrawerItem {
 	public void setCounterVisibility(boolean isCounterVisible) {
 		this.isCounterVisible = isCounterVisible;
 	}
-	
+
 	public Uri getIconUri() {
 		return iconUri;
 	}

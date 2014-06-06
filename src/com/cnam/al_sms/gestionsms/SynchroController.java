@@ -1,7 +1,9 @@
 package com.cnam.al_sms.gestionsms;
 
+import java.sql.Date;
 import java.util.List;
 
+import shared.Globales;
 import shared.TacheSMSFromMaster;
 import shared.TacheUpdate;
 import android.app.Activity;
@@ -52,6 +54,25 @@ public abstract class SynchroController {
 		sds.close();
 	}
 
+	public static List<SMS> getSmsSince(Context context) {
+		SyncDataSource syncds = new SyncDataSource(context);
+		SMSDataSource sds = new SMSDataSource(context);
+		syncds.open();
+		sds.open();
+		SyncSMS sSms = syncds.getLastSyncSMSDate();
+
+		Date now = new Date(System.currentTimeMillis());
+		Date dateLast = sSms == null ? now : sSms.getDateSync();
+		if (dateLast.before(now)) {
+			dateLast = now;
+		}
+
+		List<SMS> lSms = sds.getSmsAfterDate(dateLast);
+		syncds.close();
+		sds.close();
+		return lSms;
+	}
+
 	public static List<SMS> getSMSAfterDate(Context context) {
 		SyncDataSource sds = new SyncDataSource(context);
 		sds.open();
@@ -60,9 +81,27 @@ public abstract class SynchroController {
 		return r;
 	}
 
-	public static boolean synchroPeriode() {
+	public static boolean synchroPeriode(Context context) {
+		SMSDataSource dataSMS = new SMSDataSource(
+				Globales.curActivity.getApplicationContext());
+		dataSMS.open();
+		List<SMS> list = getSmsSince(context);
+		long firstSMSId = list.get(0).getId();
+		long lastSMSId = list.get(list.size() - 1).getId();
 
-		return false;
+		try {
+			enregistrerSyncPeriode(context, firstSMSId, lastSMSId);
+		} catch (Exception e) {
+			return false;
+		}
+
+		byte[] listbytes;
+		listbytes = SMS.getBytesFromList(list);
+
+		Globales.BTService.send(listbytes);
+
+		dataSMS.close();
+		return true;
 	}
 
 	public static boolean synchroVollee() {

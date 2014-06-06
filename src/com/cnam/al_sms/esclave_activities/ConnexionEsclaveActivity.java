@@ -37,7 +37,6 @@ public class ConnexionEsclaveActivity extends AlsmsActivity {
 			// grace au Bluetooth Service
 			BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(adress);
 			Globales.BTService.connect(device);
-
 		}
 
 	}

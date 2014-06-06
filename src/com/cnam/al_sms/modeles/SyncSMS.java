@@ -1,6 +1,6 @@
 package com.cnam.al_sms.modeles;
 
-import java.util.Date;
+import java.sql.Date;
 
 public class SyncSMS {
 

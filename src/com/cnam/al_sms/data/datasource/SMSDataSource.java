@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import shared.Globales;
-import android.R.integer;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -90,16 +89,15 @@ public class SMSDataSource {
 		cursor.close();
 		return SMSs;
 	}
-	
+
 	public List<SMS> getNsms(int n) {
 		List<SMS> list = new ArrayList<SMS>();
-		Cursor c = database.query(DataBaseHelper.TABLE_SMS,
-				allColumns, null, null, null,null, DataBaseHelper.COLUMN_DATE + " ASC",
-						 n+"");
-		
-		int i =0;
+		Cursor c = database.query(DataBaseHelper.TABLE_SMS, allColumns, null,
+				null, null, null, DataBaseHelper.COLUMN_DATE + " ASC", n + "");
+
+		int i = 0;
 		c.moveToFirst();
-		while (!c.isAfterLast() && i<n) {
+		while (!c.isAfterLast() && i < n) {
 			list.add(cursorToSMS(c));
 			c.moveToNext();
 			i++;
@@ -107,13 +105,12 @@ public class SMSDataSource {
 		c.close();
 		return list;
 	}
-	
 
 	public List<SMS> getAll() {
 		ArrayList<SMS> list = new ArrayList<SMS>();
-		Cursor c = database.query(DataBaseHelper.TABLE_SMS,
-				allColumns, null, null, null, null, DataBaseHelper.COLUMN_DATE
-						+ " DESC", Globales.MESSAGE_COUNT_AFFICHER + "");
+		Cursor c = database.query(DataBaseHelper.TABLE_SMS, allColumns, null,
+				null, null, null, DataBaseHelper.COLUMN_DATE + " DESC",
+				Globales.MESSAGE_COUNT_AFFICHER + "");
 
 		while (!c.isAfterLast()) {
 			list.add(cursorToSMS(c));
@@ -164,7 +161,7 @@ public class SMSDataSource {
 
 	public SMS cursorToSMS(Cursor cursor) {
 		SMS sms = new SMS();
-		
+
 		int n = cursor.getColumnIndex(DataBaseHelper.COLUMN_ID);
 		sms.setId(cursor.getInt(n));
 		sms.setFilId(cursor.getLong(cursor
