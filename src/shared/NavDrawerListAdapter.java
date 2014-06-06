@@ -58,9 +58,17 @@ public class NavDrawerListAdapter extends BaseAdapter {
 		TypedArray navMenuIcons = this.context.getResources()
 				.obtainTypedArray(R.array.nav_drawer_icons);
 		
-		
-		imgIcon.setImageResource(navDrawerItems.get(position).getIcon());
-		
+		if (ndi.isImageUri()) {
+			if (ndi.getIconUri() == null) {
+				imgIcon.setImageResource(navMenuIcons.getResourceId(2, -1));
+			} else {
+				imgIcon.setImageURI(ndi.getIconUri());
+			}
+		} else if (navDrawerItems.get(position).getIcon() == 0) {
+			imgIcon.setImageResource(navMenuIcons.getResourceId(2, -1));
+		} else {
+			imgIcon.setImageResource(navDrawerItems.get(position).getIcon());
+		}
 		navMenuIcons.recycle();
 		txtTitle.setText(navDrawerItems.get(position).getTitle());
 
