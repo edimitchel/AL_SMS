@@ -1,24 +1,32 @@
 package com.cnam.al_sms.modeles;
 
+import android.net.Uri;
+
 public class NavDrawerItem {
 
 	private String title;
-	private int icon;
+	private int icon = 0;
+	private Uri iconUri;
+
+	private boolean isImageUri = false;
 	private String count = "0";
+
 	// boolean to set visiblity of the counter
 	private boolean isCounterVisible = false;
 
 	public NavDrawerItem() {
 	}
 
-	public NavDrawerItem(String title) {
+	public NavDrawerItem(String title, int icon) {
 		this.title = title;
+		this.icon = icon;
 	}
 
-	public NavDrawerItem(String title, boolean isCounterVisible,
+	public NavDrawerItem(String title, Uri imageUri, boolean isCounterVisible,
 			String count) {
 		this.title = title;
-		//this.icon = icon;
+		this.isImageUri = true;
+		this.iconUri = imageUri;
 		this.isCounterVisible = isCounterVisible;
 		this.count = count;
 	}
@@ -53,5 +61,13 @@ public class NavDrawerItem {
 
 	public void setCounterVisibility(boolean isCounterVisible) {
 		this.isCounterVisible = isCounterVisible;
+	}
+	
+	public Uri getIconUri() {
+		return iconUri;
+	}
+
+	public boolean isImageUri() {
+		return isImageUri;
 	}
 }

@@ -1,10 +1,12 @@
 package com.cnam.al_sms.gestionsms;
 
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.ContactsContract;
+import android.provider.ContactsContract.Contacts;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -51,8 +53,6 @@ public abstract class ContactController {
 		}
 	}
 
-	// TODO Développer cette méthode pour récupérer un contact grâce à
-	// l'identifiant d'une conversation.
 	public static String getContactByThread(long thread_id, Context context) {
 		SMSDataSource sds = new SMSDataSource(context);
 		sds.open();
@@ -81,5 +81,57 @@ public abstract class ContactController {
 		}
 		cur.close();
 		return contactName;
+	}
+
+	public static Uri getContactImageUriByThread(long thread_id, Context context) {
+		ContentResolver cr = context.getContentResolver();
+		SMSDataSource sds = new SMSDataSource(context);
+		sds.open();
+		Cursor contact = sds.getSmsOfThread(thread_id);
+		if (contact.getCount() == 0) {
+			return null;
+		}
+		String number = contact.getString(contact
+				.getColumnIndexOrThrow(DataBaseHelper.COLUMN_ADDRESS));
+		contact.close();
+
+		Uri uri = Uri.withAppendedPath(
+				ContactsContract.PhoneLookup.CONTENT_FILTER_URI,
+				Uri.encode(number));
+
+		Cursor cur = cr.query(uri, null, null, null, null);
+
+		Long contactId;
+
+		if (cur.getCount() > 0) {
+			cur.moveToFirst();
+			contactId = Long.valueOf(cur.getString(cur
+					.getColumnIndex(ContactsContract.Contacts._ID)));
+		} else {
+			return null;
+		}
+		cur.close();
+
+		return openPhoto(contactId, context);
+	}
+
+	public static Uri openPhoto(long contactId, Context context) {
+		Uri contactUri = ContentUris.withAppendedId(Contacts.CONTENT_URI,
+				contactId);
+		Uri photoUri = Uri.withAppendedPath(contactUri,
+				Contacts.Photo.CONTENT_DIRECTORY);
+		Cursor cursor = context.getContentResolver().query(photoUri,
+				new String[] { Contacts.Photo.PHOTO }, null, null, null);
+		if (cursor == null) {
+			return null;
+		}
+		try {
+			if (cursor.moveToFirst()) {
+				return photoUri;
+			}
+		} finally {
+			cursor.close();
+		}
+		return null;
 	}
 }

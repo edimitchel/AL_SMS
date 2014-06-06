@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import shared.Globales;
+import android.R.integer;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -79,7 +80,7 @@ public class SMSDataSource {
 	public List<SMS> getSmsAfterDate(Date d) {
 		List<SMS> SMSs = new ArrayList<SMS>();
 		Cursor cursor = database.query(DataBaseHelper.TABLE_SMS, allColumns,
-				DataBaseHelper.COLUMN_ID + " > ?",
+				DataBaseHelper.COLUMN_DATE + " > ?",
 				new String[] { d.toString() }, null, null, null);
 		cursor.moveToFirst();
 		while (!cursor.isAfterLast()) {
@@ -89,10 +90,28 @@ public class SMSDataSource {
 		cursor.close();
 		return SMSs;
 	}
+	
+	public List<SMS> getNsms(int n) {
+		List<SMS> list = new ArrayList<SMS>();
+		Cursor c = database.query(DataBaseHelper.TABLE_SMS,
+				allColumns, null, null, null,null, DataBaseHelper.COLUMN_DATE + " ASC",
+						 n+"");
+		
+		int i =0;
+		c.moveToFirst();
+		while (!c.isAfterLast() && i<n) {
+			list.add(cursorToSMS(c));
+			c.moveToNext();
+			i++;
+		}
+		c.close();
+		return list;
+	}
+	
 
 	public List<SMS> getAll() {
 		ArrayList<SMS> list = new ArrayList<SMS>();
-		Cursor c = database.query(DataBaseHelper.TABLE_SYNCHRONISATION,
+		Cursor c = database.query(DataBaseHelper.TABLE_SMS,
 				allColumns, null, null, null, null, DataBaseHelper.COLUMN_DATE
 						+ " DESC", Globales.MESSAGE_COUNT_AFFICHER + "");
 
@@ -145,7 +164,9 @@ public class SMSDataSource {
 
 	public SMS cursorToSMS(Cursor cursor) {
 		SMS sms = new SMS();
-		sms.setId(cursor.getInt(cursor.getColumnIndex(DataBaseHelper.COLUMN_ID)));
+		
+		int n = cursor.getColumnIndex(DataBaseHelper.COLUMN_ID);
+		sms.setId(cursor.getInt(n));
 		sms.setFilId(cursor.getLong(cursor
 				.getColumnIndex(DataBaseHelper.COLUMN_THREADID)));
 		sms.setAdresse(cursor.getString(cursor

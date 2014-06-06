@@ -1,6 +1,5 @@
 package shared;
 
-
 import java.util.ArrayList;
 
 import com.cnam.al_sms.R;
@@ -8,6 +7,7 @@ import com.cnam.al_sms.modeles.NavDrawerItem;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,7 +53,15 @@ public class NavDrawerListAdapter extends BaseAdapter {
 		TextView txtTitle = (TextView) convertView.findViewById(R.id.title);
 		TextView txtCount = (TextView) convertView.findViewById(R.id.counter);
 
+		NavDrawerItem ndi = navDrawerItems.get(position);
+
+		TypedArray navMenuIcons = this.context.getResources()
+				.obtainTypedArray(R.array.nav_drawer_icons);
+		
+		
 		imgIcon.setImageResource(navDrawerItems.get(position).getIcon());
+		
+		navMenuIcons.recycle();
 		txtTitle.setText(navDrawerItems.get(position).getTitle());
 
 		// displaying count
