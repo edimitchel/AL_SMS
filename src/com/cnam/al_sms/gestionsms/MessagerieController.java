@@ -29,8 +29,9 @@ public abstract class MessagerieController {
 		sds.open();
 		Cursor sms = sds.getAll(thread_id);
 		sms.moveToLast();
-		while (sms.moveToPrevious()) {
+		while (!sms.isBeforeFirst()) {
 			smsList.add(sds.cursorToSMS(sms));
+			sms.moveToPrevious();
 		}
 		sds.close();
 		sms.close();
