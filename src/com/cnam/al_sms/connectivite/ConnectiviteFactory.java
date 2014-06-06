@@ -1,12 +1,6 @@
 package com.cnam.al_sms.connectivite;
 
-import shared.Globales;
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothSocket;
-import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
-import android.util.Log;
 
 public abstract class ConnectiviteFactory {
 	protected int mState;

@@ -25,7 +25,6 @@ public class TacheUpdate extends AsyncTask<String, Integer, Boolean> {
 		/*
 		 * if (dialog.isShowing()) { dialog.dismiss(); }
 		 */
-		activity.recreate();
 	}
 
 	protected Boolean doInBackground(final String... args) {

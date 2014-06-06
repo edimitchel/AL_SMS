@@ -1,15 +1,19 @@
 package shared;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.cnam.al_sms.connectivite.BluetoothService;
+import com.cnam.al_sms.data.datasource.SMSDataSource;
 import com.cnam.al_sms.esclave_activities.AlsmsActivity;
+import com.cnam.al_sms.gestionsms.ConversationController;
 import com.cnam.al_sms.modeles.SMS;
 
 public class Globales {
@@ -32,12 +36,12 @@ public class Globales {
 		return Globales.typeAppareil;
 	}
 
-	public static boolean isPhone(Context context) {
-		return getDeviceType(context) == DeviceType.phone;
+	public static boolean isPhone() {
+		return Globales.typeAppareil == DeviceType.phone;
 	}
 
-	public static boolean isTablet(Context context) {
-		return getDeviceType(context) == DeviceType.tablette;
+	public static boolean isTablet() {
+		return Globales.typeAppareil == DeviceType.tablette;
 	}
 
 	/* BLUETOOTH SERVICE */
@@ -50,7 +54,7 @@ public class Globales {
 	public static final String TOAST = "toast";
 
 	public static final int MESSAGE_STATE_CHANGE = 1;
-	public static final int MESSAGE_READ = 2;
+	public static final int MESSAGE_RECEIVED = 2;
 	public static final int MESSAGE_WRITE = 3;
 	public static final int MESSAGE_CONNECTED = 4;
 	public static final int MESSAGE_TOAST = 5;
@@ -80,16 +84,28 @@ public class Globales {
 				break;
 			case Globales.MESSAGE_WRITE:
 				break;
-			case Globales.MESSAGE_READ:
+			case Globales.MESSAGE_RECEIVED:
 				byte[] readBuff = (byte[]) msg.obj;
-				// construct a string from the valid bytes in the buffer
-				ArrayList<SMS> readMessage = SMS.getListFromBytes(readBuff);
-				// String readMessage = new String(readBuff, 0, msg.arg1);
-				Toast.makeText(curActivity, readMessage.get(0).getMessage(),
-						Toast.LENGTH_SHORT).show();
 
-				Toast.makeText(curActivity, readMessage.get(1).getMessage(),
-						Toast.LENGTH_SHORT).show();
+				Log.i("ALSMS",msg.obj.toString());
+				Log.i("ALSMS",msg.toString());
+				// construct a string from the valid bytes in the buffer
+				SMS bsms = SMS.getFromBytes(readBuff);
+				// String readMessage = new String(readBuff, 0, msg.arg1);
+				List<SMS> sms = new ArrayList<SMS>();
+				sms.add(bsms);
+				if (sms != null) {
+
+					SMSDataSource smsdata = new SMSDataSource(curActivity);
+					smsdata.open();
+
+					for (SMS s : sms) {
+						smsdata.creerSMS(s.contentValuesFromSMS());
+					}
+					ConversationController.updateFils(Globales.curActivity);
+
+					smsdata.close();
+				}
 				break;
 			case Globales.MESSAGE_CONNECTED:
 				// construct a string from the valid bytes in the buffer
@@ -124,4 +140,11 @@ public class Globales {
 			}
 		}
 	};
+
+	/**
+	 * Intervalle de temps pour la synchronisation des SMS en millisecondes
+	 * 
+	 * default: 24 h
+	 */
+	public static final long INTERVALLE_TEMPS_SYNC = 60 * 60 * 24 * 1000;
 }

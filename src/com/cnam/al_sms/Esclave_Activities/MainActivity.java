@@ -27,6 +27,7 @@ import com.cnam.al_sms.R;
 import com.cnam.al_sms.connectivite.BluetoothService;
 import com.cnam.al_sms.data.DataBaseHelper;
 import com.cnam.al_sms.gestionsms.ContactController;
+import com.cnam.al_sms.gestionsms.ConversationController;
 import com.cnam.al_sms.gestionsms.MessagerieController;
 import com.cnam.al_sms.gestionsms.SynchroController;
 import com.cnam.al_sms.maitre_activities.ConnexionMaitreActivity;
@@ -140,7 +141,6 @@ public class MainActivity extends AlsmsActivity {
 				navDrawerItems);
 		mDrawerList.setAdapter(adapter);
 
-		// enabling action bar app icon and behaving it as toggle button
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 		getActionBar().setHomeButtonEnabled(true);
 
@@ -188,10 +188,12 @@ public class MainActivity extends AlsmsActivity {
 			startActivityForResult(intent, CODE_APP);
 			return true;
 		} else if (id == R.id.synchroniser) {
-			if (Globales.typeAppareil == Globales.DeviceType.phone) {
-				SynchroController.getAllSmsFromMasterBase(this);
-			} else if (Globales.typeAppareil == Globales.DeviceType.tablette) {
+			if (Globales.isPhone()) {
+				ConversationController.getAllSmsFromMasterBase(this);
 				SynchroController.synchroPeriode(this.getApplicationContext());
+			} else if (Globales.isTablet()) {
+				// TODO APPELER LA SYNCHRONISATION CHEZ LE MAITRE!
+				
 			}
 		} else if (id == R.id.connexion) {
 			Intent i_connec = null;
@@ -259,7 +261,7 @@ public class MainActivity extends AlsmsActivity {
 			title = "Accueil";
 			fragment = new AccueilFragment();
 		} else {
-			map = conversations.get(position);
+			map = conversations.get(Math.max(0, position-1));
 			title = map.get("nom_contact").toString();
 			fragment = new ConversationFragment(Long.valueOf(map.get(
 					"thread_id").toString()));

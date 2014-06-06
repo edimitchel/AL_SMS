@@ -79,8 +79,8 @@ public class SMSDataSource {
 	public List<SMS> getSmsAfterDate(Date d) {
 		List<SMS> SMSs = new ArrayList<SMS>();
 		Cursor cursor = database.query(DataBaseHelper.TABLE_SMS, allColumns,
-				DataBaseHelper.COLUMN_DATE + " > ?",
-				new String[] { d.toString() }, null, null, null);
+				DataBaseHelper.COLUMN_DATE + " > ?", new String[] { d.getTime()
+						+ "" }, null, null, null);
 		cursor.moveToFirst();
 		while (!cursor.isAfterLast()) {
 			SMSs.add(cursorToSMS(cursor));

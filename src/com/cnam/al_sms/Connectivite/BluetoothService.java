@@ -435,7 +435,7 @@ public class BluetoothService extends ConnectiviteFactory {
 					bytes = mmInStream.read(buffer);
 
 					// Send the obtained bytes to the UI Activity
-					mHandler.obtainMessage(Globales.MESSAGE_READ, bytes, -1,
+					mHandler.obtainMessage(Globales.MESSAGE_RECEIVED, bytes, -1,
 							buffer).sendToTarget();
 				} catch (IOException e) {
 					Log.e(TAG, "disconnected", e);

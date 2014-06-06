@@ -1,6 +1,7 @@
 package com.cnam.al_sms.maitre_activities;
 
 import shared.Globales;
+import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -8,15 +9,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.cnam.al_sms.R;
 import com.cnam.al_sms.connectivite.BluetoothService;
+import com.cnam.al_sms.connectivite.ConnecBluetooth;
 import com.cnam.al_sms.connectivite.ConnectiviteFactory;
 import com.cnam.al_sms.esclave_activities.AlsmsActivity;
 
 public class ConnexionMaitreActivity extends AlsmsActivity {
-	// Member object for the chat services
-
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -25,6 +27,13 @@ public class ConnexionMaitreActivity extends AlsmsActivity {
 		if (savedInstanceState == null) {
 			getFragmentManager().beginTransaction()
 					.add(R.id.container, new PlaceholderFragment()).commit();
+		}
+		
+		try {
+			ConnecBluetooth.checkBluetoothVisibility(this);
+		} catch (Exception e) {
+			Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+			finishActivity(-1);
 		}
 
 		if (Globales.BTService != null) {

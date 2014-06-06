@@ -5,6 +5,7 @@ import java.util.List;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.telephony.SmsManager;
 
 import com.cnam.al_sms.data.datasource.FilDataSource;
 import com.cnam.al_sms.data.datasource.SMSDataSource;
@@ -34,5 +35,10 @@ public abstract class MessagerieController {
 		sds.close();
 		sms.close();
 		return smsList;
+	}
+
+	private static void sendSMS(String phoneNumber, String message) {
+		SmsManager sms = SmsManager.getDefault();
+		sms.sendTextMessage(phoneNumber, null, message, null, null);
 	}
 }

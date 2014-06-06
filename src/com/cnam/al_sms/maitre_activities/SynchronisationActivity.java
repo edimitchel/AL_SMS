@@ -6,7 +6,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.cnam.al_sms.R;
-import com.cnam.al_sms.gestionsms.SynchroController;
+import com.cnam.al_sms.gestionsms.ConversationController;
 
 public class SynchronisationActivity extends Activity {
 
@@ -20,7 +20,7 @@ public class SynchronisationActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_synchroniser);
 
-		SynchroController.getAllSmsFromMasterBase(SynchronisationActivity.this);
+		ConversationController.getAllSmsFromMasterBase(SynchronisationActivity.this);
 	}
 
 	@Override

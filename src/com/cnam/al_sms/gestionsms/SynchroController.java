@@ -4,11 +4,10 @@ import java.sql.Date;
 import java.util.List;
 
 import shared.Globales;
-import shared.TacheSMSFromMaster;
-import shared.TacheUpdate;
-import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 
+import com.cnam.al_sms.connectivite.BluetoothService;
 import com.cnam.al_sms.data.datasource.SMSDataSource;
 import com.cnam.al_sms.data.datasource.SyncDataSource;
 import com.cnam.al_sms.modeles.SMS;
@@ -39,14 +38,6 @@ public abstract class SynchroController {
 		return r;
 	}
 
-	public static void getAllSmsFromMasterBase(Activity activity) {
-		new TacheSMSFromMaster(activity).execute();
-	}
-
-	public static void updateFils(Activity activity) {
-		new TacheUpdate(activity).execute();
-	}
-
 	public static void getLastSMSId(Context context) {
 		SMSDataSource sds = new SMSDataSource(context);
 		sds.open();
@@ -61,7 +52,8 @@ public abstract class SynchroController {
 		sds.open();
 		SyncSMS sSms = syncds.getLastSyncSMSDate();
 
-		Date now = new Date(System.currentTimeMillis());
+		Date now = new Date(System.currentTimeMillis()
+				- Globales.INTERVALLE_TEMPS_SYNC);
 		Date dateLast = sSms == null ? now : sSms.getDateSync();
 		if (dateLast.before(now)) {
 			dateLast = now;
@@ -82,25 +74,29 @@ public abstract class SynchroController {
 	}
 
 	public static boolean synchroPeriode(Context context) {
-		SMSDataSource dataSMS = new SMSDataSource(
-				Globales.curActivity.getApplicationContext());
-		dataSMS.open();
-		List<SMS> list = getSmsSince(context);
-		long firstSMSId = list.get(0).getId();
-		long lastSMSId = list.get(list.size() - 1).getId();
+		if (Globales.BTService.getState() == BluetoothService.STATE_CONNECTED) {
+			SMSDataSource dataSMS = new SMSDataSource(
+					Globales.curActivity.getApplicationContext());
+			dataSMS.open();
+			List<SMS> list = getSmsSince(context);
+			dataSMS.close();
+			Log.i("ALSMS",list.size()+"");
+			if (list.size() > 0) {
+				long firstSMSId = list.get(0).getId();
+				long lastSMSId = list.get(list.size() - 1).getId();
 
-		try {
-			enregistrerSyncPeriode(context, firstSMSId, lastSMSId);
-		} catch (Exception e) {
-			return false;
+				try {
+					enregistrerSyncPeriode(context, firstSMSId, lastSMSId);
+				} catch (Exception e) {
+					return false;
+				}
+
+				byte[] listbytes;
+				listbytes = SMS.getBytes(list.get(0));
+
+				Globales.BTService.send(listbytes);
+			}
 		}
-
-		byte[] listbytes;
-		listbytes = SMS.getBytesFromList(list);
-
-		Globales.BTService.send(listbytes);
-
-		dataSMS.close();
 		return true;
 	}
 

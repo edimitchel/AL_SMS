@@ -261,7 +261,6 @@ public class SMS implements Serializable {
 
 		}
 		return smsBytes;
-
 	}
 
 	@SuppressWarnings("unchecked")

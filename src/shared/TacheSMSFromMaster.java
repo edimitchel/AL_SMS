@@ -1,5 +1,7 @@
 package shared;
 
+import java.sql.Date;
+
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
@@ -13,6 +15,7 @@ import android.util.Log;
 
 import com.cnam.al_sms.data.DataBaseHelper;
 import com.cnam.al_sms.data.datasource.SMSDataSource;
+import com.cnam.al_sms.gestionsms.ConversationController;
 import com.cnam.al_sms.gestionsms.SynchroController;
 
 public class TacheSMSFromMaster extends AsyncTask<String, Integer, Boolean> {
@@ -63,19 +66,23 @@ public class TacheSMSFromMaster extends AsyncTask<String, Integer, Boolean> {
 		if (dialog.isShowing()) {
 			dialog.dismiss();
 		}
-		SynchroController.updateFils(activity);
+		ConversationController.updateFils(activity);
 	}
 
 	protected Boolean doInBackground(final String... args) {
 		sds.open();
 
-		long last_id = sds.getLastSMSId();
-		final String[] whereArgs = new String[] { last_id + "" };
-
+		long lastID = sds.getLastSMSId();
+		final String[] whereArgs = new String[] {
+				lastID + "",
+				System.currentTimeMillis() - Globales.INTERVALLE_TEMPS_SYNC
+						+ "" };
 		int num_sms = 0;
+		sds.close();
 
 		Cursor c = cr.query(URI_SMS, SMSDataSource.allColumns,
-				DataBaseHelper.COLUMN_ID + " > ?", whereArgs,
+				DataBaseHelper.COLUMN_ID + " > ? AND "
+						+ DataBaseHelper.COLUMN_DATE + " > ?", whereArgs,
 				DataBaseHelper.COLUMN_ID);
 		c.moveToFirst();
 		nombreSMS = c.getCount();
@@ -91,7 +98,6 @@ public class TacheSMSFromMaster extends AsyncTask<String, Integer, Boolean> {
 			c.moveToNext();
 		}
 		c.close();
-		sds.close();
 
 		return true;
 	}
