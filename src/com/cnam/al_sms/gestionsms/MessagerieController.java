@@ -3,9 +3,15 @@ package com.cnam.al_sms.gestionsms;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.app.Activity;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.telephony.SmsManager;
+import android.widget.Toast;
 
 import com.cnam.al_sms.data.datasource.FilDataSource;
 import com.cnam.al_sms.data.datasource.SMSDataSource;
@@ -38,8 +44,70 @@ public abstract class MessagerieController {
 		return smsList;
 	}
 
-	private static void sendSMS(String phoneNumber, String message) {
-		SmsManager sms = SmsManager.getDefault();
-		sms.sendTextMessage(phoneNumber, null, message, null, null);
+	public static void sendSMS(Context context, String phoneNumber,
+			String message) {
+		try {
+
+			String SENT = "sent";
+			String DELIVERED = "delivered";
+
+			Intent sentIntent = new Intent(SENT);
+			/* Create Pending Intents */
+			PendingIntent sentPI = PendingIntent.getBroadcast(context, 0,
+					sentIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+			Intent deliveryIntent = new Intent(DELIVERED);
+
+			PendingIntent deliverPI = PendingIntent.getBroadcast(context, 0,
+					deliveryIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+			
+			context.registerReceiver(new BroadcastReceiver() {
+
+				@Override
+				public void onReceive(Context context, Intent intent) {
+					String result = "";
+
+					switch (getResultCode()) {
+
+					case Activity.RESULT_OK:
+						result = "Message bien envoyé";
+						break;
+					case SmsManager.RESULT_ERROR_GENERIC_FAILURE:
+						result = "Le message ne s'est pas envoyé..";
+						break;
+					case SmsManager.RESULT_ERROR_RADIO_OFF:
+						result = "Réseau mobile désactivé";
+						break;
+					case SmsManager.RESULT_ERROR_NULL_PDU:
+						result = "Le PDU n'est pas défini";
+						break;
+					case SmsManager.RESULT_ERROR_NO_SERVICE:
+						result = "Le service n'est pas accessible";
+						break;
+					}
+
+					Toast.makeText(context, result, Toast.LENGTH_LONG).show();
+				}
+
+			}, new IntentFilter(SENT));
+
+			context.registerReceiver(new BroadcastReceiver() {
+
+				@Override
+				public void onReceive(Context context, Intent intent) {
+					Toast.makeText(context, "Message délivré", Toast.LENGTH_LONG)
+							.show();
+				}
+
+			}, new IntentFilter(DELIVERED));
+
+			SmsManager smsManager = SmsManager.getDefault();
+			smsManager.sendTextMessage(phoneNumber, null, message, sentPI,
+					deliverPI);
+		} catch (Exception ex) {
+			Toast.makeText(context, ex.getMessage().toString(),
+					Toast.LENGTH_LONG).show();
+			ex.printStackTrace();
+		}
 	}
 }
