@@ -21,8 +21,6 @@ public class ConnecBluetooth {
 	 *             si le bluetooth n'est pas supproté
 	 */
 	public static boolean checkBluetoothConnection(Activity a) throws Exception {
-		boolean res = true;
-
 		BluetoothAdapter bluetoothAdapter = BluetoothAdapter
 				.getDefaultAdapter();
 		if (bluetoothAdapter == null) {
@@ -35,35 +33,35 @@ public class ConnecBluetooth {
 			a.startActivityForResult(enableBlueTooth,
 					REQUEST_CODE_ENABLE_BLUETOOTH);
 			if (!bluetoothAdapter.isEnabled()) {
-				res = false;
+				return false;
 			}
 		}
-		return res;
+		return true;
 	}
 
 	/**
 	 * Demande à changer la visiblité et à activer le bluetooth s'il le faut.
+	 * 
 	 * @param a
 	 * @return toujours true
 	 * @throws Exception
 	 *             si le bluetooth n'est pas supproté
 	 */
 	public static boolean checkBluetoothVisibility(Activity a) throws Exception {
-		boolean res = true;
-
 		BluetoothAdapter bluetoothAdapter = BluetoothAdapter
 				.getDefaultAdapter();
 		if (bluetoothAdapter == null) {
 			throw new Exception("Bluetooth non supporté sur cet appareil");
 		}
-
-		if (checkBluetoothConnection(a)) {
+		if (bluetoothAdapter.getScanMode() != BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
 			Intent changeVisibilityBlueTooth = new Intent(
 					BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+			changeVisibilityBlueTooth.putExtra(
+					BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
 			a.startActivityForResult(changeVisibilityBlueTooth,
 					REQUEST_CODE_VISIBILITY_BLUETOOTH);
 		}
-		return res;
+		return false;
 	}
 
 }

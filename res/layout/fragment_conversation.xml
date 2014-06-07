@@ -3,7 +3,7 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/list_background_pressed"
+    android:background="@color/counter_text_bg"
     tools:context="com.cnam.al_sms.ConversationActivity"
     tools:ignore="MergeRootFrame" >
 
@@ -26,22 +26,26 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/list_divider"
             android:gravity="bottom" >
 
             <EditText
                 android:id="@+id/editText1"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="fill_parent"
+                android:layout_gravity="center_vertical"
                 android:layout_weight="1"
                 android:ems="10"
-                android:inputType="textMultiLine" />
+                android:hint="@string/hint_message"
+                android:inputType="textMultiLine"
+                android:textColorHint="@color/list_item_title" />
 
-            <Button
+            <ImageButton
                 android:id="@+id/button1"
-                android:layout_width="20dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Ok" />
+                android:layout_width="75dp"
+                android:layout_height="fill_parent"
+                android:src="@android:drawable/ic_menu_send" />
+
         </LinearLayout>
     </LinearLayout>
 

@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
+import android.graphics.drawable.Drawable.Callback;
 import android.telephony.SmsManager;
 import android.widget.Toast;
 
@@ -60,7 +61,7 @@ public abstract class MessagerieController {
 
 			PendingIntent deliverPI = PendingIntent.getBroadcast(context, 0,
 					deliveryIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-			
+
 			context.registerReceiver(new BroadcastReceiver() {
 
 				@Override
@@ -95,8 +96,8 @@ public abstract class MessagerieController {
 
 				@Override
 				public void onReceive(Context context, Intent intent) {
-					Toast.makeText(context, "Message délivré", Toast.LENGTH_LONG)
-							.show();
+					Toast.makeText(context, "Message délivré",
+							Toast.LENGTH_LONG).show();
 				}
 
 			}, new IntentFilter(DELIVERED));

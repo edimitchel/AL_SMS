@@ -9,6 +9,7 @@ import shared.NavDrawerListAdapter;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.bluetooth.BluetoothAdapter;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
@@ -31,6 +32,7 @@ import com.cnam.al_sms.gestionsms.ConversationController;
 import com.cnam.al_sms.gestionsms.MessagerieController;
 import com.cnam.al_sms.gestionsms.SynchroController;
 import com.cnam.al_sms.maitre_activities.ConnexionMaitreActivity;
+import com.cnam.al_sms.modeles.Contact;
 import com.cnam.al_sms.modeles.NavDrawerItem;
 
 public class MainActivity extends AlsmsActivity {
@@ -73,6 +75,7 @@ public class MainActivity extends AlsmsActivity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		Globales.init(getApplicationContext());
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
@@ -118,7 +121,7 @@ public class MainActivity extends AlsmsActivity {
 
 			mapConversation.put("thread_id", thread_id + "");
 			mapConversation.put("nom_contact",
-					ContactController.getContactByThread(thread_id, this));
+					ContactController.getContactNameByThread(thread_id, this));
 			mapConversation.put("nb_msg", Integer.toString(cMsg));
 			mapConversation.put("last_msg", lst_msg);
 
@@ -189,11 +192,12 @@ public class MainActivity extends AlsmsActivity {
 			return true;
 		} else if (id == R.id.synchroniser) {
 			if (Globales.isPhone()) {
-				ConversationController.getAllSmsFromMasterBase(this);
+				ConversationController.getAllSmsFromMasterBase(
+						this.getApplicationContext(), false);
 				SynchroController.synchroPeriode(this.getApplicationContext());
 			} else if (Globales.isTablet()) {
 				// TODO APPELER LA SYNCHRONISATION CHEZ LE MAITRE!
-				
+
 			}
 		} else if (id == R.id.connexion) {
 			Intent i_connec = null;
@@ -261,10 +265,13 @@ public class MainActivity extends AlsmsActivity {
 			title = "Accueil";
 			fragment = new AccueilFragment();
 		} else {
-			map = conversations.get(Math.max(0, position-1));
-			title = map.get("nom_contact").toString();
-			fragment = new ConversationFragment(Long.valueOf(map.get(
-					"thread_id").toString()));
+			map = conversations.get(Math.max(0, position - 1));
+
+			Contact contact = ContactController.getContact(getApplicationContext(),Long.valueOf(map
+					.get("thread_id")+""));
+
+			title = contact.getNom();
+			fragment = new ConversationFragment(contact);
 		}
 
 		if (fragment != null) {
@@ -304,5 +311,4 @@ public class MainActivity extends AlsmsActivity {
 		// Pass any configuration change to the drawer toggls
 		mDrawerToggle.onConfigurationChanged(newConfig);
 	}
-
 }

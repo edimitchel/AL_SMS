@@ -7,12 +7,14 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
 import android.telephony.TelephonyManager;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.cnam.al_sms.connectivite.BluetoothService;
 import com.cnam.al_sms.data.datasource.SMSDataSource;
 import com.cnam.al_sms.esclave_activities.AlsmsActivity;
+import com.cnam.al_sms.esclave_activities.MainActivity;
 import com.cnam.al_sms.gestionsms.ConversationController;
 import com.cnam.al_sms.modeles.SMS;
 
@@ -87,8 +89,8 @@ public class Globales {
 			case Globales.MESSAGE_RECEIVED:
 				byte[] readBuff = (byte[]) msg.obj;
 
-				Log.i("ALSMS",msg.obj.toString());
-				Log.i("ALSMS",msg.toString());
+				Log.i("ALSMS", msg.obj.toString());
+				Log.i("ALSMS", msg.toString());
 				// construct a string from the valid bytes in the buffer
 				SMS bsms = SMS.getFromBytes(readBuff);
 				// String readMessage = new String(readBuff, 0, msg.arg1);
@@ -102,7 +104,9 @@ public class Globales {
 					for (SMS s : sms) {
 						smsdata.creerSMS(s.contentValuesFromSMS());
 					}
-					ConversationController.updateFils(Globales.curActivity);
+					ConversationController
+							.updateFils(Globales.curActivity
+									.getApplicationContext(), false);
 
 					smsdata.close();
 				}
@@ -147,4 +151,10 @@ public class Globales {
 	 * default: 24 h
 	 */
 	public static final long INTERVALLE_TEMPS_SYNC = 60 * 60 * 24 * 1000;
+
+	public static java.text.DateFormat dateFormat;
+
+	public static void init(Context context) {
+		dateFormat = DateFormat.getDateFormat(context);
+	}
 }

@@ -10,12 +10,80 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.io.StreamCorruptedException;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
-import android.provider.Telephony.Sms;
+import android.net.Uri;
 
 public class Contact implements Serializable {
+
+	private Long id;
+
+	private String nom;
+
+	private String numero;
+
+	private Uri imageURI;
+
+	private Long threadId;
+
+	/**
+	 * @param nom
+	 * @param numero
+	 * @param imageURI
+	 * @param threadId
+	 */
+
+	public Contact(Long id, String nom, String numero, Uri imageURI,
+			Long threadId) {
+		super();
+		this.id = id;
+		this.nom = nom;
+		this.numero = numero;
+		this.imageURI = imageURI;
+		this.threadId = threadId;
+	}
+
+	public Contact() {
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public String getNom() {
+		return nom;
+	}
+
+	public void setNom(String nom) {
+		this.nom = nom;
+	}
+
+	public String getNumero() {
+		return numero;
+	}
+
+	public void setNumero(String numero) {
+		this.numero = numero;
+	}
+
+	public Uri getImageURI() {
+		return imageURI;
+	}
+
+	public void setImageURI(Uri imageURI) {
+		this.imageURI = imageURI;
+	}
+
+	public void setThreadId(Long threadId) {
+		this.threadId = threadId;
+	}
+
+	public long getThreadId() {
+		return threadId;
+	}
 
 	public static byte[] getBytes(Contact contact) {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();

@@ -10,6 +10,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.text.format.DateFormat;
 import android.util.Log;
 
 import com.cnam.al_sms.data.DataBaseHelper;
@@ -170,9 +171,9 @@ public class SMSDataSource {
 				.getColumnIndex(DataBaseHelper.COLUMN_ADDRESS)));
 		sms.setPersonne(cursor.getInt(cursor
 				.getColumnIndex(DataBaseHelper.COLUMN_PERSON)));
-		sms.setDate(new Date(cursor.getInt(cursor
+		sms.setDate(new Date(cursor.getLong(cursor
 				.getColumnIndex(DataBaseHelper.COLUMN_DATE))));
-		sms.setDateEnvoi(new Date(cursor.getInt(cursor
+		sms.setDateEnvoi(new Date(cursor.getLong(cursor
 				.getColumnIndex(DataBaseHelper.COLUMN_DATESENT))));
 		sms.setLu(cursor.getInt(cursor
 				.getColumnIndex(DataBaseHelper.COLUMN_READ)));

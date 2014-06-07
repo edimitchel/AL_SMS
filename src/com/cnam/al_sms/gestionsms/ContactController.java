@@ -1,5 +1,6 @@
 package com.cnam.al_sms.gestionsms;
 
+import shared.Globales;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
@@ -12,6 +13,7 @@ import android.widget.Toast;
 
 import com.cnam.al_sms.data.DataBaseHelper;
 import com.cnam.al_sms.data.datasource.SMSDataSource;
+import com.cnam.al_sms.modeles.Contact;
 
 public abstract class ContactController {
 	private static final String TAG = "ALSMS";
@@ -53,7 +55,7 @@ public abstract class ContactController {
 		}
 	}
 
-	public static String getContactByThread(long thread_id, Context context) {
+	public static String getContactNameByThread(long thread_id, Context context) {
 		SMSDataSource sds = new SMSDataSource(context);
 		sds.open();
 		Cursor contact = sds.getSmsOfThread(thread_id);
@@ -83,36 +85,57 @@ public abstract class ContactController {
 		return contactName;
 	}
 
-	public static Uri getContactImageUriByThread(long thread_id, Context context) {
-		ContentResolver cr = context.getContentResolver();
+	public static Contact getContact(Context context, Long thread_id) {
 		SMSDataSource sds = new SMSDataSource(context);
 		sds.open();
 		Cursor contact = sds.getSmsOfThread(thread_id);
 		if (contact.getCount() == 0) {
-			return null;
+			return new Contact(0L, "null", "null", null, 0L);
 		}
+
+		Contact newContact = new Contact();
+
 		String number = contact.getString(contact
 				.getColumnIndexOrThrow(DataBaseHelper.COLUMN_ADDRESS));
-		contact.close();
 
+		ContentResolver cr = context.getContentResolver();
 		Uri uri = Uri.withAppendedPath(
 				ContactsContract.PhoneLookup.CONTENT_FILTER_URI,
 				Uri.encode(number));
 
 		Cursor cur = cr.query(uri, null, null, null, null);
-
+		contact.close();
 		Long contactId;
-
+		String contactName;
+		Uri imageUri;
 		if (cur.getCount() > 0) {
 			cur.moveToFirst();
-			contactId = Long.valueOf(cur.getString(cur
-					.getColumnIndex(ContactsContract.Contacts._ID)));
+			contactId = cur.getLong(cur
+					.getColumnIndex(ContactsContract.Contacts._ID));
+			contactName = cur.getString(cur
+					.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+			imageUri = ContactController.openPhoto(contactId, context);
+
+			newContact.setId(contactId);
+			newContact.setNom(contactName);
+			newContact.setNumero(number);
+			newContact.setImageURI(imageUri);
+			newContact.setThreadId(thread_id);
+			
 		} else {
-			return null;
+			newContact.setId(0L);
+			newContact.setNom(number);
+			newContact.setNumero(number);
+			newContact.setThreadId(thread_id);
 		}
 		cur.close();
+		sds.close();
+		return newContact;
+	}
 
-		return openPhoto(contactId, context);
+	public static Uri getContactImageUriByThread(long thread_id, Context context) {
+		Contact c = getContact(context, thread_id);
+		return openPhoto(c.getId(), context);
 	}
 
 	public static Uri openPhoto(long contactId, Context context) {
@@ -122,7 +145,7 @@ public abstract class ContactController {
 				Contacts.Photo.CONTENT_DIRECTORY);
 		Cursor cursor = context.getContentResolver().query(photoUri,
 				new String[] { Contacts.Photo.PHOTO }, null, null, null);
-		if (cursor == null) {
+		if (cursor == null || cursor.getCount() == 0) {
 			return null;
 		}
 		try {

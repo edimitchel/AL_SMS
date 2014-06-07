@@ -20,7 +20,7 @@ public class SynchronisationActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_synchroniser);
 
-		ConversationController.getAllSmsFromMasterBase(SynchronisationActivity.this);
+		ConversationController.getAllSmsFromMasterBase(SynchronisationActivity.this.getApplicationContext(), false);
 	}
 
 	@Override

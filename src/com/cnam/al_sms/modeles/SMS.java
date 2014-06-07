@@ -131,6 +131,11 @@ public class SMS implements Serializable {
 	public SMS() {
 	}
 
+	public SMS(String message, Date date) {
+		this.message = message;
+		this.date = date;
+	}
+
 	/**
 	 * @param id
 	 * @param fil_id

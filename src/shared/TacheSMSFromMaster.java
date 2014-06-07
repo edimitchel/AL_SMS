@@ -21,7 +21,7 @@ import com.cnam.al_sms.gestionsms.SynchroController;
 public class TacheSMSFromMaster extends AsyncTask<String, Integer, Boolean> {
 	private static final String TAG = "ALSMS";
 
-	private ProgressDialog dialog;
+	private ProgressDialog dialog = null;
 	private Activity activity;
 	private Context context;
 
@@ -29,44 +29,49 @@ public class TacheSMSFromMaster extends AsyncTask<String, Integer, Boolean> {
 	private SMSDataSource sds;
 	private ContentResolver cr;
 
+	private boolean dialogShow = true;
 	private int nombreSMS;
 
-	// private List<Message> messages;
-	public TacheSMSFromMaster(Activity _activity) {
-		activity = _activity;
-		context = _activity.getApplicationContext();
+	public TacheSMSFromMaster(Context _context, boolean dialogShow) {
+		this.dialogShow = dialogShow;
+		this.context = _context;
+		if (dialogShow) {
+			dialog = new ProgressDialog(activity);
+			dialog.setCancelable(false);
+			dialog.setInverseBackgroundForced(false);
+			dialog.setIndeterminate(false);
+			dialog.setMax(100);
+
+			if (!dialog.isShowing())
+				dialog.show();
+		}
 		cr = context.getContentResolver();
 		sds = new SMSDataSource(context);
-
-		dialog = new ProgressDialog(activity);
-		dialog.setCancelable(false);
-		dialog.setInverseBackgroundForced(false);
-		dialog.setIndeterminate(false);
-		dialog.setMax(100);
-
-		if (!dialog.isShowing())
-			dialog.show();
 	}
 
 	@Override
 	protected void onProgressUpdate(Integer... values) {
-		dialog.setMessage("En cours de récupération .. (" + values[0] + " / "
-				+ nombreSMS + ")");
-		dialog.setProgress((values[0] / nombreSMS) * 100);
-		super.onProgressUpdate(values);
+		if (dialogShow) {
+			dialog.setMessage("En cours de récupération .. (" + values[0]
+					+ " / " + nombreSMS + ")");
+			dialog.setProgress((values[0] / nombreSMS) * 100);
+			super.onProgressUpdate(values);
+		}
 	}
 
 	protected void onPreExecute() {
-		dialog.setTitle("Récupération des SMS de la base officielle.");
-		dialog.setMessage("En cours de récupération..");
+		if (dialogShow) {
+			dialog.setTitle("Récupération des SMS de la base officielle.");
+			dialog.setMessage("En cours de récupération..");
+		}
 	}
 
 	@Override
 	protected void onPostExecute(final Boolean success) {
-		if (dialog.isShowing()) {
+		if (dialogShow && dialog.isShowing()) {
 			dialog.dismiss();
 		}
-		ConversationController.updateFils(activity);
+		ConversationController.updateFils(context, false);
 	}
 
 	protected Boolean doInBackground(final String... args) {
@@ -78,7 +83,6 @@ public class TacheSMSFromMaster extends AsyncTask<String, Integer, Boolean> {
 				System.currentTimeMillis() - Globales.INTERVALLE_TEMPS_SYNC
 						+ "" };
 		int num_sms = 0;
-		sds.close();
 
 		Cursor c = cr.query(URI_SMS, SMSDataSource.allColumns,
 				DataBaseHelper.COLUMN_ID + " > ? AND "
@@ -98,6 +102,7 @@ public class TacheSMSFromMaster extends AsyncTask<String, Integer, Boolean> {
 			c.moveToNext();
 		}
 		c.close();
+		sds.close();
 
 		return true;
 	}
