@@ -1,12 +1,14 @@
 package shared;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
 import android.telephony.TelephonyManager;
+import android.telephony.gsm.SmsManager;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.widget.Toast;
@@ -16,6 +18,7 @@ import com.cnam.al_sms.data.datasource.SMSDataSource;
 import com.cnam.al_sms.esclave_activities.AlsmsActivity;
 import com.cnam.al_sms.esclave_activities.MainActivity;
 import com.cnam.al_sms.gestionsms.ConversationController;
+import com.cnam.al_sms.gestionsms.MessagerieController;
 import com.cnam.al_sms.modeles.SMS;
 
 public class Globales {
@@ -62,12 +65,14 @@ public class Globales {
 	public static final int MESSAGE_TOAST = 5;
 	public static final int MESSAGE_FAILED = 6;
 	public static final int MESSAGE_LOST = 7;
+	
 
 	/* Nombre de messages à afficher (premettre de la configurer) */
 
 	public static final int MESSAGE_COUNT_AFFICHER = 150;
 
 	public final static Handler mHandler = new Handler() {
+		@SuppressWarnings("deprecation")
 		@Override
 		public void handleMessage(Message msg) {
 			String readMessag;
@@ -88,28 +93,27 @@ public class Globales {
 				break;
 			case Globales.MESSAGE_RECEIVED:
 				byte[] readBuff = (byte[]) msg.obj;
-
-				Log.i("ALSMS", msg.obj.toString());
-				Log.i("ALSMS", msg.toString());
 				// construct a string from the valid bytes in the buffer
-				SMS bsms = SMS.getFromBytes(readBuff);
+				SMS sms = SMS.getFromBytes(readBuff);
 				// String readMessage = new String(readBuff, 0, msg.arg1);
-				List<SMS> sms = new ArrayList<SMS>();
-				sms.add(bsms);
-				if (sms != null) {
+				
+				
 
-					SMSDataSource smsdata = new SMSDataSource(curActivity);
-					smsdata.open();
-
-					for (SMS s : sms) {
-						smsdata.creerSMS(s.contentValuesFromSMS());
-					}
-					ConversationController
-							.updateFils(Globales.curActivity
-									.getApplicationContext(), false);
-
-					smsdata.close();
+				SMSDataSource smsdata = new SMSDataSource(curActivity);
+				smsdata.open();
+				
+					smsdata.creerSMS(sms.contentValuesFromSMS());
+				
+				smsdata.close();
+				if(Globales.isPhone()){
+					MessagerieController.sendSMS(Globales.curActivity,
+							"0687974971", sms.getMessage()); // 0605116117
+					
+					Toast.makeText(curActivity, "Envoi d'un sms "+":\""+sms.getMessage()+"\"", Toast.LENGTH_LONG).show();
+				}else{
+					Toast.makeText(curActivity, "Récupération de SMS en cours", Toast.LENGTH_SHORT).show();
 				}
+				
 				break;
 			case Globales.MESSAGE_CONNECTED:
 				// construct a string from the valid bytes in the buffer

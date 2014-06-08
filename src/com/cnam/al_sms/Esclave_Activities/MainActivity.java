@@ -86,6 +86,12 @@ public class MainActivity extends AlsmsActivity {
 
 		mTitle = mDrawerTitle = getTitle();
 
+		/*Verif BT */
+		if (!mBluetoothAdapter.isEnabled()) {
+			   Intent enableBlueTooth = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+			   startActivityForResult(enableBlueTooth, REQUEST_ENABLE_BT);
+			}
+		
 		// load slide menu items
 		navMenuTitles = getResources().getStringArray(R.array.nav_drawer_items);
 
@@ -291,6 +297,19 @@ public class MainActivity extends AlsmsActivity {
 	public void setTitle(CharSequence title) {
 		mTitle = title;
 		getActionBar().setTitle(mTitle);
+	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+	       super.onActivityResult(requestCode, resultCode, data);
+	       if (requestCode != REQUEST_ENABLE_BT)
+	           return;
+	       if (resultCode == RESULT_OK) {
+	    	   Toast.makeText(getApplicationContext(), "Bluetooth a été activé", Toast.LENGTH_LONG).show();
+	       } else {
+	    	   Toast.makeText(getApplicationContext(), "ALSMS ne peut pas être utilisé sans bluetooth", Toast.LENGTH_LONG).show();
+	    	   this.finish();
+	       }    
 	}
 
 	/**

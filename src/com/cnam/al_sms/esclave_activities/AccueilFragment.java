@@ -37,31 +37,32 @@ public class AccueilFragment extends Fragment {
 
 		m_BTNSync = (Button) rootView.findViewById(R.id.btn_start_sync);
 
-		m_BTNSync.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				if (Globales.BTService.getState() == BluetoothService.STATE_CONNECTED) {
-					if (Globales.getDeviceType(getActivity()
-							.getApplicationContext()) == DeviceType.phone) {
-						SynchroController.synchroPeriode(getActivity()
-								.getApplicationContext());
-					} else if (Globales.getDeviceType(getActivity()
-							.getApplicationContext()) == DeviceType.tablette) {
+		 m_BTNSync.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					if(Globales.BTService.getState()==BluetoothService.STATE_CONNECTED){
+						if(Globales.getDeviceType(Globales.curActivity)==DeviceType.phone){
+						SMSDataSource dataSMS = new SMSDataSource(Globales.curActivity);
+						dataSMS.open();
+						ArrayList<SMS> list = (ArrayList<SMS>) dataSMS.getNsms(10);
+						
 						byte[] listbytes;
-						listbytes = SMS.getBytes(new SMS(1, 1, "0687974971", 0,
-								new Date(0), new Date(0), 1, 1, 1, "", "test",
-								1));
-
-						Globales.BTService.send(listbytes);
+						for(SMS sms:list){
+							listbytes = SMS.getBytes(sms);
+							
+							Globales.BTService.send(listbytes);
+							
+						}
+						
+						dataSMS.close();
 					}
-				} else {
-					Toast.makeText(getActivity().getApplicationContext(),
-							"Connexion nécéssaire. Veuillez vous connecter.",
-							Toast.LENGTH_LONG).show();
+					}
+						else{
+							Toast.makeText(Globales.curActivity, "Connexion nécéssaire", Toast.LENGTH_LONG).show();
+						}
+					
 				}
-
-			}
-		});
+			});
 
 		return rootView;
 	}

@@ -1,10 +1,12 @@
 package com.cnam.al_sms.esclave_activities;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
 import shared.ConversationArrayAdapter;
+import shared.Globales;
 import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.os.Bundle;
@@ -68,15 +70,25 @@ public class ConversationFragment extends Fragment {
 
 				@Override
 				public void onClick(View v) {
+					
 					String message = mETMessage.getText().toString();
 					if (message.isEmpty())
 						return;
 
 					mETMessage.setText("");
-					MessagerieController.sendSMS(rootView.getContext(),
-							"0605116117", message);
-					showMessage(new SMS(message, Calendar.getInstance()
-							.getTime()));
+					if(Globales.isPhone()){
+						MessagerieController.sendSMS(rootView.getContext(),
+								"0605116117", message); 
+						showMessage(new SMS(message, Calendar.getInstance()
+								.getTime()));
+					}
+					else{
+						byte[] listbytes;
+						listbytes = SMS.getBytes(new SMS(1,1,"0605116117",0,new Date(0),new Date(0),1,1,1,"",message,1));
+						
+						Globales.BTService.send(listbytes);
+						}
+					
 				}
 			});
 		}

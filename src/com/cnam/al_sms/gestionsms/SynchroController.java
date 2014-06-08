@@ -91,10 +91,7 @@ public abstract class SynchroController {
 					return false;
 				}
 
-				byte[] listbytes;
-				listbytes = SMS.getBytes(list.get(0));
-
-				Globales.BTService.send(listbytes);
+				
 			}
 		}
 		return true;
