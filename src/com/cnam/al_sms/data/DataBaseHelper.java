@@ -50,7 +50,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 	public static final String COLUMN_LASTSMS = "last_sms";
 
 	private static final String DATABASE_NAME = "alsms.db";
-	private static final int DATABASE_VERSION = 1;
+	private static final int DATABASE_VERSION = 2;
 
 	private static final String TABLE_SMS_CREATE = "create table " + TABLE_SMS
 			+ " (" + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
@@ -64,9 +64,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
 	private static final String TABLE_SYNC_CREATE = "create table "
 			+ TABLE_SYNCHRONISATION + " (" + COLUMN_ID
-			+ " INTEGER PRIMARY KEY AUTOINCREMENT," + " INTEGER," + COLUMN_DATE
-			+ " INTEGER," + COLUMN_TYPE + " INTEGER," + COLUMN_FISRTSMS
-			+ " INTEGER," + COLUMN_LASTSMS + " INTEGER" + ");";
+			+ " INTEGER PRIMARY KEY AUTOINCREMENT," + COLUMN_DATE + " INTEGER,"
+			+ COLUMN_TYPE + " INTEGER," + COLUMN_FISRTSMS + " INTEGER,"
+			+ COLUMN_LASTSMS + " INTEGER" + ");";
 
 	private static final String TABLE_FIL_CREATE = "create table " + TABLE_FIL
 			+ " (" + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"

@@ -47,7 +47,7 @@ public class FilDataSource {
 		return (Fil) cursorToFil(c);
 	}
 
-	public void updateFils() {
+	public void updateFils(Long _threadId) {
 
 		final String DATE_S = "dateS";
 
@@ -58,13 +58,22 @@ public class FilDataSource {
 		}
 		cols.add("" + DATE_S);
 
+		String where = DataBaseHelper.COLUMN_THREADID + " = ?";
+		String[] whereArgs = new String[]{ _threadId+"" };
+		
+		if(_threadId == null){
+			where = null;
+			whereArgs = null;
+		}
+			
+
 		Cursor cThreads = database.query(DataBaseHelper.TABLE_SMS,
 				new String[] {
 						DataBaseHelper.COLUMN_THREADID,
 						DataBaseHelper.COLUMN_BODY,
 						"count(*) " + DataBaseHelper.COLUMN_MESSAGECOUNT,
 						"max(" + DataBaseHelper.COLUMN_DATE + ") "
-								+ DataBaseHelper.COLUMN_DATE }, null, null,
+								+ DataBaseHelper.COLUMN_DATE }, where, whereArgs,
 				DataBaseHelper.COLUMN_THREADID, null,
 				DataBaseHelper.COLUMN_THREADID);
 

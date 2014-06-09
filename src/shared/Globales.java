@@ -1,22 +1,15 @@
 package shared;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
 import android.telephony.TelephonyManager;
-import android.telephony.gsm.SmsManager;
 import android.text.format.DateFormat;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.cnam.al_sms.connectivite.BluetoothService;
 import com.cnam.al_sms.data.datasource.SMSDataSource;
 import com.cnam.al_sms.esclave_activities.AlsmsActivity;
-import com.cnam.al_sms.esclave_activities.MainActivity;
 import com.cnam.al_sms.gestionsms.ConversationController;
 import com.cnam.al_sms.gestionsms.MessagerieController;
 import com.cnam.al_sms.modeles.SMS;
@@ -65,7 +58,6 @@ public class Globales {
 	public static final int MESSAGE_TOAST = 5;
 	public static final int MESSAGE_FAILED = 6;
 	public static final int MESSAGE_LOST = 7;
-	
 
 	/* Nombre de messages à afficher (premettre de la configurer) */
 
@@ -96,24 +88,27 @@ public class Globales {
 				// construct a string from the valid bytes in the buffer
 				SMS sms = SMS.getFromBytes(readBuff);
 				// String readMessage = new String(readBuff, 0, msg.arg1);
-				
-				
 
 				SMSDataSource smsdata = new SMSDataSource(curActivity);
 				smsdata.open();
-				
-					smsdata.creerSMS(sms.contentValuesFromSMS());
-				
+
+				smsdata.creerSMS(sms.contentValuesFromSMS());
+				ConversationController.updateFils(curActivity.getApplicationContext(), sms.getFilId(), false);
 				smsdata.close();
-				if(Globales.isPhone()){
-					MessagerieController.sendSMS(Globales.curActivity,
-							"0687974971", sms.getMessage()); // 0605116117
-					
-					Toast.makeText(curActivity, "Envoi d'un sms "+":\""+sms.getMessage()+"\"", Toast.LENGTH_LONG).show();
-				}else{
-					Toast.makeText(curActivity, "Récupération de SMS en cours", Toast.LENGTH_SHORT).show();
-				}
 				
+				if (Globales.isPhone()) {
+					MessagerieController.sendSMS(Globales.curActivity,
+							sms.getAdresse(), sms.getMessage());
+
+					Toast.makeText(
+							curActivity,
+							"Envoi d'un sms " + ":\"" + sms.getMessage() + "\"",
+							Toast.LENGTH_LONG).show();
+				} else {
+					Toast.makeText(curActivity, "Récupération de SMS en cours",
+							Toast.LENGTH_SHORT).show();
+				}
+
 				break;
 			case Globales.MESSAGE_CONNECTED:
 				// construct a string from the valid bytes in the buffer

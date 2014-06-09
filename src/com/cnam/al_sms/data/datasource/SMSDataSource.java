@@ -14,6 +14,7 @@ import android.text.format.DateFormat;
 import android.util.Log;
 
 import com.cnam.al_sms.data.DataBaseHelper;
+import com.cnam.al_sms.gestionsms.ConversationController;
 import com.cnam.al_sms.modeles.SMS;
 
 public class SMSDataSource {
@@ -21,6 +22,8 @@ public class SMSDataSource {
 	private static final String TAG = "ALSMS";
 	private SQLiteDatabase database;
 	private DataBaseHelper dbHelper;
+	
+	private Context mContext;
 
 	public static String[] allColumns = { DataBaseHelper.COLUMN_ID,
 			DataBaseHelper.COLUMN_THREADID, DataBaseHelper.COLUMN_ADDRESS,
@@ -31,7 +34,8 @@ public class SMSDataSource {
 			DataBaseHelper.COLUMN_SEEN };
 
 	public SMSDataSource(Context context) {
-		dbHelper = new DataBaseHelper(context);
+		mContext = context;
+		dbHelper = new DataBaseHelper(mContext);
 	}
 
 	public void open() throws SQLException {

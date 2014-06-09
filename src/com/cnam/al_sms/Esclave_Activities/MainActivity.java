@@ -102,10 +102,6 @@ public class MainActivity extends AlsmsActivity {
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 		mDrawerList = (ListView) findViewById(R.id.list_slidermenu);
 
-		if (savedInstanceState == null) {
-			displayView(0);
-		}
-
 		if (navDrawerItems.size() == 0) {
 			navDrawerItems.add(new NavDrawerItem("Accueil", navMenuIcons
 					.getResourceId(0, -1)));
@@ -175,6 +171,11 @@ public class MainActivity extends AlsmsActivity {
 			}
 		};
 		mDrawerLayout.setDrawerListener(mDrawerToggle);
+
+		if (savedInstanceState == null) {
+			// on first time display view for first nav item
+			displayView(0);
+		}
 	}
 
 	@Override

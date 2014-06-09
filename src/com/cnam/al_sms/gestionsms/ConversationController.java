@@ -18,4 +18,8 @@ public abstract class ConversationController {
 	public static void updateFils(Context context, boolean show) {
 		new TacheUpdate(context, show).execute();
 	}
+
+	public static void updateFils(Context context, long threadId, boolean show) {
+		new TacheUpdate(context, threadId, show).execute();
+	}
 }

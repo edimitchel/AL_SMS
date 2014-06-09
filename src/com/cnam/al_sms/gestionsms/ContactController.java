@@ -56,33 +56,8 @@ public abstract class ContactController {
 	}
 
 	public static String getContactNameByThread(long thread_id, Context context) {
-		SMSDataSource sds = new SMSDataSource(context);
-		sds.open();
-		Cursor contact = sds.getSmsOfThread(thread_id);
-		if (contact.getCount() == 0) {
-			return "";
-		}
-		String number = contact.getString(contact
-				.getColumnIndexOrThrow(DataBaseHelper.COLUMN_ADDRESS));
-
-		ContentResolver cr = context.getContentResolver();
-
-		Uri uri = Uri.withAppendedPath(
-				ContactsContract.PhoneLookup.CONTENT_FILTER_URI,
-				Uri.encode(number));
-
-		Cursor cur = cr.query(uri, null, null, null, null);
-		contact.close();
-		String contactName;
-		if (cur.getCount() > 0) {
-			cur.moveToFirst();
-			contactName = cur.getString(cur
-					.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
-		} else {
-			contactName = number;
-		}
-		cur.close();
-		return contactName;
+		Contact c = getContact(context, thread_id);
+		return c.getNom();
 	}
 
 	public static Contact getContact(Context context, Long thread_id) {

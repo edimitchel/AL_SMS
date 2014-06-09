@@ -7,17 +7,26 @@ import com.cnam.al_sms.data.datasource.FilDataSource;
 
 public class TacheUpdate extends AsyncTask<String, Integer, Boolean> {
 
-	private Context context;
+	private Context mContext;
 
-	private boolean dialogShow = true;
+	private boolean mDialogShow = true;
 
-	private FilDataSource fds;
+	private FilDataSource mFds;
+	
+	private Long mThreadId = null;
 
 	// private List<Message> messages;
 	public TacheUpdate(Context _context, boolean _dialogShow) {
-		context = _context;
-		dialogShow = _dialogShow;
-		fds = new FilDataSource(context);
+		mContext = _context;
+		mDialogShow = _dialogShow;
+		mFds = new FilDataSource(mContext);
+	}
+	
+	public TacheUpdate(Context _context, long _threadId, boolean _dialogShow) {
+		mContext = _context;
+		mDialogShow = _dialogShow;
+		mFds = new FilDataSource(mContext);
+		mThreadId = _threadId;
 	}
 
 	protected void onPreExecute() {
@@ -28,9 +37,9 @@ public class TacheUpdate extends AsyncTask<String, Integer, Boolean> {
 	}
 
 	protected Boolean doInBackground(final String... args) {
-		fds.open();
-		fds.updateFils();
-		fds.close();
+		mFds.open();
+		mFds.updateFils(mThreadId);
+		mFds.close();
 
 		return true;
 	}
