@@ -101,27 +101,13 @@ public class MainActivity extends AlsmsActivity {
 		navMenuTitles = getResources().getStringArray(R.array.nav_drawer_items);
 
 		// nav drawer icons from resources
-		navMenuIcons = getResources()
-				.obtainTypedArray(R.array.nav_drawer_icons);
 
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 		mDrawerList = (ListView) findViewById(R.id.list_slidermenu);
 
-		if (navDrawerItems.size() == 0) {
-			navDrawerItems.add(new NavDrawerItem("Accueil", navMenuIcons
-					.getResourceId(0, -1)));
-		}
-
-		updateConversation();
-
-		navMenuIcons.recycle();
+		refreshConv(savedInstanceState);
 
 		mDrawerList.setOnItemClickListener(new SlideMenuClickListener());
-
-		// setting the nav drawer list adapter
-		adapter = new NavDrawerListAdapter(getApplicationContext(),
-				navDrawerItems);
-		mDrawerList.setAdapter(adapter);
 
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 		getActionBar().setHomeButtonEnabled(true);
@@ -148,16 +134,81 @@ public class MainActivity extends AlsmsActivity {
 			}
 		};
 		mDrawerLayout.setDrawerListener(mDrawerToggle);
-
-		if (savedInstanceState == null) {
-			// on first time display view for first nav item
-			displayView(0);
-		}
 	}
 
-	private void updateConversation() {
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.main, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Handle action bar item clicks here. The action bar will
+		// automatically handle clicks on the Home/Up button, so long
+		// as you specify a parent activity in AndroidManifest.xml.
+		int id = item.getItemId();
+
+		// Bouton d'ouverture du menu
+		if (mDrawerToggle.onOptionsItemSelected(item)) {
+			return true;
+		}
+
+		if (id == R.id.action_settings) {
+			Intent intent = new Intent(getBaseContext(),
+					ParametreActivity.class);
+			startActivityForResult(intent, CODE_APP);
+			return true;
+		} else if (id == R.id.synchroniser) {
+			if (Globales.isPhone()) {
+				Toast.makeText(this, "Synchronisation en cours",
+						Toast.LENGTH_SHORT).show();
+				ConversationController.getAllSmsFromMasterBase(
+						this.getApplicationContext(), false);
+				SynchroController.synchroPeriode(this.getApplicationContext());
+				refreshConv(null);
+				Toast.makeText(this, "Synchronisation terminée",
+						Toast.LENGTH_SHORT).show();
+
+			} else if (Globales.isTablet()) {
+				// TODO APPELER LA SYNCHRONISATION CHEZ LE MAITRE!
+				refreshConv(null);
+			}
+		} else if (id == R.id.connexion) {
+			Intent i_connec = null;
+			if (Globales.typeAppareil == Globales.DeviceType.phone) {
+				i_connec = new Intent(MainActivity.this,
+						ConnexionMaitreActivity.class);
+
+			} else if (Globales.typeAppareil == Globales.DeviceType.tablette) {
+				i_connec = new Intent(MainActivity.this,
+						ConfigurationConnexionActivity.class);
+			}
+			startActivityForResult(i_connec, CODE_APP);
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
+	public void refreshConv(Bundle savedInstanceState) {
+		navMenuIcons = getResources()
+				.obtainTypedArray(R.array.nav_drawer_icons);
+		// load slide menu items
 		HashMap<String, String> mapConversation;
+
+		conversations = new ArrayList<HashMap<String, String>>();
+
+		if (navDrawerItems != null)
+			navDrawerItems.clear();
+
+		if (navDrawerItems.size() == 0) {
+			navDrawerItems.add(new NavDrawerItem("Accueil", navMenuIcons
+					.getResourceId(0, -1)));
+		}
+
 		Cursor cFil = MessagerieController.getConversations(this);
+
 		while (cFil.moveToNext() && conversations.size() != cFil.getCount()) {
 			mapConversation = new HashMap<String, String>();
 
@@ -196,55 +247,20 @@ public class MainActivity extends AlsmsActivity {
 			conversations.add(mapConversation);
 		}
 		cFil.close();
-	}
+		navMenuIcons.recycle();
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-
-		// Bouton d'ouverture du menu
-		if (mDrawerToggle.onOptionsItemSelected(item)) {
-			return true;
+		if (adapter == null) {
+			adapter = new NavDrawerListAdapter(getApplicationContext(),
+					navDrawerItems);
+			mDrawerList.setAdapter(adapter);
+		} else {
+			adapter.notifyDataSetChanged();
 		}
 
-		if (id == R.id.action_settings) {
-			Intent intent = new Intent(getBaseContext(),
-					ParametreActivity.class);
-			startActivityForResult(intent, CODE_APP);
-			return true;
-		} else if (id == R.id.synchroniser) {
-			if (Globales.isPhone()) {
-				ConversationController.getAllSmsFromMasterBase(
-						this.getApplicationContext(), false);
-				SynchroController.synchroPeriode(this.getApplicationContext());
-			} else if (Globales.isTablet()) {
-				// TODO APPELER LA SYNCHRONISATION CHEZ LE MAITRE!
-
-			}
-		} else if (id == R.id.connexion) {
-			Intent i_connec = null;
-			if (Globales.typeAppareil == Globales.DeviceType.phone) {
-				i_connec = new Intent(MainActivity.this,
-						ConnexionMaitreActivity.class);
-
-			} else if (Globales.typeAppareil == Globales.DeviceType.tablette) {
-				i_connec = new Intent(MainActivity.this,
-						ConfigurationConnexionActivity.class);
-			}
-			startActivityForResult(i_connec, CODE_APP);
+		if (savedInstanceState == null) {
+			// on first time display view for first nav item
+			displayView(0);
 		}
-		return super.onOptionsItemSelected(item);
 	}
 
 	@Override
@@ -280,6 +296,13 @@ public class MainActivity extends AlsmsActivity {
 		boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
 		menu.findItem(R.id.action_settings).setVisible(!drawerOpen);
 		return super.onPrepareOptionsMenu(menu);
+	}
+
+	@Override
+	protected void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+		this.refreshConv(null);
 	}
 
 	/**

@@ -3,7 +3,6 @@ package com.cnam.al_sms.gestionsms;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import shared.Globales;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
@@ -17,7 +16,6 @@ import android.net.Uri;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.Contacts;
 import android.provider.MediaStore.Images.Media;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.cnam.al_sms.data.DataBaseHelper;
@@ -62,6 +60,7 @@ public abstract class ContactController {
 				}
 			}
 		}
+		cur.close();
 	}
 
 	public static String getContactNameByThread(long thread_id, Context context) {
@@ -132,17 +131,16 @@ public abstract class ContactController {
 		if (cursor == null || cursor.getCount() == 0) {
 			return null;
 		}
-		try {
-			if (cursor.moveToFirst()) {
-				return photoUri;
-			}
-		} finally {
+		if (cursor.moveToFirst()) {
 			cursor.close();
+			return photoUri;
 		}
+		cursor.close();
 		return null;
 	}
 
-	public static Bitmap getRoundImageContact(Context context, Uri uImage) throws FileNotFoundException, IOException {
+	public static Bitmap getRoundImageContact(Context context, Uri uImage)
+			throws FileNotFoundException, IOException {
 		Bitmap mBitmap = Media.getBitmap(context.getContentResolver(), uImage);
 		Bitmap circleBitmap = Bitmap.createBitmap(mBitmap.getWidth(),
 				mBitmap.getHeight(), Bitmap.Config.ARGB_8888);
