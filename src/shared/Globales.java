@@ -1,8 +1,14 @@
 package shared;
 
+import java.text.FieldPosition;
+import java.text.ParsePosition;
+import java.util.Date;
+
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.telephony.TelephonyManager;
 import android.text.format.DateFormat;
 import android.widget.Toast;
@@ -26,7 +32,12 @@ public class Globales {
 	public static DeviceType getDeviceType(Context context) {
 		TelephonyManager manager = (TelephonyManager) context
 				.getSystemService(Context.TELEPHONY_SERVICE);
-		if (manager.getPhoneType() == TelephonyManager.PHONE_TYPE_NONE) {
+
+		SharedPreferences prefs = PreferenceManager
+				.getDefaultSharedPreferences(context);
+		boolean isSlave = prefs.getBoolean("as_slave", false); 
+		
+		if (manager.getPhoneType() == TelephonyManager.PHONE_TYPE_NONE || isSlave) {
 			Globales.typeAppareil = Globales.DeviceType.tablette;
 		} else {
 			Globales.typeAppareil = Globales.DeviceType.phone;
@@ -146,14 +157,16 @@ public class Globales {
 
 	/**
 	 * Intervalle de temps pour la synchronisation des SMS en millisecondes
-	 * 
+	 * Surchargé par les préférences
 	 * default: 24 h
 	 */
-	public static final long INTERVALLE_TEMPS_SYNC = 60 * 60 * 24 * 1000;
+	public static final long INTERVALLE_TEMPS_SYNC = 60 * 60 * 24;
 
-	public static java.text.DateFormat dateFormat;
+	public static CharSequence dateFormatString = "dd/MM/yy à hh/h:mm";
+	
+	public static android.text.format.DateFormat dateFormat;
 
 	public static void init(Context context) {
-		dateFormat = DateFormat.getDateFormat(context);
+		dateFormat = new android.text.format.DateFormat();
 	}
 }

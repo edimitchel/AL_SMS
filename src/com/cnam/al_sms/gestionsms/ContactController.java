@@ -1,13 +1,22 @@
 package com.cnam.al_sms.gestionsms;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 import shared.Globales;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapShader;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Shader.TileMode;
 import android.net.Uri;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.Contacts;
+import android.provider.MediaStore.Images.Media;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -96,7 +105,7 @@ public abstract class ContactController {
 			newContact.setNumero(number);
 			newContact.setImageURI(imageUri);
 			newContact.setThreadId(thread_id);
-			
+
 		} else {
 			newContact.setId(0L);
 			newContact.setNom(number);
@@ -131,5 +140,21 @@ public abstract class ContactController {
 			cursor.close();
 		}
 		return null;
+	}
+
+	public static Bitmap getRoundImageContact(Context context, Uri uImage) throws FileNotFoundException, IOException {
+		Bitmap mBitmap = Media.getBitmap(context.getContentResolver(), uImage);
+		Bitmap circleBitmap = Bitmap.createBitmap(mBitmap.getWidth(),
+				mBitmap.getHeight(), Bitmap.Config.ARGB_8888);
+
+		BitmapShader shader = new BitmapShader(mBitmap, TileMode.CLAMP,
+				TileMode.CLAMP);
+		Paint paint = new Paint();
+		paint.setShader(shader);
+
+		Canvas c = new Canvas(circleBitmap);
+		c.drawCircle(mBitmap.getWidth() / 2, mBitmap.getHeight() / 2,
+				mBitmap.getWidth() / 2, paint);
+		return circleBitmap;
 	}
 }

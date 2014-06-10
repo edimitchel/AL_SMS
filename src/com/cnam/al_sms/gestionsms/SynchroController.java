@@ -5,6 +5,9 @@ import java.util.List;
 
 import shared.Globales;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.Preference;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.cnam.al_sms.connectivite.BluetoothService;
@@ -52,8 +55,13 @@ public abstract class SynchroController {
 		sds.open();
 		SyncSMS sSms = syncds.getLastSyncSMSDate();
 
-		Date now = new Date(System.currentTimeMillis()
-				- Globales.INTERVALLE_TEMPS_SYNC);
+		SharedPreferences prefs = PreferenceManager
+				.getDefaultSharedPreferences(context);
+		Long intervalle = Long.valueOf(prefs.getString("intervalle_sync",
+				Globales.INTERVALLE_TEMPS_SYNC + "")) * 1000;
+
+		Date now = intervalle < 0 ? new Date(0) : new Date(
+				System.currentTimeMillis() - intervalle);
 		Date dateLast = sSms == null ? now : sSms.getDateSync();
 		if (dateLast.before(now)) {
 			dateLast = now;
@@ -80,7 +88,7 @@ public abstract class SynchroController {
 			dataSMS.open();
 			List<SMS> list = getSmsSince(context);
 			dataSMS.close();
-			Log.i("ALSMS",list.size()+"");
+			Log.i("ALSMS", list.size() + "");
 			if (list.size() > 0) {
 				long firstSMSId = list.get(0).getId();
 				long lastSMSId = list.get(list.size() - 1).getId();
@@ -90,8 +98,6 @@ public abstract class SynchroController {
 				} catch (Exception e) {
 					return false;
 				}
-
-				
 			}
 		}
 		return true;

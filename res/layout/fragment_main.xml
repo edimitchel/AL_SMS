@@ -8,22 +8,32 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.cnam.al_sms.esclave_activities.MainActivity$PlaceholderFragment" >
 
-    <ListView
-        android:id="@+id/conversations"
-        android:layout_width="wrap_content"
+    <Button
+        android:id="@+id/btn_init"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/btn_start_sync"
+        android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:footerDividersEnabled="true" />
+        android:minHeight="32dp"
+        android:text="@string/title_init"
+        android:textSize="14sp" />
 
     <Button
         android:id="@+id/btn_start_sync"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignEnd="@id/conversations"
-        android:layout_alignParentBottom="true"
+        android:layout_above="@+id/btn_init"
+        android:layout_alignLeft="@+id/btn_init"
         android:layout_alignParentStart="true"
-        android:text="Commencer la synchronisation" />
+        android:layout_marginBottom="17dp"
+        android:text="@string/begin_sync" />
+
+    <ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/btn_start_sync"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true" />
 
 </RelativeLayout>

@@ -2,10 +2,36 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal"
     android:dividerHeight="0dp"
+    android:orientation="horizontal"
     android:paddingBottom="5dp"
     android:paddingTop="5dp" >
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="15dp"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/temp_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:gravity="right"
+            android:text="@string/temp_message_sms"
+            android:textColor="@color/list_item_title" />
+
+        <TextView
+            android:id="@+id/dateMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|center_vertical"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@color/Grey"
+            android:textSize="12sp" />
+    </LinearLayout>
 
     <ImageView
         android:id="@+id/imageContact"
@@ -15,29 +41,5 @@
         android:background="@drawable/rounded"
         android:contentDescription="Image"
         android:src="@drawable/ic_contact" />
-
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        android:orientation="vertical" >
-
-        <TextView
-            android:id="@+id/temp_message"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/temp_message_sms"
-            android:textColor="@color/list_item_title" />
-
-        <TextView
-            android:id="@+id/dateMessage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left|center_vertical"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="@color/Grey"
-            android:textSize="12sp" />
-    </LinearLayout>
 
 </LinearLayout>

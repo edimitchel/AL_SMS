@@ -1,14 +1,15 @@
 package com.cnam.al_sms.modeles;
 
+import android.graphics.Bitmap;
 import android.net.Uri;
 
 public class NavDrawerItem {
 
 	private String title;
 	private int icon = 0;
-	private Uri iconUri;
+	private Bitmap iconBitmap;
 
-	private boolean isImageUri = false;
+	private boolean isImageBitmap = false;
 	private String count = "0";
 
 	// boolean to set visiblity of the counter
@@ -22,11 +23,11 @@ public class NavDrawerItem {
 		this.icon = icon;
 	}
 
-	public NavDrawerItem(String title, Uri imageUri, boolean isCounterVisible,
+	public NavDrawerItem(String title, Bitmap bitmap, boolean isCounterVisible,
 			String count) {
 		this.title = title;
-		this.isImageUri = true;
-		this.iconUri = imageUri;
+		this.isImageBitmap = true;
+		this.iconBitmap = bitmap;
 		this.isCounterVisible = isCounterVisible;
 		this.count = count;
 	}
@@ -63,11 +64,11 @@ public class NavDrawerItem {
 		this.isCounterVisible = isCounterVisible;
 	}
 
-	public Uri getIconUri() {
-		return iconUri;
+	public Bitmap getBitmap() {
+		return iconBitmap;
 	}
 
-	public boolean isImageUri() {
-		return isImageUri;
+	public boolean isImageBitmap() {
+		return isImageBitmap;
 	}
 }

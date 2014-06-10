@@ -56,6 +56,10 @@
             android:name="com.cnam.al_sms.ConversationActivity"
             android:label="@string/title_activity_conversation" >
         </activity>
+        <activity
+            android:name="com.cnam.al_sms.ParametreActivity"
+            android:label="@string/title_activity_parametre" >
+        </activity>
     </application>
 
 </manifest>

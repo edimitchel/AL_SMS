@@ -7,10 +7,12 @@ import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.cnam.al_sms.data.DataBaseHelper;
@@ -78,9 +80,15 @@ public class TacheSMSFromMaster extends AsyncTask<String, Integer, Boolean> {
 		sds.open();
 
 		long lastID = sds.getLastSMSId();
+
+		SharedPreferences prefs = PreferenceManager
+				.getDefaultSharedPreferences(context);
+		Long intervalle = Long.valueOf(prefs.getString("intervalle_sync",
+				Globales.INTERVALLE_TEMPS_SYNC + "")) * 1000;
+
 		final String[] whereArgs = new String[] {
 				lastID + "",
-				System.currentTimeMillis() - Globales.INTERVALLE_TEMPS_SYNC
+				intervalle < 0 ? "0" : System.currentTimeMillis() - intervalle
 						+ "" };
 		int num_sms = 0;
 

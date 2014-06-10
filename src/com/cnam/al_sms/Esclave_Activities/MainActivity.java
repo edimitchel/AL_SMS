@@ -1,5 +1,6 @@
 package com.cnam.al_sms.esclave_activities;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -9,11 +10,13 @@ import shared.NavDrawerListAdapter;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.bluetooth.BluetoothAdapter;
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
@@ -24,6 +27,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.cnam.al_sms.ParametreActivity;
 import com.cnam.al_sms.R;
 import com.cnam.al_sms.connectivite.BluetoothService;
 import com.cnam.al_sms.data.DataBaseHelper;
@@ -86,12 +90,13 @@ public class MainActivity extends AlsmsActivity {
 
 		mTitle = mDrawerTitle = getTitle();
 
-		/*Verif BT */
+		/* Verif BT */
 		if (!mBluetoothAdapter.isEnabled()) {
-			   Intent enableBlueTooth = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-			   startActivityForResult(enableBlueTooth, REQUEST_ENABLE_BT);
-			}
-		
+			Intent enableBlueTooth = new Intent(
+					BluetoothAdapter.ACTION_REQUEST_ENABLE);
+			startActivityForResult(enableBlueTooth, REQUEST_ENABLE_BT);
+		}
+
 		// load slide menu items
 		navMenuTitles = getResources().getStringArray(R.array.nav_drawer_items);
 
@@ -107,35 +112,7 @@ public class MainActivity extends AlsmsActivity {
 					.getResourceId(0, -1)));
 		}
 
-		HashMap<String, String> mapConversation;
-
-		Cursor cFil = MessagerieController.getConversations(this);
-
-		while (cFil.moveToNext() && conversations.size() != cFil.getCount()) {
-			mapConversation = new HashMap<String, String>();
-
-			long thread_id = cFil.getLong(cFil
-					.getColumnIndex(DataBaseHelper.COLUMN_ID));
-			String lst_msg = cFil.getString(cFil
-					.getColumnIndex(DataBaseHelper.COLUMN_SNIPPET));
-			int cMsg = cFil.getInt(cFil
-					.getColumnIndex(DataBaseHelper.COLUMN_MESSAGECOUNT));
-
-			mapConversation.put("thread_id", thread_id + "");
-			mapConversation.put("nom_contact",
-					ContactController.getContactNameByThread(thread_id, this));
-			mapConversation.put("nb_msg", Integer.toString(cMsg));
-			mapConversation.put("last_msg", lst_msg);
-
-			navDrawerItems.add(new NavDrawerItem(mapConversation
-					.get("nom_contact"), ContactController
-					.getContactImageUriByThread(
-							Long.valueOf(mapConversation.get("thread_id")),
-							this.getApplicationContext()), true,
-					mapConversation.get("nb_msg")));
-			conversations.add(mapConversation);
-		}
-		cFil.close();
+		updateConversation();
 
 		navMenuIcons.recycle();
 
@@ -178,6 +155,49 @@ public class MainActivity extends AlsmsActivity {
 		}
 	}
 
+	private void updateConversation() {
+		HashMap<String, String> mapConversation;
+		Cursor cFil = MessagerieController.getConversations(this);
+		while (cFil.moveToNext() && conversations.size() != cFil.getCount()) {
+			mapConversation = new HashMap<String, String>();
+
+			long thread_id = cFil.getLong(cFil
+					.getColumnIndex(DataBaseHelper.COLUMN_ID));
+			String lst_msg = cFil.getString(cFil
+					.getColumnIndex(DataBaseHelper.COLUMN_SNIPPET));
+			int cMsg = cFil.getInt(cFil
+					.getColumnIndex(DataBaseHelper.COLUMN_MESSAGECOUNT));
+
+			mapConversation.put("thread_id", thread_id + "");
+			mapConversation.put("nom_contact",
+					ContactController.getContactNameByThread(thread_id, this));
+			mapConversation.put("nb_msg", Integer.toString(cMsg));
+			mapConversation.put("last_msg", lst_msg);
+
+			Uri contactUri = ContactController.getContactImageUriByThread(
+					Long.valueOf(mapConversation.get("thread_id")), this);
+			Bitmap bitmap;
+			if (contactUri != null) {
+				try {
+					bitmap = ContactController.getRoundImageContact(
+							this.getApplicationContext(), contactUri);
+				} catch (IOException e) {
+					bitmap = BitmapFactory.decodeResource(getResources(),
+							R.drawable.ic_contact);
+				}
+			} else {
+				bitmap = BitmapFactory.decodeResource(getResources(),
+						R.drawable.ic_contact);
+			}
+
+			navDrawerItems.add(new NavDrawerItem(mapConversation
+					.get("nom_contact"), bitmap, true, mapConversation
+					.get("nb_msg")));
+			conversations.add(mapConversation);
+		}
+		cFil.close();
+	}
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 
@@ -192,9 +212,15 @@ public class MainActivity extends AlsmsActivity {
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
+
+		// Bouton d'ouverture du menu
+		if (mDrawerToggle.onOptionsItemSelected(item)) {
+			return true;
+		}
+
 		if (id == R.id.action_settings) {
 			Intent intent = new Intent(getBaseContext(),
-					ConfigurationConnexionActivity.class);
+					ParametreActivity.class);
 			startActivityForResult(intent, CODE_APP);
 			return true;
 		} else if (id == R.id.synchroniser) {
@@ -274,8 +300,9 @@ public class MainActivity extends AlsmsActivity {
 		} else {
 			map = conversations.get(Math.max(0, position - 1));
 
-			Contact contact = ContactController.getContact(getApplicationContext(),Long.valueOf(map
-					.get("thread_id")+""));
+			Contact contact = ContactController.getContact(
+					getApplicationContext(),
+					Long.valueOf(map.get("thread_id") + ""));
 
 			title = contact.getNom();
 			fragment = new ConversationFragment(contact);
@@ -299,18 +326,21 @@ public class MainActivity extends AlsmsActivity {
 		mTitle = title;
 		getActionBar().setTitle(mTitle);
 	}
-	
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-	       super.onActivityResult(requestCode, resultCode, data);
-	       if (requestCode != REQUEST_ENABLE_BT)
-	           return;
-	       if (resultCode == RESULT_OK) {
-	    	   Toast.makeText(getApplicationContext(), "Bluetooth a été activé", Toast.LENGTH_LONG).show();
-	       } else {
-	    	   Toast.makeText(getApplicationContext(), "ALSMS ne peut pas être utilisé sans bluetooth", Toast.LENGTH_LONG).show();
-	    	   this.finish();
-	       }    
+		super.onActivityResult(requestCode, resultCode, data);
+		if (requestCode != REQUEST_ENABLE_BT)
+			return;
+		if (resultCode == RESULT_OK) {
+			Toast.makeText(getApplicationContext(), "Bluetooth a été activé",
+					Toast.LENGTH_LONG).show();
+		} else {
+			Toast.makeText(getApplicationContext(),
+					"ALSMS ne peut pas être utilisé sans bluetooth",
+					Toast.LENGTH_LONG).show();
+			this.finish();
+		}
 	}
 
 	/**

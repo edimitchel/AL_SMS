@@ -57,38 +57,38 @@ public class ConversationFragment extends Fragment {
 
 		mLVConversation = (ListView) rootView
 				.findViewById(R.id.LV_conversation);
-		
+
 		mETMessage = (EditText) rootView.findViewById(R.id.editText1);
 
 		mBTNEnvoi = (ImageButton) rootView.findViewById(R.id.button1);
 
 		if (mContact.getThreadId() != 0) {
 			loadSMS(mContact.getThreadId());
-			
 
 			mBTNEnvoi.setOnClickListener(new OnClickListener() {
 
 				@Override
 				public void onClick(View v) {
-					
+
 					String message = mETMessage.getText().toString();
 					if (message.isEmpty())
 						return;
 
 					mETMessage.setText("");
-					if(Globales.isPhone()){
+					if (Globales.isPhone()) {
 						MessagerieController.sendSMS(rootView.getContext(),
-								"0605116117", message); 
+								"0605116117", message);
 						showMessage(new SMS(message, Calendar.getInstance()
 								.getTime()));
-					}
-					else{
+					} else {
 						byte[] listbytes;
-						listbytes = SMS.getBytes(new SMS(1,1,"0605116117",0,new Date(0),new Date(0),1,1,1,"",message,1));
-						
+						listbytes = SMS.getBytes(new SMS(1, 1, "0605116117", 0,
+								new Date(0), new Date(0), 1, 1, 2, "", message,
+								1));
+
 						Globales.BTService.send(listbytes);
-						}
-					
+					}
+
 				}
 			});
 		}
@@ -101,7 +101,8 @@ public class ConversationFragment extends Fragment {
 				.getApplicationContext());
 
 		adapter = new ConversationArrayAdapter(this.getActivity()
-				.getApplicationContext(), R.id.LV_conversation, smsList, mContact);
+				.getApplicationContext(), R.id.LV_conversation, smsList,
+				mContact);
 
 		mLVConversation.setAdapter(adapter);
 	}
