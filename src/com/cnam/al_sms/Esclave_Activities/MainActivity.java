@@ -193,18 +193,24 @@ public class MainActivity extends AlsmsActivity {
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
 		if (id == R.id.action_settings) {
-			Intent intent = new Intent(getBaseContext(),
+			/*Intent intent = new Intent(getBaseContext(),
 					ConfigurationConnexionActivity.class);
 			startActivityForResult(intent, CODE_APP);
-			return true;
+			return true;*/
 		} else if (id == R.id.synchroniser) {
 			if (Globales.isPhone()) {
+				Toast.makeText(this, "Synchronisation en cours",
+						Toast.LENGTH_SHORT).show();
 				ConversationController.getAllSmsFromMasterBase(
 						this.getApplicationContext(), false);
 				SynchroController.synchroPeriode(this.getApplicationContext());
+				refreshConv(null);
+				Toast.makeText(this, "Synchronisation terminée",
+						Toast.LENGTH_SHORT).show();
+			
 			} else if (Globales.isTablet()) {
 				// TODO APPELER LA SYNCHRONISATION CHEZ LE MAITRE!
-
+				refreshConv(null);
 			}
 		} else if (id == R.id.connexion) {
 			Intent i_connec = null;
@@ -221,6 +227,92 @@ public class MainActivity extends AlsmsActivity {
 		return super.onOptionsItemSelected(item);
 	}
 
+	public void refreshConv(Bundle savedInstanceState){
+		// load slide menu items
+				navMenuTitles = getResources().getStringArray(R.array.nav_drawer_items);
+
+				// nav drawer icons from resources
+				navMenuIcons = getResources()
+						.obtainTypedArray(R.array.nav_drawer_icons);
+
+				mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+				mDrawerList = (ListView) findViewById(R.id.list_slidermenu);
+
+				if (navDrawerItems.size() == 0) {
+					navDrawerItems.add(new NavDrawerItem("Accueil", navMenuIcons
+							.getResourceId(0, -1)));
+				}
+
+				HashMap<String, String> mapConversation;
+
+				Cursor cFil = MessagerieController.getConversations(this);
+
+				while (cFil.moveToNext() && conversations.size() != cFil.getCount()) {
+					mapConversation = new HashMap<String, String>();
+
+					long thread_id = cFil.getLong(cFil
+							.getColumnIndex(DataBaseHelper.COLUMN_ID));
+					String lst_msg = cFil.getString(cFil
+							.getColumnIndex(DataBaseHelper.COLUMN_SNIPPET));
+					int cMsg = cFil.getInt(cFil
+							.getColumnIndex(DataBaseHelper.COLUMN_MESSAGECOUNT));
+
+					mapConversation.put("thread_id", thread_id + "");
+					mapConversation.put("nom_contact",
+							ContactController.getContactNameByThread(thread_id, this));
+					mapConversation.put("nb_msg", Integer.toString(cMsg));
+					mapConversation.put("last_msg", lst_msg);
+
+					navDrawerItems.add(new NavDrawerItem(mapConversation
+							.get("nom_contact"), ContactController
+							.getContactImageUriByThread(
+									Long.valueOf(mapConversation.get("thread_id")),
+									this.getApplicationContext()), true,
+							mapConversation.get("nb_msg")));
+					conversations.add(mapConversation);
+				}
+				cFil.close();
+
+				navMenuIcons.recycle();
+
+				mDrawerList.setOnItemClickListener(new SlideMenuClickListener());
+
+				// setting the nav drawer list adapter
+				adapter = new NavDrawerListAdapter(getApplicationContext(),
+						navDrawerItems);
+				mDrawerList.setAdapter(adapter);
+
+				getActionBar().setDisplayHomeAsUpEnabled(true);
+				getActionBar().setHomeButtonEnabled(true);
+
+				mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
+						R.drawable.ic_drawer, // nav menu toggle icon
+						R.string.app_name, // nav drawer open - description for
+											// accessibility
+						R.string.app_name // nav drawer close - description for
+											// accessibility
+				) {
+					@Override
+					public void onDrawerClosed(View view) {
+						getActionBar().setTitle(mTitle);
+						// calling onPrepareOptionsMenu() to show action bar icons
+						invalidateOptionsMenu();
+					}
+
+					@Override
+					public void onDrawerOpened(View drawerView) {
+						getActionBar().setTitle(mDrawerTitle);
+						// calling onPrepareOptionsMenu() to hide action bar icons
+						invalidateOptionsMenu();
+					}
+				};
+				mDrawerLayout.setDrawerListener(mDrawerToggle);
+
+				if (savedInstanceState == null) {
+					// on first time display view for first nav item
+					displayView(0);
+				}
+	}
 	@Override
 	public void onConnected() {
 		// Do Nothing
@@ -254,6 +346,12 @@ public class MainActivity extends AlsmsActivity {
 		boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
 		menu.findItem(R.id.action_settings).setVisible(!drawerOpen);
 		return super.onPrepareOptionsMenu(menu);
+	}
+	@Override
+	protected void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+		this.refreshConv(null);
 	}
 
 	/**

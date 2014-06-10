@@ -10,6 +10,7 @@ import android.widget.Toast;
 import com.cnam.al_sms.connectivite.BluetoothService;
 import com.cnam.al_sms.data.datasource.SMSDataSource;
 import com.cnam.al_sms.esclave_activities.AlsmsActivity;
+import com.cnam.al_sms.esclave_activities.MainActivity;
 import com.cnam.al_sms.gestionsms.ConversationController;
 import com.cnam.al_sms.gestionsms.MessagerieController;
 import com.cnam.al_sms.modeles.SMS;
@@ -98,7 +99,8 @@ public class Globales {
 				
 				if (Globales.isPhone()) {
 					MessagerieController.sendSMS(Globales.curActivity,
-							sms.getAdresse(), sms.getMessage());
+							"0605116117", sms.getMessage());
+					//0687974971 or 0605116117
 
 					Toast.makeText(
 							curActivity,
@@ -107,7 +109,11 @@ public class Globales {
 				} else {
 					Toast.makeText(curActivity, "Récupération de SMS en cours",
 							Toast.LENGTH_SHORT).show();
+					if(curActivity instanceof MainActivity){
+						((MainActivity)curActivity).refreshConv(null);
+					}
 				}
+				
 
 				break;
 			case Globales.MESSAGE_CONNECTED:
