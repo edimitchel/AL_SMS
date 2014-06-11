@@ -18,6 +18,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
@@ -85,8 +87,10 @@ public class MainActivity extends AlsmsActivity {
 
 		Globales.getDeviceType(this);
 		Globales.BTService = new BluetoothService(Globales.mHandler);
-		Toast.makeText(this, "Je suis " + Globales.typeAppareil,
-				Toast.LENGTH_LONG).show();
+		/*
+		 * Toast.makeText(this, "Je suis " + Globales.typeAppareil,
+		 * Toast.LENGTH_LONG).show();
+		 */
 
 		mTitle = mDrawerTitle = getTitle();
 
@@ -163,14 +167,21 @@ public class MainActivity extends AlsmsActivity {
 			return true;
 		} else if (id == R.id.synchroniser) {
 			if (Globales.isPhone()) {
+				Handler handlerSynchroMaitre = new Handler() {
+					@Override
+					public void handleMessage(Message msg) {
+						SynchroController.synchroPeriode(Globales.curActivity
+								.getApplicationContext());
+						refreshConv(null);
+						Toast.makeText(Globales.curActivity,
+								"Synchronisation terminée", Toast.LENGTH_SHORT)
+								.show();
+					}
+				};
 				Toast.makeText(this, "Synchronisation en cours",
 						Toast.LENGTH_SHORT).show();
 				ConversationController.getAllSmsFromMasterBase(
-						this.getApplicationContext(), false);
-				SynchroController.synchroPeriode(this.getApplicationContext());
-				refreshConv(null);
-				Toast.makeText(this, "Synchronisation terminée",
-						Toast.LENGTH_SHORT).show();
+						this.getApplicationContext(), handlerSynchroMaitre);
 
 			} else if (Globales.isTablet()) {
 				// TODO APPELER LA SYNCHRONISATION CHEZ LE MAITRE!
@@ -224,6 +235,10 @@ public class MainActivity extends AlsmsActivity {
 					ContactController.getContactNameByThread(thread_id, this));
 			mapConversation.put("nb_msg", Integer.toString(cMsg));
 			mapConversation.put("last_msg", lst_msg);
+			mapConversation.put(
+					"un_read",
+					ConversationController.getMessageUnread(
+							getApplicationContext(), thread_id) + "");
 
 			Uri contactUri = ContactController.getContactImageUriByThread(
 					Long.valueOf(mapConversation.get("thread_id")), this);
@@ -243,7 +258,8 @@ public class MainActivity extends AlsmsActivity {
 
 			navDrawerItems.add(new NavDrawerItem(mapConversation
 					.get("nom_contact"), bitmap, true, mapConversation
-					.get("nb_msg")));
+					.get("nb_msg"), mapConversation
+					.get("un_read")));
 			conversations.add(mapConversation);
 		}
 		cFil.close();
@@ -283,6 +299,10 @@ public class MainActivity extends AlsmsActivity {
 		public void onItemClick(AdapterView<?> parent, View view, int position,
 				long id) {
 			// display view for selected nav drawer item
+
+			view.findViewById(R.id.counter).setVisibility(View.INVISIBLE);
+			view.findViewById(R.id.counterUnread).setVisibility(View.VISIBLE);
+			
 			displayView(position);
 		}
 	}
@@ -300,15 +320,14 @@ public class MainActivity extends AlsmsActivity {
 
 	@Override
 	protected void onResume() {
-		// TODO Auto-generated method stub
 		super.onResume();
 		this.refreshConv(null);
 	}
 
 	/**
-	 * Diplaying fragment view for selected nav drawer list item
+	 * Affiche le fragment correspondant à l'élément sélectionné.
 	 * */
-	private void displayView(int position) {
+	public void displayView(int position) {
 		Map map = null;
 
 		CharSequence title = mTitle;
@@ -338,6 +357,7 @@ public class MainActivity extends AlsmsActivity {
 
 			// update selected item and title, then close the drawer
 			mDrawerList.setItemChecked(position, true);
+
 			mDrawerList.setSelection(position);
 			setTitle(title);
 			mDrawerLayout.closeDrawer(mDrawerList);

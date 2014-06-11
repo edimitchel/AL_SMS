@@ -10,7 +10,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.io.StreamCorruptedException;
 import java.util.ArrayList;
-import java.util.Date;
+import java.sql.Date;
 import java.util.List;
 
 import android.content.ContentValues;
@@ -131,9 +131,10 @@ public class SMS implements Serializable {
 	public SMS() {
 	}
 
-	public SMS(String message, Date date) {
+	public SMS(String message, Date date, int type) {
 		this.message = message;
 		this.date = date;
+		this.type = type;
 	}
 
 	/**

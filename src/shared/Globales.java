@@ -36,9 +36,10 @@ public class Globales {
 
 		SharedPreferences prefs = PreferenceManager
 				.getDefaultSharedPreferences(context);
-		boolean isSlave = prefs.getBoolean("as_slave", false); 
-		
-		if (manager.getPhoneType() == TelephonyManager.PHONE_TYPE_NONE || isSlave) {
+		boolean isSlave = prefs.getBoolean("as_slave", false);
+
+		if (manager.getPhoneType() == TelephonyManager.PHONE_TYPE_NONE
+				|| isSlave) {
 			Globales.typeAppareil = Globales.DeviceType.tablette;
 		} else {
 			Globales.typeAppareil = Globales.DeviceType.phone;
@@ -47,11 +48,11 @@ public class Globales {
 	}
 
 	public static boolean isPhone() {
-		return Globales.typeAppareil == DeviceType.phone;
+		return getDeviceType(curActivity) == DeviceType.phone;
 	}
 
 	public static boolean isTablet() {
-		return Globales.typeAppareil == DeviceType.tablette;
+		return getDeviceType(curActivity) == DeviceType.tablette;
 	}
 
 	/* BLUETOOTH SERVICE */
@@ -103,15 +104,15 @@ public class Globales {
 
 				SMSDataSource smsdata = new SMSDataSource(curActivity);
 				smsdata.open();
-
 				smsdata.creerSMS(sms.contentValuesFromSMS());
-				ConversationController.updateFils(curActivity.getApplicationContext(), sms.getFilId(), false);
 				smsdata.close();
-				
+				ConversationController.updateFils(
+						curActivity.getApplicationContext(), sms.getFilId());
+
 				if (Globales.isPhone()) {
 					MessagerieController.sendSMS(Globales.curActivity,
 							"0605116117", sms.getMessage());
-					//0687974971 or 0605116117
+					// 0687974971 or 0605116117
 
 					Toast.makeText(
 							curActivity,
@@ -120,11 +121,10 @@ public class Globales {
 				} else {
 					Toast.makeText(curActivity, "Récupération de SMS en cours",
 							Toast.LENGTH_SHORT).show();
-					if(curActivity instanceof MainActivity){
-						((MainActivity)curActivity).refreshConv(null);
+					if (curActivity instanceof MainActivity) {
+						((MainActivity) curActivity).refreshConv(null);
 					}
 				}
-				
 
 				break;
 			case Globales.MESSAGE_CONNECTED:
@@ -163,13 +163,12 @@ public class Globales {
 
 	/**
 	 * Intervalle de temps pour la synchronisation des SMS en millisecondes
-	 * Surchargé par les préférences
-	 * default: 24 h
+	 * Surchargé par les préférences default: 24 h
 	 */
 	public static final long INTERVALLE_TEMPS_SYNC = 60 * 60 * 24;
 
 	public static CharSequence dateFormatString = "dd/MM/yy à hh/h:mm";
-	
+
 	public static android.text.format.DateFormat dateFormat;
 
 	public static void init(Context context) {

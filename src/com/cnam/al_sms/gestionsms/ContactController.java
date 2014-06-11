@@ -128,15 +128,13 @@ public abstract class ContactController {
 				Contacts.Photo.CONTENT_DIRECTORY);
 		Cursor cursor = context.getContentResolver().query(photoUri,
 				new String[] { Contacts.Photo.PHOTO }, null, null, null);
-		if (cursor == null || cursor.getCount() == 0) {
-			return null;
-		}
 		if (cursor.moveToFirst()) {
 			cursor.close();
 			return photoUri;
+		} else {
+			cursor.close();
+			return null;
 		}
-		cursor.close();
-		return null;
 	}
 
 	public static Bitmap getRoundImageContact(Context context, Uri uImage)

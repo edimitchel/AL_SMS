@@ -54,7 +54,9 @@ public class SyncDataSource {
 					allColumns, null, null, null, null,
 					DataBaseHelper.COLUMN_DATE + " DESC", "1");
 			c.moveToFirst();
-			return (SyncSMS) cursorToSyncSMS(c);
+			SyncSMS SyncS = (SyncSMS) cursorToSyncSMS(c);
+			c.close();
+			return SyncS;
 		}
 		return null;
 	}

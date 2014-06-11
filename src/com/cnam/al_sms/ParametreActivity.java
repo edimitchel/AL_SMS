@@ -1,23 +1,19 @@
 package com.cnam.al_sms;
 
+import java.util.List;
+
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Configuration;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
-import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.preference.RingtonePreference;
-import android.text.TextUtils;
-
-import java.util.List;
+import android.support.v4.app.NavUtils;
+import android.view.MenuItem;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On
@@ -56,6 +52,7 @@ public class ParametreActivity extends PreferenceActivity {
 			return;
 		}
 
+		getActionBar().setDisplayHomeAsUpEnabled(true);
 		// In the simplified UI, fragments are not used at all and we instead
 		// use the older PreferenceActivity APIs.
 
@@ -65,7 +62,7 @@ public class ParametreActivity extends PreferenceActivity {
 		// Bind the summaries of EditText/List/Dialog/Ringtone preferences to
 		// their values. When their values change, their summaries are updated
 		// to reflect the new value, per the Android Design guidelines.
-		//bindPreferenceSummaryToValue(findPreference("as_slave"));
+		// bindPreferenceSummaryToValue(findPreference("as_slave"));
 		bindPreferenceSummaryToValue(findPreference("intervalle_sync"));
 	}
 
@@ -175,7 +172,7 @@ public class ParametreActivity extends PreferenceActivity {
 			bindPreferenceSummaryToValue(findPreference("as_slave"));
 		}
 	}
-	
+
 	/**
 	 * This fragment shows data and sync preferences only. It is used when the
 	 * activity is showing a two-pane settings UI.
@@ -193,5 +190,16 @@ public class ParametreActivity extends PreferenceActivity {
 			// guidelines.
 			bindPreferenceSummaryToValue(findPreference("intervalle_sync"));
 		}
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		// Respond to the action bar's Up/Home button
+		case android.R.id.home:
+			NavUtils.navigateUpFromSameTask(this);
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 }

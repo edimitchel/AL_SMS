@@ -98,9 +98,11 @@ public abstract class SynchroController {
 				} catch (Exception e) {
 					return false;
 				}
+				return true;
+			} else {
+				return false;
 			}
-		}
-		return true;
+		} else return false;
 	}
 
 	public static boolean synchroVollee() {

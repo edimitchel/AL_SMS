@@ -29,6 +29,12 @@
     <string name="begin_sync">Synchroniser</string>
     <string name="title_init">Réinitialiser</string>
     <string name="sendMessage">Envoyer message</string>
+    
+    <string-array name="notif_nouv_message">
+        <item name="titre">%1$d nouveau%2$s message%3$s</item>
+        <item name="content">Ouvrir le sms dans l\'application</item>
+        <item name="message"><![CDATA[<b>%1$s</b>\t%2$s]]></item>
+    </string-array>
 
     <string name="drawer_open">Slider Menu Opened</string>
     <string name="drawer_close">Slider Menu Closed</string>

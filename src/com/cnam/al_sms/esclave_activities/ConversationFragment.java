@@ -4,6 +4,9 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import shared.ConversationArrayAdapter;
 import shared.Globales;
@@ -20,6 +23,7 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 
 import com.cnam.al_sms.R;
+import com.cnam.al_sms.gestionsms.ConversationController;
 import com.cnam.al_sms.gestionsms.MessagerieController;
 import com.cnam.al_sms.modeles.Contact;
 import com.cnam.al_sms.modeles.SMS;
@@ -62,7 +66,7 @@ public class ConversationFragment extends Fragment {
 
 		mBTNEnvoi = (ImageButton) rootView.findViewById(R.id.button1);
 
-		if (mContact.getThreadId() != 0) {
+		if (mContact != null && mContact.getThreadId() != 0) {
 			loadSMS(mContact.getThreadId());
 
 			mBTNEnvoi.setOnClickListener(new OnClickListener() {
@@ -78,8 +82,8 @@ public class ConversationFragment extends Fragment {
 					if (Globales.isPhone()) {
 						MessagerieController.sendSMS(rootView.getContext(),
 								"0605116117", message);
-						showMessage(new SMS(message, Calendar.getInstance()
-								.getTime()));
+						showMessage(new SMS(message, new Date(Calendar
+								.getInstance().getTimeInMillis()), 2));
 					} else {
 						byte[] listbytes;
 						listbytes = SMS.getBytes(new SMS(1, 1, "0605116117", 0,
@@ -105,6 +109,9 @@ public class ConversationFragment extends Fragment {
 				mContact);
 
 		mLVConversation.setAdapter(adapter);
+
+		ConversationController.readSMS(rootView.getContext(),
+				mContact.getThreadId());
 	}
 
 	private void showMessage(SMS sms) {

@@ -50,6 +50,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 	public static final String COLUMN_LASTSMS = "last_sms";
 
 	private static final String DATABASE_NAME = "alsms.db";
+	
 	private static final int DATABASE_VERSION = 2;
 
 	private static final String TABLE_SMS_CREATE = "create table " + TABLE_SMS

@@ -5,12 +5,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import shared.Globales;
+import android.annotation.SuppressLint;
+import android.content.ContentProvider;
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.text.format.DateFormat;
+import android.net.Uri;
+import android.provider.Telephony.Sms;
 import android.util.Log;
 
 import com.cnam.al_sms.data.DataBaseHelper;
@@ -22,7 +27,7 @@ public class SMSDataSource {
 	private static final String TAG = "ALSMS";
 	private SQLiteDatabase database;
 	private DataBaseHelper dbHelper;
-	
+
 	private Context mContext;
 
 	public static String[] allColumns = { DataBaseHelper.COLUMN_ID,
@@ -51,6 +56,22 @@ public class SMSDataSource {
 		return insertId;
 	}
 
+	@SuppressLint("NewApi")
+	public Long creerSMSFromMaster(Long time) {
+		ContentResolver cr = mContext.getContentResolver();
+		Cursor c = cr.query(Sms.CONTENT_URI, allColumns,
+				Sms.DATE_SENT + " = ?", new String[] { time + "" }, null);
+		if (c.moveToFirst()) {
+			ContentValues vals = new ContentValues();
+			DatabaseUtils.cursorRowToContentValues(c, vals);
+			long nId = creerSMS(vals);
+			c.close();
+			return nId;
+		} else {
+			return null;
+		}
+	}
+
 	public SMS getSMS(long id) {
 		Cursor cursor = database.query(DataBaseHelper.TABLE_SMS, allColumns,
 				DataBaseHelper.COLUMN_ID + " = " + id, null, null, null, null);
@@ -58,6 +79,13 @@ public class SMSDataSource {
 		SMS newSMS = cursorToSMS(cursor);
 		cursor.close();
 		return newSMS;
+	}
+
+	public int updateSms(long id, ContentValues cv) {
+		int result = database.update(DataBaseHelper.TABLE_SMS, cv,
+				DataBaseHelper.COLUMN_ID + " = ?",
+				new String[] { String.valueOf(id) });
+		return result;
 	}
 
 	public int deleteSms(long id) {
@@ -142,15 +170,29 @@ public class SMSDataSource {
 		}
 	}
 
+	public int getUnread(long thread_id) {
+		Cursor c = database.query(DataBaseHelper.TABLE_SMS, allColumns,
+				DataBaseHelper.COLUMN_THREADID + " = ? " + " AND "
+						+ DataBaseHelper.COLUMN_READ + " = 0",
+				new String[] { thread_id + "" }, null, null,
+				DataBaseHelper.COLUMN_DATE + " DESC",
+				Globales.MESSAGE_COUNT_AFFICHER + "");
+		int count = c.getCount();
+		c.close();
+		return count;
+	}
+
 	public long getLastSMSId() {
 		Cursor c = database.query(DataBaseHelper.TABLE_SMS,
 				new String[] { DataBaseHelper.COLUMN_ID }, null, null, null,
 				null, DataBaseHelper.COLUMN_ID + " DESC", "1");
 		if (c.getCount() == 0) {
+			c.close();
 			return 0;
 		} else {
 			c.moveToFirst();
 			long id = c.getLong(c.getColumnIndex(DataBaseHelper.COLUMN_ID));
+			c.close();
 			return id;
 		}
 

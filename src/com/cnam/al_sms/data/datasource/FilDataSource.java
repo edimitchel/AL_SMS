@@ -44,7 +44,10 @@ public class FilDataSource {
 				DataBaseHelper.COLUMN_ID + " = ?",
 				new String[] { String.valueOf(threadid) }, null, null, null);
 		c.moveToFirst();
-		return (Fil) cursorToFil(c);
+		
+		Fil f = (Fil) cursorToFil(c);
+		c.close();
+		return f;
 	}
 
 	public void updateFils(Long _threadId) {
@@ -59,13 +62,12 @@ public class FilDataSource {
 		cols.add("" + DATE_S);
 
 		String where = DataBaseHelper.COLUMN_THREADID + " = ?";
-		String[] whereArgs = new String[]{ _threadId+"" };
-		
-		if(_threadId == null){
+		String[] whereArgs = new String[] { _threadId + "" };
+
+		if (_threadId == null) {
 			where = null;
 			whereArgs = null;
 		}
-			
 
 		Cursor cThreads = database.query(DataBaseHelper.TABLE_SMS,
 				new String[] {
@@ -73,8 +75,8 @@ public class FilDataSource {
 						DataBaseHelper.COLUMN_BODY,
 						"count(*) " + DataBaseHelper.COLUMN_MESSAGECOUNT,
 						"max(" + DataBaseHelper.COLUMN_DATE + ") "
-								+ DataBaseHelper.COLUMN_DATE }, where, whereArgs,
-				DataBaseHelper.COLUMN_THREADID, null,
+								+ DataBaseHelper.COLUMN_DATE }, where,
+				whereArgs, DataBaseHelper.COLUMN_THREADID, null,
 				DataBaseHelper.COLUMN_THREADID);
 
 		cThreads.moveToFirst();
@@ -134,7 +136,6 @@ public class FilDataSource {
 					.getColumnIndexOrThrow(DataBaseHelper.COLUMN_SNIPPET)));
 			fil.setNombreMessage(c.getInt(c
 					.getColumnIndexOrThrow(DataBaseHelper.COLUMN_MESSAGECOUNT)));
-			c.close();
 			return fil;
 		}
 		return null;

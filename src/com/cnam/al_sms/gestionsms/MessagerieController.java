@@ -72,7 +72,7 @@ public abstract class MessagerieController {
 
 					case Activity.RESULT_OK:
 						result = "Message bien envoyé";
-						
+
 						// TODO Signaler l'esclave du bon envoi du SMS
 						break;
 					case SmsManager.RESULT_ERROR_GENERIC_FAILURE:

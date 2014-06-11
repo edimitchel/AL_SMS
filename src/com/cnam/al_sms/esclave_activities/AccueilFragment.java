@@ -5,8 +5,10 @@ import java.util.ArrayList;
 import shared.Globales;
 import shared.Globales.DeviceType;
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +18,7 @@ import android.widget.Toast;
 
 import com.cnam.al_sms.R;
 import com.cnam.al_sms.connectivite.BluetoothService;
+import com.cnam.al_sms.gestionsms.ConversationController;
 import com.cnam.al_sms.gestionsms.SynchroController;
 import com.cnam.al_sms.modeles.SMS;
 
@@ -24,7 +27,9 @@ public class AccueilFragment extends Fragment {
 
 	private Context context;
 
-	private Button m_BTNSync;
+	private Button mBTNSync;
+
+	private Button mBTNInit;
 
 	public AccueilFragment() {
 	}
@@ -38,9 +43,9 @@ public class AccueilFragment extends Fragment {
 
 		context = rootView.getContext();
 
-		m_BTNSync = (Button) rootView.findViewById(R.id.btn_start_sync);
+		mBTNSync = (Button) rootView.findViewById(R.id.btn_start_sync);
 
-		m_BTNSync.setOnClickListener(new View.OnClickListener() {
+		mBTNSync.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				if (Globales.BTService.getState() == BluetoothService.STATE_CONNECTED) {
@@ -61,6 +66,32 @@ public class AccueilFragment extends Fragment {
 							"Connexion nécéssaire", Toast.LENGTH_LONG).show();
 				}
 
+			}
+		});
+
+		mBTNInit = (Button) rootView.findViewById(R.id.btn_init);
+
+		mBTNInit.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				new AlertDialog.Builder(context)
+						.setIcon(android.R.drawable.ic_dialog_alert)
+						.setTitle("Ré-initialisation")
+						.setMessage(
+								"Vous allez ré-initialiser toutes vos données.\nÊtes-vous sûr(e) ?")
+						.setPositiveButton("Oui, je le veux.",
+								new DialogInterface.OnClickListener() {
+
+									@Override
+									public void onClick(DialogInterface dialog,
+											int which) {
+										ConversationController
+												.clearAllData(context);
+										getActivity().recreate();
+									}
+
+								}).setNegativeButton("Non, merci.", null)
+						.show();
 			}
 		});
 

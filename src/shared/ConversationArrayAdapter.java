@@ -1,18 +1,10 @@
 package shared;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.sql.Date;
 import java.util.List;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapShader;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.Shader.TileMode;
 import android.net.Uri;
-import android.provider.MediaStore.Images.Media;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,7 +22,6 @@ public class ConversationArrayAdapter extends ArrayAdapter<SMS> {
 
 	private Context mContext;
 	private Contact mContact;
-	private List<SMS> SMSList;
 
 	private static class ViewHolder {
 		TextView message;
@@ -42,7 +33,6 @@ public class ConversationArrayAdapter extends ArrayAdapter<SMS> {
 			List<SMS> objects, Contact contact) {
 		super(context, resource, objects);
 		this.mContext = context;
-		SMSList = objects;
 		mContact = contact;
 	}
 
@@ -73,7 +63,8 @@ public class ConversationArrayAdapter extends ArrayAdapter<SMS> {
 		Uri uImage = mContact.getImageURI();
 		if (uImage != null) {
 			try {
-				viewHolder.image.setImageBitmap(ContactController.getRoundImageContact(mContext, uImage));
+				viewHolder.image.setImageBitmap(ContactController
+						.getRoundImageContact(mContext, uImage));
 			} catch (IOException e) {
 				viewHolder.image.setImageResource(R.drawable.ic_contact);
 			}
@@ -82,7 +73,7 @@ public class ConversationArrayAdapter extends ArrayAdapter<SMS> {
 		}
 
 		viewHolder.message.setText(sms.getMessage());
-		viewHolder.date.setText(ConversationController.getDateTime((Date) sms
+		viewHolder.date.setText(ConversationController.getDateTime(sms
 				.getDate()));
 		return convertView;
 	}

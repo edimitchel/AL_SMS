@@ -11,6 +11,7 @@ public class NavDrawerItem {
 
 	private boolean isImageBitmap = false;
 	private String count = "0";
+	private String countUnread = "0";
 
 	// boolean to set visiblity of the counter
 	private boolean isCounterVisible = false;
@@ -24,12 +25,13 @@ public class NavDrawerItem {
 	}
 
 	public NavDrawerItem(String title, Bitmap bitmap, boolean isCounterVisible,
-			String count) {
+			String count, String countUnRead) {
 		this.title = title;
 		this.isImageBitmap = true;
 		this.iconBitmap = bitmap;
 		this.isCounterVisible = isCounterVisible;
 		this.count = count;
+		this.countUnread = countUnRead;
 	}
 
 	public String getTitle() {
@@ -42,6 +44,10 @@ public class NavDrawerItem {
 
 	public String getCount() {
 		return this.count;
+	}
+
+	public String getCountUnread() {
+		return countUnread;
 	}
 
 	public boolean getCounterVisibility() {
