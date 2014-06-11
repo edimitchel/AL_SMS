@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Al SMS</string>
+    <string name="app_name">SMS Traffic</string>
     <string name="action_settings">Paramètres</string>
     <string name="is_master">Périphérique maître</string>
     <string name="title_activity_synchronisation">Synchronisation</string>
