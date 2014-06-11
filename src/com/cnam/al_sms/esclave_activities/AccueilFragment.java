@@ -10,6 +10,7 @@ import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,7 +53,9 @@ public class AccueilFragment extends Fragment {
 					if (Globales.getDeviceType(Globales.curActivity) == DeviceType.phone) {
 						ArrayList<SMS> list = (ArrayList<SMS>) SynchroController
 								.getSmsSince(context);
-
+						Toast.makeText(Globales.curActivity,
+								"Envoi de SMS vers la tablette", Toast.LENGTH_LONG).show();
+						
 						byte[] listbytes;
 						for (SMS sms : list) {
 							listbytes = SMS.getBytes(sms);

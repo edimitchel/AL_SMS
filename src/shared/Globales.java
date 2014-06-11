@@ -119,8 +119,7 @@ public class Globales {
 							"Envoi d'un sms " + ":\"" + sms.getMessage() + "\"",
 							Toast.LENGTH_LONG).show();
 				} else {
-					Toast.makeText(curActivity, "Récupération de SMS en cours",
-							Toast.LENGTH_SHORT).show();
+					
 					if (curActivity instanceof MainActivity) {
 						((MainActivity) curActivity).refreshConv(null);
 					}
